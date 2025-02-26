@@ -1,0 +1,31 @@
+{
+  "name": "team-project-20201-techtitans",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gopinathsjsu/team-project-20201-techtitans.git"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gopinathsjsu/team-project-20201-techtitans/issues"
+  },
+  "homepage": "https://github.com/gopinathsjsu/team-project-20201-techtitans#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.10.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
