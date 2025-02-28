@@ -7,6 +7,7 @@
     position: fixed;
     top: 0px;
     padding-left: 30px;
+    background-color: white;
 }
 
 .nav-header .nav-logo {
@@ -15,14 +16,32 @@
     font-weight: bold;
 }
 
-.nav-header > .admin-login{
+.nav-btns-container{
     margin-right: 40px;
+    display: flex;
+    align-items: center;
 }
 
-.nav-header .admin-login > .admin-btns {
+.user-pic {
+    padding: 5px 20px;
+    background: #D9D9D9;
+    width: 1px;
+    height: 30px;
+    border-radius: 50px;
+}
+
+.user-name {
     font-size: 1.1rem;
     font-weight: 600;
     color: black;
-    background-color: #D9D9D9;
+    margin-left: 10px;
     margin-right: 20px;
+}
+
+.nav-btns {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: black;
+    margin-right: 20px;
+    background-color: #D9D9D9;
 }
