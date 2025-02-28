@@ -1,6 +1,6 @@
 //Some help from tutorial: https://www.youtube.com/watch?v=amf18mxNX18
-import './Navbar.css';
-import { Link } from 'react-router-dom';
+import "./Navbar.css"
+import { Link } from "react-router-dom"
 
 /*
 The Navbar should have different buttons depending if the admin,
@@ -9,19 +9,21 @@ is done.
 */
 
 function Navbar() {
-    return (
-        <header className="nav-header">
-            <Link to='/' className="nav-logo">BookTable</Link>
-            <nav className="nav-btns-container">
-                {/*Admin would see these buttons:*/}
-                <Link to='/'>
-                    <button className="nav-btns">Analytics</button>
-                </Link>
-                <Link to='/'>
-                    <button className="nav-btns">Log out</button>
-                </Link>
+	return (
+		<header className="nav-header">
+			<Link to="/" className="nav-logo">
+				BookTable
+			</Link>
+			<nav className="nav-btns-container">
+				{/*Admin would see these buttons:*/}
+				<Link to="/">
+					<button className="nav-btns">Analytics</button>
+				</Link>
+				<Link to="/">
+					<button className="nav-btns">Log out</button>
+				</Link>
 
-                {/*
+				{/*
                 Admin would see these buttons when in the Analytics page:
                 <Link to='/'>
                     <button className="nav-btns">Back</button>
@@ -58,9 +60,9 @@ function Navbar() {
                     <button className="nav-btns">Log out</button>
                 </Link>
                 */}
-            </nav>
-        </header>
-    )
+			</nav>
+		</header>
+	)
 }
 
 export default Navbar

@@ -1,5 +1,5 @@
-import './RestaurantListing.css';
-import { Link } from 'react-router-dom';
+import "./RestaurantListing.css"
+import { Link } from "react-router-dom"
 
 /*
 The RestaurantListings should have different buttons depending
@@ -43,17 +43,17 @@ Restaurants", and so the listing of the restaurants is displayed in rows):
 */
 
 function RestaurantListing(props) {
-    return (
-        <div className="thumbnail">
-            <Link to='/hi'>
-                <div className="image"></div>
-            </Link>
-            <Link to='/hello'>
-                <h3 className="name">{props.name}</h3>
-            </Link>
-            {/*Admin would see these buttons from restaurants under All Restaurants:*/}
-            <button className="thumbnail-btn">Remove</button>
-            {/*
+	return (
+		<div className="thumbnail">
+			<Link to="/hi">
+				<div className="image"></div>
+			</Link>
+			<Link to="/hello">
+				<h3 className="name">{props.name}</h3>
+			</Link>
+			{/*Admin would see these buttons from restaurants under All Restaurants:*/}
+			<button className="thumbnail-btn">Remove</button>
+			{/*
             Admin would see these buttons from restaurants under Pending:
             <div className="pair-btns">
                 <button className="thumbnail-btn">Approve</button>
@@ -74,8 +74,8 @@ function RestaurantListing(props) {
                 <button className="smaller-thumbnail-btn">Reserve</button>
             </div>
             */}
-        </div>
-    )
+		</div>
+	)
 }
 
 export default RestaurantListing
