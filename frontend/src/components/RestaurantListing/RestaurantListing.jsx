@@ -45,10 +45,10 @@ Restaurants", and so the listing of the restaurants is displayed in rows):
 function RestaurantListing(props) {
 	return (
 		<div className="thumbnail">
-			<Link to="/hi">
+			<Link to="/">
 				<div className="image"></div>
 			</Link>
-			<Link to="/hello">
+			<Link to="/">
 				<h3 className="name">{props.name}</h3>
 			</Link>
 			{/*Admin would see these buttons from restaurants under All Restaurants:*/}
