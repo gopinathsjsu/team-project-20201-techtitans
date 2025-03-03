@@ -5,7 +5,7 @@ const LoginButtons = () => {
 		fontSize: "16px",
 		padding: "10px",
 		cursor: "pointer",
-	}
+	};
 
 	return (
 		<div
@@ -54,7 +54,7 @@ const LoginButtons = () => {
 				New Customer
 			</button>
 		</div>
-	)
-}
+	);
+};
 
-export default LoginButtons
+export default LoginButtons;

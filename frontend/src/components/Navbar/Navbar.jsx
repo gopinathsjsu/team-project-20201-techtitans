@@ -1,6 +1,6 @@
 //Some help from tutorial: https://www.youtube.com/watch?v=amf18mxNX18
-import "./Navbar.css"
-import { Link } from "react-router-dom"
+import "./Navbar.css";
+import { Link } from "react-router-dom";
 
 /*
 The Navbar should have different buttons depending if the admin,
@@ -62,7 +62,7 @@ function Navbar() {
                 */}
 			</nav>
 		</header>
-	)
+	);
 }
 
-export default Navbar
+export default Navbar;
