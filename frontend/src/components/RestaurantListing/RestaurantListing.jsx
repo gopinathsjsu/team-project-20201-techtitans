@@ -1,5 +1,5 @@
-import "./RestaurantListing.css"
-import { Link } from "react-router-dom"
+import "./RestaurantListing.css";
+import { Link } from "react-router-dom";
 
 /*
 The RestaurantListings should have different buttons depending
@@ -75,7 +75,7 @@ function RestaurantListing(props) {
             </div>
             */}
 		</div>
-	)
+	);
 }
 
-export default RestaurantListing
+export default RestaurantListing;

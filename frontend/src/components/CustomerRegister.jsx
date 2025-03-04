@@ -2,7 +2,7 @@ const Login = () => {
 	const textBoxStyle = {
 		marginBottom: "10px",
 		padding: "8px",
-	}
+	};
 
 	return (
 		<div
@@ -42,7 +42,7 @@ const Login = () => {
 				Register
 			</button>
 		</div>
-	)
-}
+	);
+};
 
-export default Login
+export default Login;
