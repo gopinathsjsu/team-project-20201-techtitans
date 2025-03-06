@@ -26,7 +26,18 @@ export async function addRestaurant(restaurant) {
 	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
 	try {
 		const restaurantToAdd = new RestaurantModel(restaurant);
-		const savedRestaurant = await restaurantToAdd.save();
+
+		let savedRestaurant;
+		const checkRestaurantName = await findRestaurantByName(restaurant.name);
+		const checkRestaurantLoc = await findRestaurantByLoc(
+			restaurant.location
+		);
+
+		if (!checkRestaurantName && !checkRestaurantLoc) {
+			savedRestaurant = await restaurantToAdd.save();
+		} else {
+			return "existing restaurant";
+		}
 		return savedRestaurant;
 	} catch (error) {
 		return false;
