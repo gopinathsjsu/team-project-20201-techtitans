@@ -1,83 +1,124 @@
 {
-	"RestaurantManager": [
+	"User": [
 		{
 			"username": "manager1",
 			"password": "rest123",
-			"email": "manager1@opentable.com"
+			"email": "manager1@opentable.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
-			"username": "foodadmin",
-			"password": "admin567",
-			"email": "foodadmin@domain.com"
+			"username": "foodManager",
+			"password": "manager567",
+			"email": "foodmanager@domain.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "chef_john",
 			"password": "gourmet1",
-			"email": "chefjohn@restaurant.com"
+			"email": "chefjohn@restaurant.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "r_manager99",
 			"password": "manage99",
-			"email": "rmanager99@example.org"
+			"email": "rmanager99@example.org",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "foodie_mgr",
 			"password": "lovefood",
-			"email": "foodie_mgr@foodmail.com"
-		}
-	],
-	"Customer": [
+			"email": "foodie_mgr@foodmail.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
+		},
 		{
 			"username": "happyEater",
 			"password": "eat123",
-			"email": "happyeater@gmail.com"
+			"email": "happyeater@gmail.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "dineLover",
 			"password": "dine202",
-			"email": "dinelover@yahoo.com"
+			"email": "dinelover@yahoo.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "nomNomUser",
 			"password": "tasty456",
-			"email": "nomnomuser@outlook.com"
+			"email": "nomnomuser@outlook.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "savoryJane",
 			"password": "spice789",
-			"email": "savoryjane@email.com"
+			"email": "savoryjane@email.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "foodieChris",
 			"password": "fork321",
-			"email": "foodiechris@domain.org"
-		}
-	],
-	"Admin": [
+			"email": "foodiechris@domain.org",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
+		},
 		{
 			"username": "admin1",
 			"password": "admin123",
-			"email": "admin1@opentable.com"
+			"email": "admin1@opentable.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "mod_food",
 			"password": "modpass",
-			"email": "modfood@restaurant.com"
+			"email": "modfood@restaurant.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "admin99",
 			"password": "secure77",
-			"email": "admin99@example.net"
+			"email": "admin99@example.net",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "siteowner",
 			"password": "rootpass",
-			"email": "siteowner@domain.org"
+			"email": "siteowner@domain.org",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "supermod",
 			"password": "mod9876",
-			"email": "supermod@adminmail.com"
+			"email": "supermod@adminmail.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		}
 	],
 	"Restaurant": [

@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
+import bcrypt from "bcrypt";
 import { addRestaurant } from "./models/restaurantServices.js";
+import { addUser } from "./models/userServices.js";
 
 const app = express();
 const PORT = 5173;
@@ -12,6 +14,33 @@ app.get("/", (req, res) => {
 	res.send("Server is ready");
 });
 
+app.get("/users", async (req, res) => {
+	res.send("Get Request");
+});
+
+app.post("/users", async (req, res) => {
+	const user = req.body;
+	const { email } = user;
+	const { password } = user;
+
+	if (!email) {
+		res.status(400).send("Bad request: Invalid input for email.");
+	} else if (!password) {
+		res.status(400).send("Bad request: Invalid input for password.");
+	} else {
+		const salt = await bcrypt.genSalt(10);
+		const hashedPwd = await bcrypt.hash(password, salt);
+		const savedUser = await addUser(user, hashedPwd);
+
+		// generate access token in the future
+		if (savedUser && savedUser != "existing user") {
+			res.status(201).send(savedUser);
+		} else {
+			res.status(500).end();
+		}
+	}
+});
+
 app.get("/restaurants", async (req, res) => {
 	res.send("Get Request");
 });
@@ -19,8 +48,7 @@ app.get("/restaurants", async (req, res) => {
 app.post("/restaurants", async (req, res) => {
 	const restaurant = req.body;
 	const savedRestaurant = await addRestaurant(restaurant);
-	// check for duplicate restaurants later
-	if (savedRestaurant) {
+	if (savedRestaurant && savedRestaurant != "existing restaurant") {
 		res.status(201).send(savedRestaurant);
 	} else {
 		res.status(500).end();
