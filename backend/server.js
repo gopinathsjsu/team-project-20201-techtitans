@@ -2,13 +2,17 @@ import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import { addRestaurant } from "./models/restaurantServices.js";
-import { addUser } from "./models/userServices.js";
+import { addUser, findUserByUsername } from "./models/userServices.js";
 
 const app = express();
 const PORT = 5173;
 
 app.use(cors());
 app.use(express.json());
+
+app.listen(PORT, () => {
+	console.log(`Server started at http://localhost:${PORT}`);
+});
 
 app.get("/", (req, res) => {
 	res.send("Server is ready");
@@ -35,8 +39,29 @@ app.post("/users", async (req, res) => {
 		// generate access token in the future
 		if (savedUser && savedUser != "existing user") {
 			res.status(201).send(savedUser);
+		} else if (savedUser == "existing user") {
+			res.status(401).end();
 		} else {
 			res.status(500).end();
+		}
+	}
+});
+
+app.post("/log-in", async (req, res) => {
+	const user = req.body;
+	const { username } = user;
+	const { password } = user;
+
+	const savedUser = await findUserByUsername(username);
+	if (!savedUser) {
+		res.status(401).send("Unauthorized request: Invalid username.");
+	} else {
+		const isValidUser = await bcrypt.compare(password, savedUser.password);
+		if (isValidUser) {
+			// generate access token in the future
+			res.status(201).send(savedUser);
+		} else {
+			res.status(401).send("Unauthorized request: Invalid Password");
 		}
 	}
 });
@@ -53,8 +78,4 @@ app.post("/restaurants", async (req, res) => {
 	} else {
 		res.status(500).end();
 	}
-});
-
-app.listen(PORT, () => {
-	console.log(`Server started at http://localhost:${PORT}`);
 });

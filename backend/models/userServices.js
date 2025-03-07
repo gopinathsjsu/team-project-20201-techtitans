@@ -31,7 +31,7 @@ async function findUserByEmail(email) {
 	}
 }
 
-async function findUserByUsername(username) {
+export async function findUserByUsername(username) {
 	const conn = getDbConnection();
 	const userModel = conn.model("User", UserSchema);
 	try {

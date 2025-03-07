@@ -18,7 +18,7 @@ const LoginButtons = () => {
 				alignItems: "center",
 			}}
 		>
-			<Link to="/admin-login">
+			<Link to="/log-in">
 				<button
 					style={{
 						...buttonStyle,
@@ -26,32 +26,10 @@ const LoginButtons = () => {
 						color: "white",
 					}}
 				>
-					Admin Login
+					Login
 				</button>
 			</Link>
-			<Link to="/restaurant-manager-login">
-				<button
-					style={{
-						...buttonStyle,
-						backgroundColor: "red",
-						color: "white",
-					}}
-				>
-					Restaurant Manager Login
-				</button>
-			</Link>
-			<Link to="/customer-login">
-				<button
-					style={{
-						...buttonStyle,
-						backgroundColor: "red",
-						color: "white",
-					}}
-				>
-					Customer Login
-				</button>
-			</Link>
-			<Link to="/customer-registration">
+			<Link to="/register">
 				<button
 					style={{
 						...buttonStyle,
@@ -60,7 +38,7 @@ const LoginButtons = () => {
 						border: "2px solid black",
 					}}
 				>
-					New Customer
+					Register
 				</button>
 			</Link>
 		</div>
