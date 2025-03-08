@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Login = () => {
 	const textBoxStyle = {
 		marginBottom: "10px",
@@ -31,16 +33,18 @@ const Login = () => {
 				placeholder="Password"
 				style={{ ...textBoxStyle }}
 			/>
-			<button
-				style={{
-					width: "100%",
-					padding: "10px",
-					backgroundColor: "red",
-					color: "white",
-				}}
-			>
-				Register
-			</button>
+			<Link to="/customer-home">
+				<button
+					style={{
+						width: "100%",
+						padding: "10px",
+						backgroundColor: "red",
+						color: "white",
+					}}
+				>
+					Register
+				</button>
+			</Link>
 		</div>
 	);
 };
