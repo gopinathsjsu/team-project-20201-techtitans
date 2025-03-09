@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const LoginButtons = () => {
 	const buttonStyle = {
 		width: "250px",
@@ -16,43 +18,51 @@ const LoginButtons = () => {
 				alignItems: "center",
 			}}
 		>
-			<button
-				style={{
-					...buttonStyle,
-					backgroundColor: "red",
-					color: "white",
-				}}
-			>
-				Admin Login
-			</button>
-			<button
-				style={{
-					...buttonStyle,
-					backgroundColor: "red",
-					color: "white",
-				}}
-			>
-				Restaurant Manager Login
-			</button>
-			<button
-				style={{
-					...buttonStyle,
-					backgroundColor: "red",
-					color: "white",
-				}}
-			>
-				Customer Login
-			</button>
-			<button
-				style={{
-					...buttonStyle,
-					backgroundColor: "white",
-					color: "black",
-					border: "2px solid black",
-				}}
-			>
-				New Customer
-			</button>
+			<Link to="/admin-login">
+				<button
+					style={{
+						...buttonStyle,
+						backgroundColor: "red",
+						color: "white",
+					}}
+				>
+					Admin Login
+				</button>
+			</Link>
+			<Link to="/restaurant-manager-login">
+				<button
+					style={{
+						...buttonStyle,
+						backgroundColor: "red",
+						color: "white",
+					}}
+				>
+					Restaurant Manager Login
+				</button>
+			</Link>
+			<Link to="/customer-login">
+				<button
+					style={{
+						...buttonStyle,
+						backgroundColor: "red",
+						color: "white",
+					}}
+				>
+					Customer Login
+				</button>
+			</Link>
+			<Link to="/customer-registration">
+				<button
+					style={{
+						...buttonStyle,
+						backgroundColor: "white",
+						color: "black",
+						border: "2px solid black",
+					}}
+				>
+					New Customer
+				</button>
+			</Link>
 		</div>
 	);
 };

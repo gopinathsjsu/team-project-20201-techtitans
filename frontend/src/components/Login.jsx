@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Login = ({ role }) => {
 	const textBoxStyle = {
 		marginBottom: "10px",
@@ -26,16 +28,54 @@ const Login = ({ role }) => {
 				placeholder="Password"
 				style={{ ...textBoxStyle }}
 			/>
-			<button
-				style={{
-					width: "100%",
-					padding: "10px",
-					backgroundColor: "red",
-					color: "white",
-				}}
-			>
-				Login
-			</button>
+			{role == "Admin" && (
+				<>
+					<Link to="/admin-home">
+						<button
+							style={{
+								width: "100%",
+								padding: "10px",
+								backgroundColor: "red",
+								color: "white",
+							}}
+						>
+							Login
+						</button>
+					</Link>
+				</>
+			)}
+			{role == "Restaurant Manager" && (
+				<>
+					<Link to="/restaurant-manager-home">
+						<button
+							style={{
+								width: "100%",
+								padding: "10px",
+								backgroundColor: "red",
+								color: "white",
+							}}
+						>
+							Login
+						</button>
+					</Link>
+				</>
+			)}
+			{role == "Customer" && (
+				<>
+					<Link to="/customer-home">
+						<button
+							style={{
+								width: "100%",
+								padding: "10px",
+								backgroundColor: "red",
+								color: "white",
+							}}
+						>
+							Login
+						</button>
+					</Link>
+				</>
+			)}
 		</div>
 	);
 };
