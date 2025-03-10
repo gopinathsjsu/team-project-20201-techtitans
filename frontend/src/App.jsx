@@ -1,11 +1,4 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import LoginButtons from "./components/LoginButtons";
-import Login from "./components/Login";
-import CustomerRegister from "./components/CustomerRegister";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartLogin from "./pages/StartLogin/StartLogin";
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
@@ -17,7 +10,7 @@ import CustomerProfile from "./pages/CustomerProfile/CustomerProfile";
 import RestaurantManagerHome from "./pages/RestaurantManagerHome/RestaurantManagerHome";
 import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddRestaurant";
 
-// demonstration of the first login page (buttons)
+//demonstration of the first login page (buttons)
 function App() {
 	return (
 		<BrowserRouter>
@@ -44,17 +37,6 @@ function App() {
 					element={<RestaurantManagerAddRestaurant />}
 				/>
 			</Routes>
-			{/*
-			<div style={{ display: "flex", flexDirection: "column" }}>
-				<LoginButtons />
-				<div style={{ display: "flex", flexDirection: "column" }}>
-					<Login role="Admin" />
-					<Login role="Restaurant Manager" />
-					<Login role="Customer" />
-					<CustomerRegister />
-				</div>
-			</div>
-			*/}
 		</BrowserRouter>
 	);
 }

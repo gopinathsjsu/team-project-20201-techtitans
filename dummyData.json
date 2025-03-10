@@ -130,7 +130,7 @@
 			"bookingsToday": 3,
 			"address": "123 Food St, NY",
 			"contactInfo": "555-123-4000",
-			"hours": {"Mon": "10 AM - 10 PM"},
+			"hours": { "Mon": "10 AM - 10 PM" },
 			"description": "Authentic Italian cuisine",
 			"location": [40.7128, -74.006],
 			"pendingApproval": false
@@ -143,7 +143,7 @@
 			"bookingsToday": 5,
 			"address": "456 Sushi Lane, CA",
 			"contactInfo": "555-567-1111",
-			"hours": {"Mon": "12 PM - 10 PM", "Fri": "12 PM - 10 PM"},
+			"hours": { "Mon": "12 PM - 10 PM", "Fri": "12 PM - 10 PM" },
 			"description": "Fresh sushi and sashimi",
 			"location": [34.0522, -118.2437],
 			"pendingApproval": true
@@ -156,7 +156,7 @@
 			"bookingsToday": 2,
 			"address": "789 Curry Ave, TX",
 			"contactInfo": "555-999-6666",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Traditional Indian flavors",
 			"location": [29.7604, -95.3698],
 			"pendingApproval": false
@@ -169,7 +169,7 @@
 			"bookingsToday": 4,
 			"address": "321 Mix St, FL",
 			"contactInfo": "555-222-3333",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Unique fusion dishes",
 			"location": [25.7617, -80.1918],
 			"pendingApproval": false
@@ -182,7 +182,7 @@
 			"bookingsToday": 3,
 			"address": "987 Tacos Rd, AZ",
 			"contactInfo": "555-333-7777",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Spicy Tex-Mex specialties",
 			"location": [33.4484, -112.074],
 			"pendingApproval": true
