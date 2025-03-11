@@ -1,23 +1,29 @@
 import "./AdminAnalytics.css";
 import Navbar from "../../components/Navbar/Navbar";
 
-// get this month
-const CurrentMonth = () => {
-	const todayMonth = new Date().toLocaleString("en-US", { month: "long" });
-	return todayMonth;
-  };
-
-// display this month's statistics so far
 function AdminAnalytics() {
-	const todayMonth = CurrentMonth();
+	// Function to get the date from 30 days ago
+	const getDate30DaysAgo = () => {
+		const date = new Date();
+		date.setDate(date.getDate() - 30);
+		// formats MM/DD/YYYY
+		return date.toLocaleDateString(); 
+	};
+
+	// Function to get today's date
+	const getTodayDate = () => {
+		const date = new Date();
+		// formats MM/DD/YYYY
+		return date.toLocaleDateString(); 
+	};
+
 	return (
 		<>
 			<Navbar role="adminback" />
 			<div>
 				<h2>Admin Analytics</h2>
-				<h3> {todayMonth}'s Reservations </h3>
+				<h3>Showing stats from: {getDate30DaysAgo()} to {getTodayDate()}</h3>
 			</div>
-			
 		</>
 	);
 }
