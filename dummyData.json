@@ -1,83 +1,124 @@
 {
-	"RestaurantManager": [
+	"User": [
 		{
 			"username": "manager1",
 			"password": "rest123",
-			"email": "manager1@opentable.com"
+			"email": "manager1@opentable.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
-			"username": "foodadmin",
-			"password": "admin567",
-			"email": "foodadmin@domain.com"
+			"username": "foodManager",
+			"password": "manager567",
+			"email": "foodmanager@domain.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "chef_john",
 			"password": "gourmet1",
-			"email": "chefjohn@restaurant.com"
+			"email": "chefjohn@restaurant.com",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "r_manager99",
 			"password": "manage99",
-			"email": "rmanager99@example.org"
+			"email": "rmanager99@example.org",
+			"status": "RestaurantManager",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "foodie_mgr",
 			"password": "lovefood",
-			"email": "foodie_mgr@foodmail.com"
-		}
-	],
-	"Customer": [
+			"email": "foodie_mgr@foodmail.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
+		},
 		{
 			"username": "happyEater",
 			"password": "eat123",
-			"email": "happyeater@gmail.com"
+			"email": "happyeater@gmail.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "dineLover",
 			"password": "dine202",
-			"email": "dinelover@yahoo.com"
+			"email": "dinelover@yahoo.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "nomNomUser",
 			"password": "tasty456",
-			"email": "nomnomuser@outlook.com"
+			"email": "nomnomuser@outlook.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "savoryJane",
 			"password": "spice789",
-			"email": "savoryjane@email.com"
+			"email": "savoryjane@email.com",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "foodieChris",
 			"password": "fork321",
-			"email": "foodiechris@domain.org"
-		}
-	],
-	"Admin": [
+			"email": "foodiechris@domain.org",
+			"status": "Customer",
+			"reservations": [],
+			"restaurantListings": []
+		},
 		{
 			"username": "admin1",
 			"password": "admin123",
-			"email": "admin1@opentable.com"
+			"email": "admin1@opentable.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "mod_food",
 			"password": "modpass",
-			"email": "modfood@restaurant.com"
+			"email": "modfood@restaurant.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "admin99",
 			"password": "secure77",
-			"email": "admin99@example.net"
+			"email": "admin99@example.net",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "siteowner",
 			"password": "rootpass",
-			"email": "siteowner@domain.org"
+			"email": "siteowner@domain.org",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		},
 		{
 			"username": "supermod",
 			"password": "mod9876",
-			"email": "supermod@adminmail.com"
+			"email": "supermod@adminmail.com",
+			"status": "Admin",
+			"reservations": [],
+			"restaurantListings": []
 		}
 	],
 	"Restaurant": [
@@ -89,7 +130,7 @@
 			"bookingsToday": 3,
 			"address": "123 Food St, NY",
 			"contactInfo": "555-123-4000",
-			"hours": {"Mon": "10 AM - 10 PM"},
+			"hours": { "Mon": "10 AM - 10 PM" },
 			"description": "Authentic Italian cuisine",
 			"location": [40.7128, -74.006],
 			"pendingApproval": false
@@ -102,7 +143,7 @@
 			"bookingsToday": 5,
 			"address": "456 Sushi Lane, CA",
 			"contactInfo": "555-567-1111",
-			"hours": {"Mon": "12 PM - 10 PM", "Fri": "12 PM - 10 PM"},
+			"hours": { "Mon": "12 PM - 10 PM", "Fri": "12 PM - 10 PM" },
 			"description": "Fresh sushi and sashimi",
 			"location": [34.0522, -118.2437],
 			"pendingApproval": true
@@ -115,7 +156,7 @@
 			"bookingsToday": 2,
 			"address": "789 Curry Ave, TX",
 			"contactInfo": "555-999-6666",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Traditional Indian flavors",
 			"location": [29.7604, -95.3698],
 			"pendingApproval": false
@@ -128,7 +169,7 @@
 			"bookingsToday": 4,
 			"address": "321 Mix St, FL",
 			"contactInfo": "555-222-3333",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Unique fusion dishes",
 			"location": [25.7617, -80.1918],
 			"pendingApproval": false
@@ -141,7 +182,7 @@
 			"bookingsToday": 3,
 			"address": "987 Tacos Rd, AZ",
 			"contactInfo": "555-333-7777",
-			"hours": {"Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM"},
+			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Spicy Tex-Mex specialties",
 			"location": [33.4484, -112.074],
 			"pendingApproval": true
