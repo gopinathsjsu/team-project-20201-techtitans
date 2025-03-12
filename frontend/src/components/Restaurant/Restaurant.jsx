@@ -3,9 +3,9 @@ import Gallery from "../Gallery/Gallery";
 import Reviews from "../Reviews/Reviews";
 import PopularDishes from "../PopularDishes/PopularDishes";
 import Menu from "../Menu/Menu";
-import "./RestaurantPage.css";
+import "./Restaurant.css";
 
-const RestaurantPage = () => {
+const Restaurant = () => {
 
   return (
     <div className="restaurant-page">
@@ -79,4 +79,4 @@ const RestaurantPage = () => {
   );
 };
 
-export default RestaurantPage;
+export default Restaurant;
