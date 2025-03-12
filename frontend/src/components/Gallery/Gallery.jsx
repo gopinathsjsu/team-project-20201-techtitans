@@ -1,35 +1,3 @@
-// import React, { useState } from "react";
-// import "./Gallery.css";
-
-// const sampleImages = [
-//   "/images/restaurant1.jpg",
-//   "/images/restaurant2.jpg",
-//   "/images/restaurant3.jpg",
-//   "/images/restaurant4.jpg",
-// ];
-
-// const Gallery = ({ images = sampleImages }) => {
-//   const [selectedImage, setSelectedImage] = useState(null);
-
-//   return (
-//     <div className="gallery-container">
-//       <h2>Gallery</h2>
-//       <div className="gallery-grid">
-//         {images.map((img, index) => (
-//           <img key={index} src={img} alt={`Gallery ${index}`} onClick={() => setSelectedImage(img)} />
-//         ))}
-//       </div>
-//       {selectedImage && (
-//         <div className="modal" onClick={() => setSelectedImage(null)}>
-//           <img src={selectedImage} alt="Selected" className="modal-content" />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Gallery;
-
 import React, { useState } from "react";
 import "./Gallery.css";
 
