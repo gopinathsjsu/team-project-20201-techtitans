@@ -1,6 +1,8 @@
 import "./App.css";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartLogin from "./pages/StartLogin/StartLogin";
+
 import AdminLogin from "./pages/AdminLogin/AdminLogin";
 import RestaurantManagerLogin from "./pages/RestaurantManagerLogin/RestaurantManagerLogin";
 import CustomerLogin from "./pages/CustomerLogin/CustomerLogin";
@@ -14,31 +16,47 @@ import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaura
 import AdminDash from "./pages/AdminDash/AdminDash";
 import AdminAnalytics from "./pages/AdminAnalytics/AdminAnalytics";
 
+import Login from "./components/Login";
+import Register from "./components/Register";
+import CustomerProfile from "./pages/Customer/CustomerProfile";
+import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
+import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
+
 function App() {
+	const [alertMessages, setAlertMessages] = useState({
+		isOpen: false,
+		message: "",
+		type: "error",
+	});
+
 	return (
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartLogin />} />
-				
 
-				{/* Admin Routing */}
-				<Route path="/admin-login" element={<AdminLogin />} />
 				<Route path="/admin-dash" element={<AdminDash />} />
 				<Route path="/admin-analytics" element={<AdminAnalytics />} />
 
-				{/* Customer Routing */}
-				<Route path="/customer-login" element={<CustomerLogin />} />
 				<Route
-					path="/customer-registration"
-					element={<CustomerRegistration />}
+					path="/log-in"
+					element={
+						<Login
+							alertMessages={alertMessages}
+							setAlertMessages={setAlertMessages}
+						/>
+					}
+				/>
+
+				<Route
+					path="/register"
+					element={
+						<Register
+							alertMessages={alertMessages}
+							setAlertMessages={setAlertMessages}
+						/>
+					}
 				/>
 				<Route path="/customer-profile" element={<CustomerProfile />} />
-
-				{/* Restuarant Manager Routing */}
-				<Route
-					path="/restaurant-manager-login"
-					element={<RestaurantManagerLogin />}
-				/>
 				<Route
 					path="/restaurant-manager-home"
 					element={<RestaurantManagerHome />}
