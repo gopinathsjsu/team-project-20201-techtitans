@@ -2,7 +2,7 @@ import "./AdminDash.css";
 import Navbar from "../../components/Navbar/Navbar";
 import RestaurantListing from "../../components/RestaurantListing/RestaurantListing";
 
-function CustomerProfile() {
+function AdminDash() {
 	return (
 		<>
 			<Navbar role="admin" />
@@ -33,4 +33,4 @@ function CustomerProfile() {
 	);
 }
 
-export default CustomerProfile;
+export default AdminDash;
