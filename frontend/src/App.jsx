@@ -1,33 +1,43 @@
 import "./App.css";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartLogin from "./pages/StartLogin/StartLogin";
-import AdminLogin from "./pages/AdminLogin/AdminLogin";
-import RestaurantManagerLogin from "./pages/RestaurantManagerLogin/RestaurantManagerLogin";
-import CustomerLogin from "./pages/CustomerLogin/CustomerLogin";
-import CustomerRegistration from "./pages/CustomerRegistration/CustomerRegistration";
-import CustomerProfile from "./pages/CustomerProfile/CustomerProfile";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import CustomerProfile from "./pages/Customer/CustomerProfile";
+import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
+import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
 
-import RestaurantManagerHome from "./pages/RestaurantManagerHome/RestaurantManagerHome";
-import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddRestaurant";
-
-//demonstration of the first login page (buttons)
 function App() {
+	const [alertMessages, setAlertMessages] = useState({
+		isOpen: false,
+		message: "",
+		type: "error",
+	});
+
 	return (
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartLogin />} />
-				<Route path="/admin-login" element={<AdminLogin />} />
 				<Route
-					path="/restaurant-manager-login"
-					element={<RestaurantManagerLogin />}
+					path="/log-in"
+					element={
+						<Login
+							alertMessages={alertMessages}
+							setAlertMessages={setAlertMessages}
+						/>
+					}
 				/>
-				<Route path="/customer-login" element={<CustomerLogin />} />
 				<Route
-					path="/customer-registration"
-					element={<CustomerRegistration />}
+					path="/register"
+					element={
+						<Register
+							alertMessages={alertMessages}
+							setAlertMessages={setAlertMessages}
+						/>
+					}
 				/>
 				<Route path="/customer-profile" element={<CustomerProfile />} />
-
 				<Route
 					path="/restaurant-manager-home"
 					element={<RestaurantManagerHome />}
