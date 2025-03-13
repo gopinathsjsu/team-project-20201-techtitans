@@ -1,0 +1,72 @@
+.reservation-confirmation-page {
+	font-family: Arial, sans-serif;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh; /* Ensure the page takes the full height of the viewport */
+	padding-top: 80px;
+}
+
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #333; /* Change background color */
+	color: #fff;
+	padding: 10px 20px;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	z-index: 1000; /* Ensure the header is above other content */
+}
+
+.header h1 {
+	margin: 0;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+}
+
+.user-info span {
+	margin-right: 10px;
+}
+
+.confirmation-details {
+	margin-top: 20px;
+	width: 100%;
+	max-width: 800px;
+}
+
+.confirmation-details h2 {
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.details {
+	margin-bottom: 20px;
+}
+
+.detail-item {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.complete-reservation-button {
+	background-color: #4caf50;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	cursor: pointer;
+	align-self: center;
+}
+
+.complete-reservation-button:hover {
+	background-color: #45a049;
+}

@@ -1,70 +1,70 @@
 .book-table-page {
-    padding: 20px;
-    background-color: #f0f0f0; /* Light grey background */
-    min-height: 100vh; /* Ensure the page takes full height */
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    background-color: #fff; /* White background for header */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-  }
-  
-  .user-info span {
-    margin-right: 10px;
-  }
-  
-  .search-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    background-color: #fff; /* White background for form */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  }
-  
-  .search-form input,
-  .search-form button {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .search-form button {
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .search-results {
-    margin-top: 20px;
-  }
-  
-  .restaurant-result {
-    margin-bottom: 10px;
-    background-color: #fff; /* White background for results */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  }
-  
-  .available-times button {
-    margin-right: 5px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-  }
+	padding: 20px;
+	min-height: 100vh; /* Ensure the page takes full height */
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	background-color: #fff; /* White background for header */
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+}
+
+.user-info span {
+	margin-right: 10px;
+}
+
+.search-form {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+	background-color: #fff; /* White background for form */
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+	margin-top: 80px;
+}
+
+.search-form input,
+.search-form button {
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.search-form button {
+	background-color: #007bff;
+	color: #fff;
+	cursor: pointer;
+}
+
+.search-results {
+	margin-top: 20px;
+}
+
+.restaurant-result {
+	margin-bottom: 10px;
+	background-color: #fff; /* White background for results */
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.available-times button {
+	margin-right: 5px;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #007bff;
+	color: #fff;
+	cursor: pointer;
+}

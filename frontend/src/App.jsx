@@ -7,6 +7,9 @@ import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
 import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
 import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
+import BookTablePage from "./components/BookTable/BookTablePage";
+import Restaurant from "./components/Restaurant/Restaurant";
+import ReservationConfirmation from "./components/ReservationConfirmation/ReservationConfirmation";
 
 function App() {
 	const [alertMessages, setAlertMessages] = useState({
@@ -45,6 +48,15 @@ function App() {
 				<Route
 					path="/restaurant-manager-add-restaurant"
 					element={<RestaurantManagerAddRestaurant />}
+				/>
+				<Route path="/book-table" element={<BookTablePage />} />
+				<Route
+					path="/restaurant/:restaurantId"
+					element={<Restaurant />}
+				/>
+				<Route
+					path="/reservation-confirmation"
+					element={<ReservationConfirmation />}
 				/>
 			</Routes>
 		</BrowserRouter>

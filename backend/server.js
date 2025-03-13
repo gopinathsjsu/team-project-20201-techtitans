@@ -1,8 +1,23 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 import { addRestaurant } from "./models/restaurantServices.js";
 import { addUser, findUserByUsername } from "./models/userServices.js";
+import {
+	addReservation,
+	getReservationsByUserId,
+	getReservationsByRestaurantId,
+} from "./models/reservationServices.js";
+import {
+	addReview,
+	getReviewsByRestaurantId,
+} from "./models/reviewServices.js";
+import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
+
+dotenv.config();
+console.log("MONGODB_URI:", process.env.MONGODB_URI); // Add this line to check the value
 
 const app = express();
 const PORT = 5173;
@@ -10,9 +25,13 @@ const PORT = 5173;
 app.use(cors());
 app.use(express.json());
 
-app.listen(PORT, () => {
-	console.log(`Server started at http://localhost:${PORT}`);
-});
+mongoose
+	.connect(process.env.MONGODB_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => console.log("MongoDB connected"))
+	.catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
 	res.send("Server is ready");
@@ -78,4 +97,53 @@ app.post("/restaurants", async (req, res) => {
 	} else {
 		res.status(500).end();
 	}
+});
+
+// Reservation endpoints
+app.post("/reservations", async (req, res) => {
+	const reservation = req.body;
+	const result = await addReservation(reservation);
+	res.json(result);
+});
+
+app.get("/reservations/user/:userId", async (req, res) => {
+	const userId = req.params.userId;
+	const result = await getReservationsByUserId(userId);
+	res.json(result);
+});
+
+app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
+	const restaurantId = req.params.restaurantId;
+	const result = await getReservationsByRestaurantId(restaurantId);
+	res.json(result);
+});
+
+// Review endpoints
+app.post("/reviews", async (req, res) => {
+	const review = req.body;
+	const result = await addReview(review);
+	res.json(result);
+});
+
+app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
+	const restaurantId = req.params.restaurantId;
+	const result = await getReviewsByRestaurantId(restaurantId);
+	res.json(result);
+});
+
+// Gallery endpoints
+app.post("/gallery", async (req, res) => {
+	const image = req.body;
+	const result = await addImage(image);
+	res.json(result);
+});
+
+app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
+	const restaurantId = req.params.restaurantId;
+	const result = await getImagesByRestaurantId(restaurantId);
+	res.json(result);
+});
+
+app.listen(PORT, () => {
+	console.log(`Server is running on port ${PORT}`);
 });
