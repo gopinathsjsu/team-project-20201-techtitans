@@ -1,10 +1,11 @@
 import Navbar from "../../components/Navbar/Navbar";
+import AddRestaurant from "../../components/AddRestaurant/AddRestaurant";
 
 function RestaurantManagerAddRestaurant() {
 	return (
 		<>
 			<Navbar role="restaurant-manager" />
-			<h2>This is the Restaurant Manager's Add Restaurant Page</h2>
+			<AddRestaurant />
 		</>
 	);
 }
