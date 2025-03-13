@@ -1,8 +1,13 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-import { addRestaurant } from "./models/restaurantServices.js";
 import { addUser, findUserByUsername } from "./models/userServices.js";
+import {
+	addRestaurant,
+	updateRestaurantStatus,
+	getVerifiedRestaurants,
+	getPendingRestaurants,
+} from "./models/restaurantServices.js";
 import {
 	addReservation,
 	getReservationsByUserId,
@@ -76,8 +81,22 @@ app.post("/log-in", async (req, res) => {
 	}
 });
 
-app.get("/restaurants", async (req, res) => {
-	res.send("Get Request");
+app.get("/restaurants/verified", async (req, res) => {
+	try {
+		const result = await getVerifiedRestaurants();
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send("Unable to fetch verified restaurants.");
+	}
+});
+
+app.get("/restaurants/pending", async (req, res) => {
+	try {
+		const result = await getPendingRestaurants();
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send("Unable to fetch pending restaurants.");
+	}
 });
 
 app.post("/restaurants", async (req, res) => {
@@ -87,6 +106,21 @@ app.post("/restaurants", async (req, res) => {
 		res.status(201).send(savedRestaurant);
 	} else {
 		res.status(500).end();
+	}
+});
+
+app.patch("/restaurants/:name", async (req, res) => {
+	const { name } = req.params;
+	const updates = req.body;
+	let result = null;
+	if (updates.updateStatus != undefined || updates.updateStatus != null) {
+		result = await updateRestaurantStatus(name, updates.updateStatus);
+	}
+
+	if (result === undefined || result === null) {
+		res.status(404).send("Resource not found.");
+	} else {
+		res.status(201).send(result);
 	}
 });
 
