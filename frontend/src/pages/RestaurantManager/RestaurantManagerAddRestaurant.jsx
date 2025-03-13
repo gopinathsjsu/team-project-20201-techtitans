@@ -1,4 +1,3 @@
-import "./RestaurantManagerAddRestaurant.css";
 import Navbar from "../../components/Navbar/Navbar";
 import AddRestaurant from "../../components/AddRestaurant/AddRestaurant";
 
