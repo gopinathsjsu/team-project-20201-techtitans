@@ -2,6 +2,14 @@ import "./RestaurantReservation.css";
 import { useState } from "react";
 
 function RestaurantReservation(props) {
+	const handleFormSubmit = (event) => {
+		//Should use props.date, props.time, props.numPeople to make reservation
+		event.preventDefault();
+	};
+
+	//Returns array that holds dates from now to 7 days from now
+	//Restaurant booking limits state that customers can make reservations at
+	//most 7 days in advance
 	const getSevenDatesAhead = () => {
 		let eightDates = [];
 		const date = new Date();
@@ -19,10 +27,14 @@ function RestaurantReservation(props) {
 		setDateSelection(e.target.value);
 	};
 
+	//Returns array that holds available booking times based on restaurants booking hours,
+	//If customer chooses today's date, then hours will adjust since restaurant booking
+	//limits state that customers must make reservations at least 4 hours in advance
+	//Unfortunately this function does not account for other customers' reservations
 	const getBookingTimes = () => {
 		let bookingTimes = [];
-		const startTime = props.bookingStartTime;
-		const endTime = props.bookingEndTime;
+		const startTime = props.bookingStartTime; //ex. bookingStartTime = "9:00 AM"
+		const endTime = props.bookingEndTime; //ex. bookingEndTime = "9:00 PM"
 		const intervals = parseInt(
 			props.bookingTimeIntervals.replace(/[^\d]/g, ""),
 			10
@@ -94,6 +106,7 @@ function RestaurantReservation(props) {
 			bookingTimes.push(startTime);
 		}
 
+		//Puts all available booking times into bookingTimes
 		while (startDate.getTime() < endDate.getTime()) {
 			startDate.setMinutes(startDate.getMinutes() + intervals);
 			if (startDate.getTime() >= endDate.getTime()) {
@@ -113,10 +126,11 @@ function RestaurantReservation(props) {
 	return (
 		<>
 			<h2>{props.name}</h2>
-			<form className="reservation-form">
+			<form className="reservation-form" onSubmit={handleFormSubmit}>
 				<div className="reservation-control">
-					<label>
-						Date:
+					<label className="reservation-info" value={props.date}>
+						Date: {props.date}
+						{/*
 						<select
 							className="reservation-selector"
 							name="reservation-date"
@@ -131,9 +145,11 @@ function RestaurantReservation(props) {
 								</option>
 							))}
 						</select>
+                        */}
 					</label>
-					<label>
-						Time:
+					<label className="reservation-info" value={props.time}>
+						Time: {props.time}
+						{/*
 						<select
 							className="reservation-selector"
 							name="reservation-time"
@@ -147,9 +163,11 @@ function RestaurantReservation(props) {
 								</option>
 							))}
 						</select>
+                        */}
 					</label>
-					<label>
-						Number of People:
+					<label className="reservation-info" value={props.numPeople}>
+						Number of People: {props.numPeople}
+						{/*
 						<select
 							className="reservation-selector"
 							name="reservation-persons"
@@ -163,9 +181,12 @@ function RestaurantReservation(props) {
 								</option>
 							))}
 						</select>
+                        */}
 					</label>
 				</div>
-				<button className="complete-btn">Complete Reservation</button>
+				<button type="submit" className="complete-btn">
+					Complete Reservation
+				</button>
 			</form>
 		</>
 	);
