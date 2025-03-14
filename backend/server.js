@@ -17,7 +17,7 @@ import {
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 
 dotenv.config();
-console.log("MONGODB_URI:", process.env.MONGODB_URI); // Add this line to check the value
+console.log("MONGODB_URI:", process.env.MONGODB_URI);
 
 const app = express();
 const PORT = 5173;
@@ -99,49 +99,102 @@ app.post("/restaurants", async (req, res) => {
 	}
 });
 
-// Reservation endpoints
 app.post("/reservations", async (req, res) => {
-	const reservation = req.body;
-	const result = await addReservation(reservation);
-	res.json(result);
+	try {
+		const reservation = req.body;
+		const result = await addReservation(reservation);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/reservations/user/:userId", async (req, res) => {
-	const userId = req.params.userId;
-	const result = await getReservationsByUserId(userId);
-	res.json(result);
+	try {
+		const userId = req.params.userId;
+		const result = await getReservationsByUserId(userId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
-	const restaurantId = req.params.restaurantId;
-	const result = await getReservationsByRestaurantId(restaurantId);
-	res.json(result);
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReservationsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
-// Review endpoints
 app.post("/reviews", async (req, res) => {
-	const review = req.body;
-	const result = await addReview(review);
-	res.json(result);
+	try {
+		const review = req.body;
+		const result = await addReview(review);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
-	const restaurantId = req.params.restaurantId;
-	const result = await getReviewsByRestaurantId(restaurantId);
-	res.json(result);
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReviewsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reviews not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
-// Gallery endpoints
 app.post("/gallery", async (req, res) => {
-	const image = req.body;
-	const result = await addImage(image);
-	res.json(result);
+	try {
+		const image = req.body;
+		const result = await addImage(image);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
-	const restaurantId = req.params.restaurantId;
-	const result = await getImagesByRestaurantId(restaurantId);
-	res.json(result);
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getImagesByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Images not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.listen(PORT, () => {

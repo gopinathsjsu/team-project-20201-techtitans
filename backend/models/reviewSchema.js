@@ -7,7 +7,7 @@ export const ReviewSchema = new mongoose.Schema(
 			ref: "Restaurant",
 			required: true,
 		},
-		restaurant: {
+		restaurantName: {
 			type: String,
 			required: true,
 			trim: true,

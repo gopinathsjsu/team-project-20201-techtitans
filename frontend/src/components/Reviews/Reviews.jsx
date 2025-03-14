@@ -64,7 +64,7 @@ const Reviews = ({ reviews = sampleReviews }) => {
 		responsive: true,
 		plugins: {
 			legend: {
-				display: false, // Hide the legend
+				display: false,
 			},
 			title: {
 				display: true,

@@ -18,14 +18,14 @@ html {
 	top: 0;
 	left: 0;
 	width: 100%;
-	background-color: #333; /* Change background color */
+	background-color: #333;
 	color: #fff; /* Ensure text color is white */
 	padding: 10px 20px;
 	border-bottom: 1px solid #ddd;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	z-index: 1000; /* Ensure the header is above other content */
+	z-index: 1000;
 }
 
 .restaurant-header h1 {
@@ -89,7 +89,7 @@ html {
 	display: flex;
 	justify-content: space-around;
 	margin-bottom: 20px;
-	background-color: #f8f8f8; /* Change background color */
+	background-color: #f8f8f8;
 	padding: 10px;
 	width: 100%;
 	max-width: 800px;

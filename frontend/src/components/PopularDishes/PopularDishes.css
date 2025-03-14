@@ -1,16 +1,16 @@
 .popular-dishes {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-  }
-  
-  .dish {
-    width: 150px;
-    text-align: center;
-  }
-  
-  .dish img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.dish {
+	width: 150px;
+	text-align: center;
+}
+
+.dish img {
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+}
