@@ -6,13 +6,13 @@ function AdminAnalytics() {
 		const date = new Date();
 		date.setDate(date.getDate() - 30);
 		// formats MM/DD/YYYY
-		return date.toLocaleDateString(); 
+		return date.toLocaleDateString();
 	};
 
 	const getTodayDate = () => {
 		const date = new Date();
 		// formats MM/DD/YYYY
-		return date.toLocaleDateString(); 
+		return date.toLocaleDateString();
 	};
 
 	return (
@@ -20,7 +20,9 @@ function AdminAnalytics() {
 			<Navbar role="adminback" />
 			<div>
 				<h2>Admin Analytics</h2>
-				<h3>Showing stats from: {getDate30DaysAgo()} to {getTodayDate()}</h3>
+				<h3>
+					Showing stats from: {getDate30DaysAgo()} to {getTodayDate()}
+				</h3>
 			</div>
 		</>
 	);
