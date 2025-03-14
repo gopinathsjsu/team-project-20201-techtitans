@@ -2,6 +2,10 @@ import "./App.css";
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StartLogin from "./pages/StartLogin/StartLogin";
+
+import AdminDash from "./pages/AdminDash/AdminDash";
+import AdminAnalytics from "./pages/AdminAnalytics/AdminAnalytics";
+
 import Login from "./components/Login";
 import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
@@ -22,6 +26,10 @@ function App() {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<StartLogin />} />
+
+				<Route path="/admin-dash" element={<AdminDash />} />
+				<Route path="/admin-analytics" element={<AdminAnalytics />} />
+
 				<Route
 					path="/log-in"
 					element={
@@ -31,6 +39,7 @@ function App() {
 						/>
 					}
 				/>
+
 				<Route
 					path="/register"
 					element={
