@@ -128,7 +128,7 @@ function RestaurantReservationConfirmation(props) {
 			<h2>{props.name}</h2>
 			<form className="reservation-form" onSubmit={handleFormSubmit}>
 				<div className="reservation-control">
-					<label className="reservation-info" value={props.date}>
+					<label className="reservation-info">
 						Date: {props.date}
 						{/*
 						<select
@@ -147,7 +147,7 @@ function RestaurantReservationConfirmation(props) {
 						</select>
                         */}
 					</label>
-					<label className="reservation-info" value={props.time}>
+					<label className="reservation-info">
 						Time: {props.time}
 						{/*
 						<select
@@ -165,7 +165,7 @@ function RestaurantReservationConfirmation(props) {
 						</select>
                         */}
 					</label>
-					<label className="reservation-info" value={props.numPeople}>
+					<label className="reservation-info">
 						Number of People: {props.numPeople}
 						{/*
 						<select
