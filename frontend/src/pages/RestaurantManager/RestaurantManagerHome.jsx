@@ -1,11 +1,11 @@
 import Navbar from "../../components/Navbar/Navbar";
-import RestaurantReservation from "../../components/RestaurantReservation/RestaurantReservation";
+import RestaurantReservationConfirmation from "../../components/RestaurantReservationConfirmation/RestaurantReservationConfirmation";
 
 function RestaurantManagerHome() {
 	return (
 		<>
 			<Navbar role="restaurant-manager" />
-			<RestaurantReservation
+			<RestaurantReservationConfirmation
 				name="Mickey's Kitchen"
 				date="3/18/25"
 				time="4:00 PM"

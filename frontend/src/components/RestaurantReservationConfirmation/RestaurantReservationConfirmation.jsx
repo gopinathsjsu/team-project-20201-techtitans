@@ -1,7 +1,7 @@
-import "./RestaurantReservation.css";
+import "./RestaurantReservationConfirmation.css";
 import { useState } from "react";
 
-function RestaurantReservation(props) {
+function RestaurantReservationConfirmation(props) {
 	const handleFormSubmit = (event) => {
 		//Should use props.date, props.time, props.numPeople to make reservation
 		event.preventDefault();
@@ -192,4 +192,4 @@ function RestaurantReservation(props) {
 	);
 }
 
-export default RestaurantReservation;
+export default RestaurantReservationConfirmation;
