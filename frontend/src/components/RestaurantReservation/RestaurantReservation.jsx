@@ -67,6 +67,10 @@ function RestaurantReservation(props) {
 		if (sameDay) {
 			const fourHoursAhead = new Date(today);
 			fourHoursAhead.setHours(today.getHours() + 4);
+			if (fourHoursAhead.getMinutes() > 0) {
+				fourHoursAhead.setMinutes(0);
+				fourHoursAhead.setHours(fourHoursAhead.getHours() + 1);
+			}
 			if (
 				fourHoursAhead.getDate() !== today.getDate() ||
 				fourHoursAhead.getTime() > endDate.getTime()
@@ -76,6 +80,15 @@ function RestaurantReservation(props) {
 				bookingTimes.push(startTime);
 			} else {
 				startDate.setTime(fourHoursAhead.getTime());
+				const adjustedHours = startDate.getHours() % 12 || 12;
+				const adjustedMinutes = startDate
+					.getMinutes()
+					.toString()
+					.padStart(2, "0");
+				const adjustedPeriod = startDate.getHours() >= 12 ? "PM" : "AM";
+				bookingTimes.push(
+					`${adjustedHours}:${adjustedMinutes} ${adjustedPeriod}`
+				);
 			}
 		} else {
 			bookingTimes.push(startTime);
