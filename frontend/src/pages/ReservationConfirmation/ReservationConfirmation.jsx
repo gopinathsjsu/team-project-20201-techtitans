@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
 
 const ReservationConfirmation = () => {
@@ -8,13 +9,7 @@ const ReservationConfirmation = () => {
 
 	return (
 		<div className="reservation-confirmation-page">
-			<header className="header">
-				<h1>BookTable</h1>
-				<div className="user-info">
-					<span>User Name</span>
-					<button>Log out</button>
-				</div>
-			</header>
+			<Navbar role="customer" />
 			<div className="confirmation-details">
 				<h2>{restaurantName}</h2>
 				<div className="details">

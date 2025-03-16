@@ -1,6 +1,12 @@
 .book-table-page {
+	width: 100%;
+	max-width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	padding: 20px;
-	min-height: 100vh; /* Ensure the page takes full height */
+	min-height: 100vh;
+	box-sizing: border-box;
 }
 
 .header {
@@ -8,29 +14,20 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 20px;
-	background-color: #fff; /* White background for header */
+	background-color: #fff;
 	padding: 10px;
 	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-.user-info {
-	display: flex;
-	align-items: center;
-}
-
-.user-info span {
-	margin-right: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-form {
 	display: flex;
 	gap: 10px;
 	margin-bottom: 20px;
-	background-color: #fff; /* White background for form */
+	background-color: #fff;
 	padding: 10px;
 	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	margin-top: 80px;
 }
 
@@ -39,6 +36,7 @@
 	padding: 10px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
+	box-sizing: border-box;
 }
 
 .search-form button {
@@ -53,10 +51,22 @@
 
 .restaurant-result {
 	margin-bottom: 10px;
-	background-color: #fff; /* White background for results */
+	background-color: #fff;
 	padding: 10px;
 	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.available-times {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .available-times button {

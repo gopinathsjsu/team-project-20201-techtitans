@@ -11,9 +11,9 @@ import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
 import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
 import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
-import BookTablePage from "./components/BookTable/BookTablePage";
-import Restaurant from "./components/Restaurant/Restaurant";
-import ReservationConfirmation from "./components/ReservationConfirmation/ReservationConfirmation";
+import BookTablePage from "./pages/BookTable/BookTablePage";
+import Restaurant from "./pages/Restaurant/Restaurant";
+import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
 
 function App() {
 	const [alertMessages, setAlertMessages] = useState({

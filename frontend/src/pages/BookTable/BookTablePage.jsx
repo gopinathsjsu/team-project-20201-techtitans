@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar";
 import "./BookTablePage.css";
 
 const BookTablePage = () => {
@@ -32,13 +33,7 @@ const BookTablePage = () => {
 
 	return (
 		<div className="book-table-page">
-			<header className="header">
-				<h1>BookTable</h1>
-				<div className="user-info">
-					<span>User Name</span>
-					<button>Log out</button>
-				</div>
-			</header>
+			<Navbar role="customer" />
 			<div className="search-form">
 				<input
 					type="date"

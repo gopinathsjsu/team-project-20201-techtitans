@@ -18,7 +18,10 @@ function AdminDash() {
 			</div>
 			<h2 className="restaurants-listing-title">All Restaurants</h2>
 			<div className="restaurants-listing">
-				<RestaurantListing name="In N Out" interact="admin-remove-btn" />
+				<RestaurantListing
+					name="In N Out"
+					interact="admin-remove-btn"
+				/>
 				<RestaurantListing
 					name="Burger King"
 					interact="admin-remove-btn"
@@ -28,7 +31,6 @@ function AdminDash() {
 					interact="admin-remove-btn"
 				/>
 			</div>
-			
 		</>
 	);
 }
