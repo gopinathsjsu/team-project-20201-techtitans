@@ -1,16 +1,15 @@
 import Navbar from "../../components/Navbar/Navbar";
-import RestaurantReservation from "../../components/RestaurantReservation/RestaurantReservation";
+import RestaurantReservationConfirmation from "../../components/RestaurantReservationConfirmation/RestaurantReservationConfirmation";
 
 function RestaurantManagerHome() {
 	return (
 		<>
 			<Navbar role="restaurant-manager" />
-			<RestaurantReservation
+			<RestaurantReservationConfirmation
 				name="Mickey's Kitchen"
-				bookingStartTime="8:00 AM"
-				bookingEndTime="8:00 PM"
-				bookingTimeIntervals="30min"
-				maxPeople="14"
+				date="3/18/25"
+				time="4:00 PM"
+				numPeople="8"
 			/>
 			<h2>This is the Restaurant Manager's Home Page</h2>
 		</>
