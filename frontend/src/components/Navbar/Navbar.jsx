@@ -55,6 +55,12 @@ function Navbar(props) {
 					</Link>
 				)}
 				{props.role != "signed-out" && (
+					<Link to="/book-table">
+						{/* Add the link */}
+						<button className="nav-btns">Book Table</button>
+					</Link>
+				)}
+				{props.role != "signed-out" && (
 					<Link to="/">
 						<button className="nav-btns">Log out</button>
 					</Link>
