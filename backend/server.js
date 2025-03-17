@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
 import { addRestaurant } from "./models/restaurantServices.js";
 import { addUser, findUserByUsername } from "./models/userServices.js";
 import {
@@ -16,22 +14,15 @@ import {
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 
-dotenv.config();
-console.log("MONGODB_URI:", process.env.MONGODB_URI);
-
 const app = express();
 const PORT = 5173;
 
 app.use(cors());
 app.use(express.json());
 
-mongoose
-	.connect(process.env.MONGODB_URI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
-	.then(() => console.log("MongoDB connected"))
-	.catch((err) => console.log(err));
+app.listen(PORT, () => {
+	console.log(`Server started at http://localhost:${PORT}`);
+});
 
 app.get("/", (req, res) => {
 	res.send("Server is ready");
