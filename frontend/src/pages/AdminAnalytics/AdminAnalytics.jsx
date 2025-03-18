@@ -32,7 +32,7 @@ function AdminAnalytics() {
 						src="https://charts.mongodb.com/charts-project-0-hxqbckt/embed/charts?id=6ff58bd4-2404-4a4a-ab3a-07cc1f93c18e&maxDataAge=3600&theme=light&autoRefresh=true"
 						title="Bar Chart Reservations"
 					></iframe>
-					
+
 					<iframe
 						width="640"
 						height="580"
