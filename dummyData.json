@@ -133,7 +133,8 @@
 			"hours": { "Mon": "10 AM - 10 PM" },
 			"description": "Authentic Italian cuisine",
 			"location": [40.7128, -74.006],
-			"pendingApproval": false
+			"pendingApproval": true,
+			"approved": null
 		},
 		{
 			"name": "Sushi Heaven",
@@ -146,7 +147,8 @@
 			"hours": { "Mon": "12 PM - 10 PM", "Fri": "12 PM - 10 PM" },
 			"description": "Fresh sushi and sashimi",
 			"location": [34.0522, -118.2437],
-			"pendingApproval": true
+			"pendingApproval": true,
+			"approved": null
 		},
 		{
 			"name": "Spicy Delight",
@@ -159,7 +161,8 @@
 			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Traditional Indian flavors",
 			"location": [29.7604, -95.3698],
-			"pendingApproval": false
+			"pendingApproval": true,
+			"approved": null
 		},
 		{
 			"name": "Fusion Bites",
@@ -172,7 +175,8 @@
 			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Unique fusion dishes",
 			"location": [25.7617, -80.1918],
-			"pendingApproval": false
+			"pendingApproval": true,
+			"approved": null
 		},
 		{
 			"name": "TexMex Grill",
@@ -185,7 +189,8 @@
 			"hours": { "Mon": "11 AM - 9 PM", "Sat": "11 AM - 9 PM" },
 			"description": "Spicy Tex-Mex specialties",
 			"location": [33.4484, -112.074],
-			"pendingApproval": true
+			"pendingApproval": true,
+			"approved": null
 		}
 	],
 	"Review": [

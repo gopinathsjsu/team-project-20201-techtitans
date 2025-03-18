@@ -1,8 +1,34 @@
+import { useEffect } from "react";
 import "./AdminDash.css";
 import Navbar from "../../components/Navbar/Navbar";
 import RestaurantListing from "../../components/RestaurantListing/RestaurantListing";
+import AlertMessage from "../../components/AlertMessage";
 
-function AdminDash() {
+function AdminDash(props) {
+	const {
+		pendingRestaurants,
+		setPendingRestaurants,
+		fetchPendingRestaurants,
+		alertMessages,
+		setAlertMessages,
+	} = props;
+
+	const pendingListings = pendingRestaurants.map((listing) => (
+		<div className="restaurants-listing" key={listing.name}>
+			<RestaurantListing
+				name={listing.name}
+				interact={"admin-pending-btns"}
+				setAlertMessages={setAlertMessages}
+			/>
+		</div>
+	));
+
+	useEffect(() => {
+		fetchPendingRestaurants().then((result) => {
+			setPendingRestaurants(result);
+		});
+	}, [pendingRestaurants]);
+
 	return (
 		<>
 			<Navbar role="admin" />
@@ -10,12 +36,7 @@ function AdminDash() {
 				<h2>Admin Dashboard</h2>
 			</div>
 			<h2 className="restaurants-listing-title">Pending</h2>
-			<div className="restaurants-listing">
-				<RestaurantListing
-					name="Nora's"
-					interact="admin-pending-btns"
-				/>
-			</div>
+			<div className="restaurants-listing">{pendingListings}</div>
 			<h2 className="restaurants-listing-title">All Restaurants</h2>
 			<div className="restaurants-listing">
 				<RestaurantListing
@@ -31,6 +52,10 @@ function AdminDash() {
 					interact="admin-remove-btn"
 				/>
 			</div>
+			<AlertMessage
+				alertMessages={alertMessages}
+				setAlertMessages={setAlertMessages}
+			/>
 		</>
 	);
 }

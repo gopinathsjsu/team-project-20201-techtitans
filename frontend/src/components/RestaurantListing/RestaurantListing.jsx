@@ -1,31 +1,84 @@
 import "./RestaurantListing.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function RestaurantListing(props) {
+	const { name, interact, setAlertMessages } = props;
+	async function makeUpdateCall(name, status) {
+		try {
+			const restaurantStatus = {
+				updateStatus: status,
+			};
+			const updatedRestaurant = await axios.patch(
+				`http://127.0.0.1:5173/restaurants/${name}`,
+				restaurantStatus
+			);
+			return updatedRestaurant;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	function updateRestaurantStatus(name, status) {
+		makeUpdateCall(name, status).then((result) => {
+			if (result && result.status === 201) {
+				setAlertMessages({
+					isOpen: true,
+					message: "Restaurant Approval Updated",
+					type: "success",
+				});
+			} else {
+				if (result.response.data) {
+					setAlertMessages({
+						isOpen: true,
+						message: result.response.data,
+						type: "error",
+					});
+				}
+			}
+		});
+	}
+
 	return (
 		<div className="thumbnail">
 			<Link to="/restaurant-details">
 				<div className="image"></div>
 			</Link>
 			<Link to="/restaurant-details">
-				<h3 className="name">{props.name}</h3>
+				<h3 className="name">{name}</h3>
 			</Link>
-			{props.interact == "admin-remove-btn" && (
+			{interact == "admin-remove-btn" && (
 				<button className="thumbnail-btn">Remove</button>
 			)}
-			{props.interact == "admin-pending-btns" && (
+			{interact == "admin-pending-btns" && (
 				<div className="pair-btns">
-					<button className="thumbnail-btn">Approve</button>
-					<button className="thumbnail-btn">Deny</button>
+					<button
+						className="thumbnail-btn"
+						onClick={(e) => {
+							e.preventDefault();
+							updateRestaurantStatus(name, true);
+						}}
+					>
+						Approve
+					</button>
+					<button
+						className="thumbnail-btn"
+						onClick={(e) => {
+							e.preventDefault();
+							updateRestaurantStatus(name, false);
+						}}
+					>
+						Deny
+					</button>
 				</div>
 			)}
-			{props.interact == "restaurant-manager-btns" && (
+			{interact == "restaurant-manager-btns" && (
 				<div className="pair-btns">
 					<button className="thumbnail-btn">Update</button>
 					<button className="thumbnail-btn">Bookings</button>
 				</div>
 			)}
-			{props.interact == "customer-btns" && (
+			{interact == "customer-btns" && (
 				<div className="four-btns">
 					<button className="smaller-thumbnail-btn">Slot 1</button>
 					<button className="smaller-thumbnail-btn">Slot 1</button>
@@ -33,7 +86,7 @@ function RestaurantListing(props) {
 					<button className="smaller-thumbnail-btn">Reserve</button>
 				</div>
 			)}
-			{props.interact == "customer-remove-btn" && (
+			{interact == "customer-remove-btn" && (
 				<button className="thumbnail-btn">Remove</button>
 			)}
 		</div>
