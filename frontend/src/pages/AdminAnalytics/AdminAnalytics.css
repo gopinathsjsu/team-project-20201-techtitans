@@ -1,7 +1,16 @@
-.admin-login-fields-btns {
+.admin-analytics-container {
 	display: flex;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	width: 100vw;
-}
+	flex-direction: column;
+	align-items: center; 
+	justify-content: center; 
+  }
+  
+  .iframe-container {
+	display: flex;
+	gap: 20px; 
+	width: 100%;
+	max-width: 1400px; 
+	margin-top: 20px;
+  }
+  
+  
