@@ -4,7 +4,7 @@ h2 {
 	width: 100vw;
 }
 
-.restaurant-form {
+.add-restaurant-restaurant-form {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -15,7 +15,7 @@ h2 {
 	margin-bottom: 60px;
 }
 
-.form-group {
+.add-restaurant-form-group {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -24,12 +24,12 @@ h2 {
 	font-weight: bold;
 }
 
-.form-group input {
+.add-restaurant-form-group input {
 	width: 60%;
 	max-width: 300px;
 }
 
-.form-group-description {
+.add-restaurant-form-group-description {
 	display: flex;
 	gap: 10px;
 	width: 500px;
@@ -37,37 +37,37 @@ h2 {
 	font-weight: bold;
 }
 
-.description-text {
+.add-restaurant-description-text {
 	width: 60%;
 	max-width: 300px;
 	height: 100px;
 	resize: none;
 }
 
-.form-section-label {
+.add-restaurant-form-section-label {
 	display: flex;
 	width: 500px;
 	flex-shrink: 0;
 	font-weight: bold;
 }
 
-.form-select {
+.add-restaurant-form-select {
 	width: 307px;
 }
 
-.form-select-smaller {
+.add-restaurant-form-select-smaller {
 	width: 200px;
 }
 
-.form-select-smallest {
+.add-restaurant-form-select-smallest {
 	width: 100px;
 }
 
-.form-group-hours {
+.add-restaurant-form-group-hours {
 	margin-bottom: 10px;
 }
 
-.day {
+.add-restaurant-day {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -75,25 +75,25 @@ h2 {
 	margin-bottom: 10px;
 }
 
-.day-closed {
+.add-restaurant-day-closed {
 	display: flex;
 	align-items: center;
 	width: 200px;
 	justify-content: space-between;
 }
 
-.day-title {
+.add-restaurant-day-title {
 	font-weight: bold;
 }
 
-.from-to-hours {
+.add-restaurant-from-to-hours {
 	display: flex;
 	align-items: center;
 	width: 250px;
 	justify-content: space-between;
 }
 
-.form-group-booking {
+.add-restaurant-form-group-booking {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -101,11 +101,11 @@ h2 {
 	gap: 5px;
 }
 
-.booking-times-title {
+.add-restaurant-booking-times-title {
 	font-weight: bold;
 }
 
-.form-group-table-sizes {
+.add-restaurant-form-group-table-sizes {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -113,7 +113,7 @@ h2 {
 	gap: 5px;
 }
 
-.save-btn {
+.add-restaurant-save-btn {
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: black;
