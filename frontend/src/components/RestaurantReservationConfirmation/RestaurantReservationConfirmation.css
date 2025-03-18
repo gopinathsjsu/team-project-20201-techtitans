@@ -1,0 +1,43 @@
+h2 {
+	margin-top: 100px;
+	text-align: center;
+	width: 100vw;
+}
+
+.reservation-form {
+	display: flex;
+	flex-direction: column;
+	gap: 25px;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	width: 100vw;
+}
+
+.reservation-control {
+	text-align: center;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	justify-content: space-between;
+	font-weight: bold;
+}
+
+.reservation-info {
+	border-radius: 10px;
+	background: #d9d9d9;
+	padding: 20px;
+}
+
+.reservation-selector {
+	margin-left: 10px;
+}
+
+.complete-btn {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: white;
+	margin-right: 20px;
+	background-color: red;
+	width: 250px;
+}

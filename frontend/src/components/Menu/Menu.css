@@ -1,0 +1,16 @@
+.menu {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.menu-item {
+	width: 150px;
+	text-align: center;
+}
+
+.menu-item img {
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+}

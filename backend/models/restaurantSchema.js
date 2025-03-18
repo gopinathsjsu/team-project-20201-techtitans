@@ -73,6 +73,10 @@ export const RestaurantSchema = new mongoose.Schema(
 		pendingApproval: {
 			type: Boolean,
 			default: true,
+			required: true,
+		},
+		approved: {
+			type: Boolean,
 		},
 	},
 	{ collection: "Restaurants" }

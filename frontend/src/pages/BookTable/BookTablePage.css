@@ -1,0 +1,80 @@
+.book-table-page {
+	width: 100%;
+	max-width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 20px;
+	min-height: 100vh;
+	box-sizing: border-box;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	background-color: #fff;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+	background-color: #fff;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin-top: 80px;
+}
+
+.search-form input,
+.search-form button {
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.search-form button {
+	background-color: #007bff;
+	color: #fff;
+	cursor: pointer;
+}
+
+.search-results {
+	margin-top: 20px;
+}
+
+.restaurant-result {
+	margin-bottom: 10px;
+	background-color: #fff;
+	padding: 10px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.available-times {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.available-times button {
+	margin-right: 5px;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #007bff;
+	color: #fff;
+	cursor: pointer;
+}

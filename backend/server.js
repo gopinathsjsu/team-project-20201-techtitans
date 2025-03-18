@@ -1,8 +1,23 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-import { addRestaurant } from "./models/restaurantServices.js";
 import { addUser, findUserByUsername } from "./models/userServices.js";
+import {
+	addRestaurant,
+	updateRestaurantStatus,
+	getVerifiedRestaurants,
+	getPendingRestaurants,
+} from "./models/restaurantServices.js";
+import {
+	addReservation,
+	getReservationsByUserId,
+	getReservationsByRestaurantId,
+} from "./models/reservationServices.js";
+import {
+	addReview,
+	getReviewsByRestaurantId,
+} from "./models/reviewServices.js";
+import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 
 const app = express();
 const PORT = 5173;
@@ -66,8 +81,22 @@ app.post("/log-in", async (req, res) => {
 	}
 });
 
-app.get("/restaurants", async (req, res) => {
-	res.send("Get Request");
+app.get("/restaurants/verified", async (req, res) => {
+	try {
+		const result = await getVerifiedRestaurants();
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send("Unable to fetch verified restaurants.");
+	}
+});
+
+app.get("/restaurants/pending", async (req, res) => {
+	try {
+		const result = await getPendingRestaurants();
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send("Unable to fetch pending restaurants.");
+	}
 });
 
 app.post("/restaurants", async (req, res) => {
@@ -77,5 +106,118 @@ app.post("/restaurants", async (req, res) => {
 		res.status(201).send(savedRestaurant);
 	} else {
 		res.status(500).end();
+	}
+});
+
+app.patch("/restaurants/:name", async (req, res) => {
+	const { name } = req.params;
+	const updates = req.body;
+	let result = null;
+	if (updates.updateStatus != undefined || updates.updateStatus != null) {
+		result = await updateRestaurantStatus(name, updates.updateStatus);
+	}
+
+	if (result === undefined || result === null) {
+		res.status(404).send("Resource not found.");
+	} else {
+		res.status(201).send(result);
+	}
+});
+
+app.post("/reservations", async (req, res) => {
+	try {
+		const reservation = req.body;
+		const result = await addReservation(reservation);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/reservations/user/:userId", async (req, res) => {
+	try {
+		const userId = req.params.userId;
+		const result = await getReservationsByUserId(userId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReservationsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.post("/reviews", async (req, res) => {
+	try {
+		const review = req.body;
+		const result = await addReview(review);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReviewsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reviews not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.post("/gallery", async (req, res) => {
+	try {
+		const image = req.body;
+		const result = await addImage(image);
+		if (result) {
+			res.status(201).json(result);
+		} else {
+			res.status(500).end();
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getImagesByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Images not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
 	}
 });
