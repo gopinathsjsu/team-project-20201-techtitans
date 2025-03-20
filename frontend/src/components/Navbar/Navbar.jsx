@@ -1,35 +1,39 @@
-//Some help from tutorial: https://www.youtube.com/watch?v=amf18mxNX18
 import "./Navbar.css";
+import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
 
 function Navbar(props) {
+	const { role } = props;
+	const [, , removeCookie] = useCookies(["auth_token"]);
+	const handleLogOut = () => {
+		removeCookie("auth_token", { path: "/" });
+	};
+
 	return (
 		<header className="nav-header">
-			{props.role == "admin" && (
+			{role == "admin" && (
 				<Link to="/admin-home" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{props.role == "adminback" && (
+			{role == "adminback" && (
 				<Link to="/admin-home" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{props.role == "restaurant-manager" && (
+			{role == "restaurant-manager" && (
 				<Link to="/restaurant-manager-home" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{props.role == "customer" && (
+			{role == "customer" && (
 				<Link to="/customer-home" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{props.role == "signed-out" && (
-				<div className="nav-logo">BookTable</div>
-			)}
+			{role == "signed-out" && <div className="nav-logo">BookTable</div>}
 			<nav className="nav-btns-container">
-				{props.role == "customer" && (
+				{role == "customer" && (
 					<>
 						<Link to="/customer-profile">
 							<div className="user-pic"></div>
@@ -39,30 +43,34 @@ function Navbar(props) {
 						</Link>
 					</>
 				)}
-				{props.role == "admin" && (
+				{role == "admin" && (
 					<Link to="/admin-analytics">
 						<button className="nav-btns">Analytics</button>
 					</Link>
 				)}
-				{props.role == "adminback" && (
+				{role == "adminback" && (
 					<Link to="/admin-dash">
 						<button className="nav-btns">Dashboard</button>
 					</Link>
 				)}
-				{props.role == "restaurant-manager" && (
+				{role == "restaurant-manager" && (
 					<Link to="/restaurant-manager-add-restaurant">
 						<button className="nav-btns">Add Restaurant</button>
 					</Link>
 				)}
-				{props.role != "signed-out" && (
+				{role != "signed-out" && (
 					<Link to="/book-table">
-						{/* Add the link */}
 						<button className="nav-btns">Book Table</button>
 					</Link>
 				)}
-				{props.role != "signed-out" && (
+				{role != "signed-out" && (
 					<Link to="/">
-						<button className="nav-btns">Log out</button>
+						<button
+							className="nav-btns"
+							onClick={() => handleLogOut()}
+						>
+							Log out
+						</button>
 					</Link>
 				)}
 			</nav>

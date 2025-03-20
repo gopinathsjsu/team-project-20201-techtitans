@@ -43,7 +43,10 @@ function AddRestaurant() {
 		));
 
 		return Array.from({ length: numTables }, (_, i) => (
-			<label key={`table-${i + 1}`} className="add-restaurant-form-group-table-sizes">
+			<label
+				key={`table-${i + 1}`}
+				className="add-restaurant-form-group-table-sizes"
+			>
 				Size for Table {i + 1}:
 				<select
 					name={`size-table-${i + 1}`}
@@ -97,7 +100,10 @@ function AddRestaurant() {
 					</label>
 					<label className="add-restaurant-form-group">
 						Cuisine Type:
-						<select name="cuisine-type" className="add-restaurant-form-select">
+						<select
+							name="cuisine-type"
+							className="add-restaurant-form-select"
+						>
 							<option value="" disabled selected>
 								Choose Cuisine Type...
 							</option>
@@ -142,7 +148,9 @@ function AddRestaurant() {
 							placeholder="Enter a description..."
 						></textarea>
 					</label>
-					<label className="add-restaurant-form-section-label">Hours</label>
+					<label className="add-restaurant-form-section-label">
+						Hours
+					</label>
 					<div className="add-restaurant-form-group-hours">
 						{days.map((day) => (
 							<div key={day} className="add-restaurant-day">
@@ -329,7 +337,9 @@ function AddRestaurant() {
 							<option value="30min">30 Minutes</option>
 						</select>
 					</label>
-					<label className="add-restaurant-form-section-label">Table Sizes</label>
+					<label className="add-restaurant-form-section-label">
+						Table Sizes
+					</label>
 					<label className="add-restaurant-form-group">
 						Number of Tables:
 						<select

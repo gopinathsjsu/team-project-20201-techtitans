@@ -8,7 +8,10 @@ function RestaurantReservationConfirmation(props) {
 	return (
 		<>
 			<h2>{props.name}</h2>
-			<form className="reservation-confirmation-form" onSubmit={handleFormSubmit}>
+			<form
+				className="reservation-confirmation-form"
+				onSubmit={handleFormSubmit}
+			>
 				<div className="reservation-confirmation-control">
 					<label className="reservation-confirmation-info">
 						Date: {props.date}
@@ -20,7 +23,10 @@ function RestaurantReservationConfirmation(props) {
 						Number of People: {props.numPeople}
 					</label>
 				</div>
-				<button type="submit" className="reservation-confirmation-complete-btn">
+				<button
+					type="submit"
+					className="reservation-confirmation-complete-btn"
+				>
 					Complete Reservation
 				</button>
 			</form>
