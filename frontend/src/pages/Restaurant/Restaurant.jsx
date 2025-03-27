@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Gallery from "../../components/Gallery/Gallery";
 import Reviews from "../../components/Reviews/Reviews";

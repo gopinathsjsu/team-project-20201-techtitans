@@ -1,4 +1,3 @@
-import React from "react";
 import "./PopularDishes.css";
 
 const sampleDishes = [
