@@ -1,35 +1,73 @@
 import "./AddRestaurant.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import AlertMessage from "../AlertMessage";
 
 function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
-		sunday: false,
-		monday: false,
-		tuesday: false,
-		wednesday: false,
-		thursday: false,
-		friday: false,
-		saturday: false,
+		Sun: false,
+		Mon: false,
+		Tue: false,
+		Wed: false,
+		Thu: false,
+		Fri: false,
+		Sat: false,
 	});
 
-	const [numTables, setNumTables] = useState(0);
+	const days = [
+		"Sun",
+		"Mon",
+		"Tue",
+		"Wed",
+		"Thu",
+		"Fri",
+		"Sat",
+	];
 
-	const handleCheckboxChange = (day) => {
-		setClosedDays((prev) => ({
-			...prev,
-			[day]: !prev[day],
-		}));
+	const dayTitles = {
+		"Sun" : "Sunday",
+		"Mon" : "Monday",
+		"Tue" : "Tuesday",
+		"Wed" : "Wednesday",
+		"Thu" : "Thursday",
+		"Fri" : "Friday",
+		"Sat" : "Saturday"
 	};
 
-	const days = [
-		"sunday",
-		"monday",
-		"tuesday",
-		"wednesday",
-		"thursday",
-		"friday",
-		"saturday",
-	];
+	const handleTimeChange = (day, type, value) => {
+		setRestaurant((prev) => {
+			const newHours = { ...prev.hours };
+			let currentHours = newHours[day] ? newHours[day].split(" - ") : ["", ""];
+			if (type === "start") {
+				currentHours[0] = value;
+			} else if (type === "end") {
+				currentHours[1] = value;
+			}
+			newHours[day] = currentHours.join(" - ");
+			return {
+				...prev,
+				hours: newHours,
+			};
+		});
+	};
+
+	const handleCheckboxChange = (day) => {
+		setClosedDays((prev) => {
+			const newClosedDays = { ...prev, [day]: !prev[day] };
+			setRestaurant((prevRestaurant) => {
+				const newHours = { ...prevRestaurant.hours };
+				newHours[day] = newClosedDays[day] ? "Closed" : "";
+				return {
+					...prevRestaurant,
+					hours: newHours,
+				};
+			});
+			return newClosedDays;
+		});
+	};
+
+	const [numTables, setNumTables] = useState(0);
 
 	const handleTableChange = (e) => {
 		setNumTables(parseInt(e.target.value, 10));
@@ -61,10 +99,177 @@ function AddRestaurant() {
 		));
 	};
 
+	const [alertMessages, setAlertMessages] = useState({
+		isOpen: false,
+		message: "",
+		type: "error",
+	});
+	const [error, setError] = useState({});
+	const [isDisable, setDisable] = useState(false);
+	const [restaurant, setRestaurant] = useState({
+		name: "",
+		cuisineType: "",
+		costRating: "",
+		avgRating: 0,
+		bookingsToday: 0,
+		address: "",
+		contactInfo: "",
+		hours: {
+			Mon: "",
+			Tue: "",
+			Wed: "",
+			Thu: "",
+			Fri: "",
+			Sat: "",
+			Sun: "",
+		},
+		description: "",
+		location: [0, 0],
+		pendingApproval: true,
+		approved: false,
+	});
+
+	/*
+	const [restaurant, setRestaurant] = useState({
+		name: "",
+		cuisineType: "",
+		costRating: "",
+		avgRating: 0,
+		bookingsToday: 0,
+		address: "",
+		contactInfo: "",
+		hours: {
+			Mon: "",
+			Tue: "",
+			Wed: "",
+			Thu: "",
+			Fri: "",
+			Sat: "",
+			Sun: "",
+		},
+		description: "",
+		location: [0, 0],
+		pendingApproval: true,
+		approved: false,
+		bookingTimes: {
+			From: "",
+			To: "",
+			Every: "",
+		},
+		tables: {},
+	});
+	*/
+
+	const navigate = useNavigate();
+
+	function handleChange(event) {
+		const { value } = event.target;
+		setRestaurant({
+			...restaurant,
+			[event.target.name]: value,
+		});
+	}
+
+	function validate() {
+		let bool = true;
+		const errors = {};
+		if (restaurant.name.length === 0) {
+			errors.name = "Please enter a restaurant name.";
+			bool = false;
+		}
+		if (restaurant.cuisineType === "") {
+			errors.cuisineType = "Please choose a cuisine type.";
+			bool = false;
+		}
+		if (restaurant.costRating === "") {
+			errors.costRating = "Please choose a cost rating.";
+			bool = false;
+		}
+		if (restaurant.address.length === 0) {
+			errors.address = "Please enter an address.";
+			bool = false;
+		}
+		const phonePattern = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+		if (restaurant.contactInfo.length === 0) {
+			errors.contactInfo = "Please enter a phone number.";
+			bool = false;
+		} else if (!phonePattern.test(restaurant.contactInfo)) {
+			errors.contactInfo = "Please enter a phone number in this format: 123-456-7890.";
+			bool = false;
+		}
+		if (restaurant.description.length === 0) {
+			errors.description = "Please enter a description.";
+			bool = false;
+		}
+		const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+		daysOfWeek.forEach((day) => {
+			const currentHours = (restaurant.hours[day] || "").trim();
+			if (!currentHours || currentHours === "" || currentHours === "-" || currentHours.startsWith("-") || currentHours.endsWith("-")) {
+				errors.hours = "Please enter all operating hours for all days of the week.";
+				bool = false;
+			}
+		});
+		setError(errors);
+		return bool;
+	}
+
+	async function makeRestaurantCall(restaurant) {
+		try {
+			const response = await axios.post(
+				"http://127.0.0.1:5173/restaurants",
+				restaurant
+			);
+			return response;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	function addRestaurant() {
+		if (validate()) {
+			setDisable(true);
+			makeRestaurantCall(restaurant).then((result) => {
+				if (result && result.status === 201) {
+					navigate("/restaurant-manager-home");
+					setAlertMessages({
+						isOpen: true,
+						message: "Restaurant Successfully Added, waiting for Approval",
+						type: "success",
+					});
+				} else if (result.response.status === 500) {
+					setAlertMessages({
+						isOpen: true,
+						message: "Invalid input. Unable to add restaurant.",
+						type: "error",
+					});
+				} else if (result.response.status === 401) {
+					setAlertMessages({
+						isOpen: true,
+						message: "Restaurant already exists.",
+						type: "error",
+					});
+				} else if (result.response.status === 400) {
+					setAlertMessages({
+						isOpen: true,
+						message: result.response.data,
+						type: "error",
+					});
+				}
+			});
+		}
+	}
+
 	return (
 		<>
 			<h2>New Restaurant</h2>
-			<form>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					if (!isDisable) {
+						addRestaurant();
+					}
+				}}
+			>
 				<div className="add-restaurant-restaurant-form">
 					<label className="add-restaurant-form-group">
 						Name:
@@ -72,6 +277,7 @@ function AddRestaurant() {
 							type="text"
 							name="name"
 							placeholder="Enter Name..."
+							onChange={handleChange}
 						/>
 					</label>
 					<label className="add-restaurant-form-group">
@@ -80,16 +286,19 @@ function AddRestaurant() {
 							type="text"
 							name="address"
 							placeholder="Enter Address..."
+							onChange={handleChange}
 						/>
 					</label>
 					<label className="add-restaurant-form-group">
 						Phone Number:
 						<input
 							type="text"
-							name="phone-number"
-							placeholder="Enter Phone Number..."
+							name="contactInfo"
+							placeholder="Required Format: 123-456-7890"
+							onChange={handleChange}
 						/>
 					</label>
+					{/*
 					<label className="add-restaurant-form-group">
 						Email:
 						<input
@@ -98,45 +307,48 @@ function AddRestaurant() {
 							placeholder="Enter Email..."
 						/>
 					</label>
+					*/}
 					<label className="add-restaurant-form-group">
 						Cuisine Type:
 						<select
-							name="cuisine-type"
+							name="cuisineType"
 							className="add-restaurant-form-select"
+							onChange={handleChange}
 						>
 							<option value="" disabled selected>
 								Choose Cuisine Type...
 							</option>
-							<option value="american">American</option>
-							<option value="chinese">Chinese</option>
-							<option value="ethiopian">Ethiopian</option>
-							<option value="french">French</option>
-							<option value="fusion">Fusion</option>
-							<option value="indian">Indian</option>
-							<option value="italian">Italian</option>
-							<option value="japanese">Japanese</option>
-							<option value="korean">Korean</option>
-							<option value="pakistani">Pakistani</option>
-							<option value="mexican">Mexican</option>
-							<option value="spanish">Spanish</option>
-							<option value="thai">Thai</option>
-							<option value="turkish">Turkish</option>
-							<option value="vietnamese">Vietnamese</option>
-							<option value="other">Other</option>
+							<option value="American">American</option>
+							<option value="Chinese">Chinese</option>
+							<option value="Ethiopian">Ethiopian</option>
+							<option value="French">French</option>
+							<option value="Fusion">Fusion</option>
+							<option value="Indian">Indian</option>
+							<option value="Italian">Italian</option>
+							<option value="Japanese">Japanese</option>
+							<option value="Korean">Korean</option>
+							<option value="Pakistani">Pakistani</option>
+							<option value="Mexican">Mexican</option>
+							<option value="Spanish">Spanish</option>
+							<option value="Thai">Thai</option>
+							<option value="Turkish">Turkish</option>
+							<option value="Vietnamese">Vietnamese</option>
+							<option value="Other">Other</option>
 						</select>
 					</label>
 					<label className="add-restaurant-form-group">
 						Cost Rating:
 						<select
-							name="cost-rating"
+							name="costRating"
 							className="add-restaurant-form-select-smaller"
+							onChange={handleChange}
 						>
 							<option value="" disabled selected>
 								Choose Cost Rating...
 							</option>
-							<option value="low">$</option>
-							<option value="medium">$$</option>
-							<option value="high">$$$</option>
+							<option value="$">$</option>
+							<option value="$$">$$</option>
+							<option value="$$$">$$$</option>
 						</select>
 					</label>
 					<label className="add-restaurant-form-group-description">
@@ -146,6 +358,7 @@ function AddRestaurant() {
 							name="description"
 							className="add-restaurant-description-text"
 							placeholder="Enter a description..."
+							onChange={handleChange}
 						></textarea>
 					</label>
 					<label className="add-restaurant-form-section-label">
@@ -156,15 +369,12 @@ function AddRestaurant() {
 							<div key={day} className="add-restaurant-day">
 								<label className="add-restaurant-day-closed">
 									<label className="add-restaurant-day-title">
-										{day.charAt(0).toUpperCase() +
-											day.slice(1)}
-										:
+										{dayTitles[day]}:
 									</label>
 									<label>
 										Closed:
 										<input
 											type="checkbox"
-											name={`closed-${day}`}
 											checked={closedDays[day]}
 											onChange={() =>
 												handleCheckboxChange(day)
@@ -175,86 +385,92 @@ function AddRestaurant() {
 								{!closedDays[day] && (
 									<label className="add-restaurant-from-to-hours">
 										<label>From:</label>
-										<select name={`${day}-start-time`}>
+										<select
+											value={restaurant.hours[day]?.split(" - ")[0] || ""}
+											onChange={(e) => handleTimeChange(day, "start", e.target.value)}
+										>
 											<option value="" disabled selected>
 												00:00 AM
 											</option>
-											<option value="12am">
+											<option value="12 AM">
 												12:00 AM
 											</option>
-											<option value="1am">1:00 AM</option>
-											<option value="2am">2:00 AM</option>
-											<option value="3am">3:00 AM</option>
-											<option value="4am">4:00 AM</option>
-											<option value="5am">5:00 AM</option>
-											<option value="6am">6:00 AM</option>
-											<option value="7am">7:00 AM</option>
-											<option value="8am">8:00 AM</option>
-											<option value="9am">9:00 AM</option>
-											<option value="10am">
+											<option value="1 AM">1:00 AM</option>
+											<option value="2 AM">2:00 AM</option>
+											<option value="3 AM">3:00 AM</option>
+											<option value="4 AM">4:00 AM</option>
+											<option value="5 AM">5:00 AM</option>
+											<option value="6 AM">6:00 AM</option>
+											<option value="7 AM">7:00 AM</option>
+											<option value="8 AM">8:00 AM</option>
+											<option value="9 AM">9:00 AM</option>
+											<option value="10 AM">
 												10:00 AM
 											</option>
-											<option value="11am">
+											<option value="11 AM">
 												11:00 AM
 											</option>
-											<option value="12pm">
+											<option value="12 PM">
 												12:00 PM
 											</option>
-											<option value="1pm">1:00 PM</option>
-											<option value="2pm">2:00 PM</option>
-											<option value="3pm">3:00 PM</option>
-											<option value="4pm">4:00 PM</option>
-											<option value="5pm">5:00 PM</option>
-											<option value="6pm">6:00 PM</option>
-											<option value="7pm">7:00 PM</option>
-											<option value="8pm">8:00 PM</option>
-											<option value="9pm">9:00 PM</option>
-											<option value="10pm">
+											<option value="1 PM">1:00 PM</option>
+											<option value="2 PM">2:00 PM</option>
+											<option value="3 PM">3:00 PM</option>
+											<option value="4 PM">4:00 PM</option>
+											<option value="5 PM">5:00 PM</option>
+											<option value="6 PM">6:00 PM</option>
+											<option value="7 PM">7:00 PM</option>
+											<option value="8 PM">8:00 PM</option>
+											<option value="9 PM">9:00 PM</option>
+											<option value="10 PM">
 												10:00 PM
 											</option>
-											<option value="11pm">
+											<option value="11 PM">
 												11:00 PM
 											</option>
 										</select>
 										<label>To:</label>
-										<select name={`${day}-end-time`}>
+										<select
+											value={restaurant.hours[day]?.split(" - ")[1] || ""}
+											onChange={(e) => handleTimeChange(day, "end", e.target.value)}
+										>
 											<option value="" disabled selected>
 												00:00 PM
 											</option>
-											<option value="12pm">
+											<option value="12 PM">
 												12:00 PM
 											</option>
-											<option value="1pm">1:00 PM</option>
-											<option value="2pm">2:00 PM</option>
-											<option value="3pm">3:00 PM</option>
-											<option value="4pm">4:00 PM</option>
-											<option value="5pm">5:00 PM</option>
-											<option value="6pm">6:00 PM</option>
-											<option value="7pm">7:00 PM</option>
-											<option value="8pm">8:00 PM</option>
-											<option value="9pm">9:00 PM</option>
-											<option value="10pm">
+											<option value="1 PM">1:00 PM</option>
+											<option value="2 PM">2:00 PM</option>
+											<option value="3 PM">3:00 PM</option>
+											<option value="4 PM">4:00 PM</option>
+											<option value="5 PM">5:00 PM</option>
+											<option value="6 PM">6:00 PM</option>
+											<option value="7 PM">7:00 PM</option>
+											<option value="8 PM">8:00 PM</option>
+											<option value="9 PM">9:00 PM</option>
+											<option value="10 PM">
 												10:00 PM
 											</option>
-											<option value="11pm">
+											<option value="11 PM">
 												11:00 PM
 											</option>
-											<option value="12am">
+											<option value="12 AM">
 												12:00 AM
 											</option>
-											<option value="1am">1:00 AM</option>
-											<option value="2am">2:00 AM</option>
-											<option value="3am">3:00 AM</option>
-											<option value="4am">4:00 AM</option>
-											<option value="5am">5:00 AM</option>
-											<option value="6am">6:00 AM</option>
-											<option value="7am">7:00 AM</option>
-											<option value="8am">8:00 AM</option>
-											<option value="9am">9:00 AM</option>
-											<option value="10am">
+											<option value="1 AM">1:00 AM</option>
+											<option value="2 AM">2:00 AM</option>
+											<option value="3 AM">3:00 AM</option>
+											<option value="4 AM">4:00 AM</option>
+											<option value="5 AM">5:00 AM</option>
+											<option value="6 AM">6:00 AM</option>
+											<option value="7 AM">7:00 AM</option>
+											<option value="8 AM">8:00 AM</option>
+											<option value="9 AM">9:00 AM</option>
+											<option value="10 AM">
 												10:00 AM
 											</option>
-											<option value="11am">
+											<option value="11 AM">
 												11:00 AM
 											</option>
 										</select>
@@ -272,69 +488,69 @@ function AddRestaurant() {
 							<option value="" disabled selected>
 								00:00 AM
 							</option>
-							<option value="12am">12:00 AM</option>
-							<option value="1am">1:00 AM</option>
-							<option value="2am">2:00 AM</option>
-							<option value="3am">3:00 AM</option>
-							<option value="4am">4:00 AM</option>
-							<option value="5am">5:00 AM</option>
-							<option value="6am">6:00 AM</option>
-							<option value="7am">7:00 AM</option>
-							<option value="8am">8:00 AM</option>
-							<option value="9am">9:00 AM</option>
-							<option value="10am">10:00 AM</option>
-							<option value="11am">11:00 AM</option>
-							<option value="12pm">12:00 PM</option>
-							<option value="1pm">1:00 PM</option>
-							<option value="2pm">2:00 PM</option>
-							<option value="3pm">3:00 PM</option>
-							<option value="4pm">4:00 PM</option>
-							<option value="5pm">5:00 PM</option>
-							<option value="6pm">6:00 PM</option>
-							<option value="7pm">7:00 PM</option>
-							<option value="8pm">8:00 PM</option>
-							<option value="9pm">9:00 PM</option>
-							<option value="10pm">10:00 PM</option>
-							<option value="11pm">11:00 PM</option>
+							<option value="12 AM">12:00 AM</option>
+							<option value="1 AM">1:00 AM</option>
+							<option value="2 AM">2:00 AM</option>
+							<option value="3 AM">3:00 AM</option>
+							<option value="4 AM">4:00 AM</option>
+							<option value="5 AM">5:00 AM</option>
+							<option value="6 AM">6:00 AM</option>
+							<option value="7 AM">7:00 AM</option>
+							<option value="8 AM">8:00 AM</option>
+							<option value="9 AM">9:00 AM</option>
+							<option value="10 AM">10:00 AM</option>
+							<option value="11 AM">11:00 AM</option>
+							<option value="12 PM">12:00 PM</option>
+							<option value="1 PM">1:00 PM</option>
+							<option value="2 PM">2:00 PM</option>
+							<option value="3 PM">3:00 PM</option>
+							<option value="4 PM">4:00 PM</option>
+							<option value="5 PM">5:00 PM</option>
+							<option value="6 PM">6:00 PM</option>
+							<option value="7 PM">7:00 PM</option>
+							<option value="8 PM">8:00 PM</option>
+							<option value="9 PM">9:00 PM</option>
+							<option value="10 PM">10:00 PM</option>
+							<option value="11 PM">11:00 PM</option>
 						</select>
 						<label>To:</label>
 						<select name="end-booking-time">
 							<option value="" disabled selected>
 								00:00 PM
 							</option>
-							<option value="12pm">12:00 PM</option>
-							<option value="1pm">1:00 PM</option>
-							<option value="2pm">2:00 PM</option>
-							<option value="3pm">3:00 PM</option>
-							<option value="4pm">4:00 PM</option>
-							<option value="5pm">5:00 PM</option>
-							<option value="6pm">6:00 PM</option>
-							<option value="7pm">7:00 PM</option>
-							<option value="8pm">8:00 PM</option>
-							<option value="9pm">9:00 PM</option>
-							<option value="10pm">10:00 PM</option>
-							<option value="11pm">11:00 PM</option>
-							<option value="12am">12:00 AM</option>
-							<option value="1am">1:00 AM</option>
-							<option value="2am">2:00 AM</option>
-							<option value="3am">3:00 AM</option>
-							<option value="4am">4:00 AM</option>
-							<option value="5am">5:00 AM</option>
-							<option value="6am">6:00 AM</option>
-							<option value="7am">7:00 AM</option>
-							<option value="8am">8:00 AM</option>
-							<option value="9am">9:00 AM</option>
-							<option value="10am">10:00 AM</option>
-							<option value="11am">11:00 AM</option>
+							<option value="12 PM">12:00 PM</option>
+							<option value="1 PM">1:00 PM</option>
+							<option value="2 PM">2:00 PM</option>
+							<option value="3 PM">3:00 PM</option>
+							<option value="4 PM">4:00 PM</option>
+							<option value="5 PM">5:00 PM</option>
+							<option value="6 PM">6:00 PM</option>
+							<option value="7 PM">7:00 PM</option>
+							<option value="8 PM">8:00 PM</option>
+							<option value="9 PM">9:00 PM</option>
+							<option value="10 PM">10:00 PM</option>
+							<option value="11 PM">11:00 PM</option>
+							<option value="12 AM">12:00 AM</option>
+							<option value="1 AM">1:00 AM</option>
+							<option value="2 AM">2:00 AM</option>
+							<option value="3 AM">3:00 AM</option>
+							<option value="4 AM">4:00 AM</option>
+							<option value="5 AM">5:00 AM</option>
+							<option value="6 AM">6:00 AM</option>
+							<option value="7 AM">7:00 AM</option>
+							<option value="8 AM">8:00 AM</option>
+							<option value="9 AM">9:00 AM</option>
+							<option value="10 AM">10:00 AM</option>
+							<option value="11 AM">11:00 AM</option>
 						</select>
 						<label>Every</label>
 						<select name="booking-time-minutes">
 							<option value="" disabled selected>
 								0 Minutes
 							</option>
-							<option value="10min">10 Minutes</option>
-							<option value="20min">20 Minutes</option>
-							<option value="30min">30 Minutes</option>
+							<option value="10 Minutes">10 Minutes</option>
+							<option value="20 Minutes">20 Minutes</option>
+							<option value="30 Minutes">30 Minutes</option>
 						</select>
 					</label>
 					<label className="add-restaurant-form-section-label">
@@ -358,7 +574,32 @@ function AddRestaurant() {
 						</select>
 					</label>
 					{renderTableSizes()}
+					{error.name && (
+						<p style={{ color: "red" }}>Error: {error.name}</p>
+					)}
+					{error.address && (
+						<p style={{ color: "red" }}>Error: {error.address}</p>
+					)}
+					{error.contactInfo && (
+						<p style={{ color: "red" }}>Error: {error.contactInfo}</p>
+					)}
+					{error.cuisineType && (
+						<p style={{ color: "red" }}>Error: {error.cuisineType}</p>
+					)}
+					{error.costRating && (
+						<p style={{ color: "red" }}>Error: {error.costRating}</p>
+					)}
+					{error.description && (
+						<p style={{ color: "red" }}>Error: {error.description}</p>
+					)}
+					{error.hours && (
+						<p style={{ color: "red" }}>Error: {error.hours}</p>
+					)}
 					<button className="add-restaurant-save-btn">Save</button>
+					<AlertMessage
+						alertMessages={alertMessages}
+						setAlertMessages={setAlertMessages}
+					/>
 				</div>
 			</form>
 		</>
