@@ -201,14 +201,24 @@ function AddRestaurant() {
 			errors.description = "Please enter a description.";
 			bool = false;
 		}
+		let open = false;
+		let hasErrors = false;
 		const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 		daysOfWeek.forEach((day) => {
 			const currentHours = (restaurant.hours[day] || "").trim();
 			if (!currentHours || currentHours === "" || currentHours === "-" || currentHours.startsWith("-") || currentHours.endsWith("-")) {
-				errors.hours = "Please enter all operating hours for all days of the week.";
-				bool = false;
+				hasErrors = true;
+			} else if (currentHours !== "Closed") {
+				open = true;
 			}
 		});
+		if (hasErrors) {
+			errors.hours = "Please enter all operating hours for all days of the week.";
+			bool = false;
+		} else if (!open) {
+			errors.hours = "Please have at least one day of the week open.";
+			bool = false;
+		}
 		setError(errors);
 		return bool;
 	}
@@ -231,6 +241,7 @@ function AddRestaurant() {
 			makeRestaurantCall(restaurant).then((result) => {
 				if (result && result.status === 201) {
 					navigate("/restaurant-manager-home");
+					window.location.reload();
 					setAlertMessages({
 						isOpen: true,
 						message: "Restaurant Successfully Added, waiting for Approval",
