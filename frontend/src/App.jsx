@@ -60,7 +60,7 @@ function App() {
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />
 				<Route
-					path="/restaurant/:restaurantId"
+					path="/restaurant/:id"
 					element={<Restaurant />}
 				/>
 				<Route

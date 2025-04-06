@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
-import { addRestaurant } from "./models/restaurantServices.js";
 import { addUser, findUserByUsername } from "./models/userServices.js";
 import {
 	addReservation,
@@ -13,10 +12,13 @@ import {
 	getReviewsByRestaurantId,
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
+import { RestaurantSchema } from "./models/restaurantSchema.js";
+import { addRestaurant, getRestaurants, getRestaurantById } from "./models/restaurantServices.js";
 
 const app = express();
-const PORT = 5173;
-
+//const PORT = 5173;
+const PORT = 5000;
+ 
 app.use(cors());
 app.use(express.json());
 
@@ -77,7 +79,17 @@ app.post("/log-in", async (req, res) => {
 });
 
 app.get("/restaurants", async (req, res) => {
-	res.send("Get Request");
+    try {
+        const result = await getRestaurants();
+        if (result && result.length > 0) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).send("No restaurants found");
+        }
+    } catch (error) {
+        console.error("Error fetching restaurants:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 app.post("/restaurants", async (req, res) => {
@@ -186,4 +198,20 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 	} catch (error) {
 		res.status(500).send("Internal Server Error");
 	}
+});
+
+app.get("/restaurants/:id", async (req, res) => {
+    try {
+        const restaurantId = req.params.id;
+        const result = await getRestaurantById(restaurantId);
+        
+        if (result) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).send("Restaurant not found");
+        }
+    } catch (error) {
+        console.error("Error fetching restaurant:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });

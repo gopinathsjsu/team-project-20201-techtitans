@@ -139,3 +139,10 @@ html {
 	font-size: 22px;
 	z-index: 1;
 }
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+}
