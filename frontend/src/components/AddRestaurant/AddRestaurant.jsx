@@ -43,11 +43,14 @@ function AddRestaurant() {
 		));
 
 		return Array.from({ length: numTables }, (_, i) => (
-			<label key={`table-${i + 1}`} className="form-group-table-sizes">
+			<label
+				key={`table-${i + 1}`}
+				className="add-restaurant-form-group-table-sizes"
+			>
 				Size for Table {i + 1}:
 				<select
 					name={`size-table-${i + 1}`}
-					className="form-select-smallest"
+					className="add-restaurant-form-select-smallest"
 				>
 					<option value="" disabled selected>
 						0
@@ -62,8 +65,8 @@ function AddRestaurant() {
 		<>
 			<h2>New Restaurant</h2>
 			<form>
-				<div className="restaurant-form">
-					<label className="form-group">
+				<div className="add-restaurant-restaurant-form">
+					<label className="add-restaurant-form-group">
 						Name:
 						<input
 							type="text"
@@ -71,7 +74,7 @@ function AddRestaurant() {
 							placeholder="Enter Name..."
 						/>
 					</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-group">
 						Address:
 						<input
 							type="text"
@@ -79,7 +82,7 @@ function AddRestaurant() {
 							placeholder="Enter Address..."
 						/>
 					</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-group">
 						Phone Number:
 						<input
 							type="text"
@@ -87,7 +90,7 @@ function AddRestaurant() {
 							placeholder="Enter Phone Number..."
 						/>
 					</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-group">
 						Email:
 						<input
 							type="text"
@@ -95,9 +98,12 @@ function AddRestaurant() {
 							placeholder="Enter Email..."
 						/>
 					</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-group">
 						Cuisine Type:
-						<select name="cuisine-type" className="form-select">
+						<select
+							name="cuisine-type"
+							className="add-restaurant-form-select"
+						>
 							<option value="" disabled selected>
 								Choose Cuisine Type...
 							</option>
@@ -119,11 +125,11 @@ function AddRestaurant() {
 							<option value="other">Other</option>
 						</select>
 					</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-group">
 						Cost Rating:
 						<select
 							name="cost-rating"
-							className="form-select-smaller"
+							className="add-restaurant-form-select-smaller"
 						>
 							<option value="" disabled selected>
 								Choose Cost Rating...
@@ -133,21 +139,23 @@ function AddRestaurant() {
 							<option value="high">$$$</option>
 						</select>
 					</label>
-					<label className="form-group-description">
+					<label className="add-restaurant-form-group-description">
 						Description:
 						<textarea
 							type="text"
 							name="description"
-							className="description-text"
+							className="add-restaurant-description-text"
 							placeholder="Enter a description..."
 						></textarea>
 					</label>
-					<label className="form-section-label">Hours</label>
-					<div className="form-group-hours">
+					<label className="add-restaurant-form-section-label">
+						Hours
+					</label>
+					<div className="add-restaurant-form-group-hours">
 						{days.map((day) => (
-							<div key={day} className="day">
-								<label className="day-closed">
-									<label className="day-title">
+							<div key={day} className="add-restaurant-day">
+								<label className="add-restaurant-day-closed">
+									<label className="add-restaurant-day-title">
 										{day.charAt(0).toUpperCase() +
 											day.slice(1)}
 										:
@@ -165,7 +173,7 @@ function AddRestaurant() {
 									</label>
 								</label>
 								{!closedDays[day] && (
-									<label className="from-to-hours">
+									<label className="add-restaurant-from-to-hours">
 										<label>From:</label>
 										<select name={`${day}-start-time`}>
 											<option value="" disabled selected>
@@ -255,8 +263,8 @@ function AddRestaurant() {
 							</div>
 						))}
 					</div>
-					<label className="form-group-booking">
-						<label className="booking-times-title">
+					<label className="add-restaurant-form-group-booking">
+						<label className="add-restaurant-booking-times-title">
 							Booking Times:
 						</label>
 						<label>From:</label>
@@ -329,13 +337,15 @@ function AddRestaurant() {
 							<option value="30min">30 Minutes</option>
 						</select>
 					</label>
-					<label className="form-section-label">Table Sizes</label>
-					<label className="form-group">
+					<label className="add-restaurant-form-section-label">
+						Table Sizes
+					</label>
+					<label className="add-restaurant-form-group">
 						Number of Tables:
 						<select
 							name="total-tables"
 							onChange={handleTableChange}
-							className="form-select-smallest"
+							className="add-restaurant-form-select-smallest"
 						>
 							<option value="" disabled selected>
 								0
@@ -348,7 +358,7 @@ function AddRestaurant() {
 						</select>
 					</label>
 					{renderTableSizes()}
-					<button className="save-btn">Save</button>
+					<button className="add-restaurant-save-btn">Save</button>
 				</div>
 			</form>
 		</>

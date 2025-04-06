@@ -4,7 +4,7 @@ h2 {
 	width: 100vw;
 }
 
-.reservation-form {
+.reservation-confirmation-form {
 	display: flex;
 	flex-direction: column;
 	gap: 25px;
@@ -14,7 +14,7 @@ h2 {
 	width: 100vw;
 }
 
-.reservation-control {
+.reservation-confirmation-control {
 	text-align: center;
 	display: flex;
 	align-items: center;
@@ -23,17 +23,17 @@ h2 {
 	font-weight: bold;
 }
 
-.reservation-info {
+.reservation-confirmation-info {
 	border-radius: 10px;
 	background: #d9d9d9;
 	padding: 20px;
 }
 
-.reservation-selector {
+.reservation-confirmation-selector {
 	margin-left: 10px;
 }
 
-.complete-btn {
+.reservation-confirmation-complete-btn {
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: white;

@@ -18,6 +18,53 @@ function getDbConnection() {
 	return dbConnection;
 }
 
+async function findRestaurantByName(name) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		return await RestaurantModel.findOne({ name });
+	} catch (error) {
+		return undefined;
+	}
+}
+
+async function findRestaurantByLoc(loc) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		return await RestaurantModel.findOne({ loc });
+	} catch (error) {
+		return undefined;
+	}
+}
+
+export async function getVerifiedRestaurants() {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const verifiedRestaurants = RestaurantModel.find({
+			pendingApproval: false,
+			approved: true,
+		});
+		return verifiedRestaurants;
+	} catch (error) {
+		return false;
+	}
+}
+
+export async function getPendingRestaurants() {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const pendingRestaurants = RestaurantModel.find({
+			pendingApproval: true,
+		});
+		return pendingRestaurants;
+	} catch (error) {
+		return false;
+	}
+}
+
 export async function addRestaurant(restaurant) {
 	const conn = getDbConnection();
 	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
@@ -36,6 +83,21 @@ export async function addRestaurant(restaurant) {
 			return "existing restaurant";
 		}
 		return savedRestaurant;
+	} catch (error) {
+		return false;
+	}
+}
+
+export async function updateRestaurantStatus(name, status) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const updatedRestaurant = await RestaurantModel.findOneAndUpdate(
+			{ name: name },
+			{ $set: { pendingApproval: false, approved: status } },
+			{ new: true }
+		);
+		return updatedRestaurant;
 	} catch (error) {
 		return false;
 	}

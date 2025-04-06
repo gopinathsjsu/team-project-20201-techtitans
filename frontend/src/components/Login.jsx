@@ -5,7 +5,7 @@ import AlertMessage from "./AlertMessage";
 import Navbar from "./Navbar/Navbar";
 
 function Login(props) {
-	const { alertMessages, setAlertMessages } = props;
+	const { handleLoginIn, alertMessages, setAlertMessages } = props;
 	const [error, setError] = useState({});
 	const [isDisable, setDisable] = useState(false);
 	const [user, setUser] = useState({
@@ -58,12 +58,16 @@ function Login(props) {
 			setDisable(true);
 			makeLoginCall(user).then((result) => {
 				if (result && result.status === 201) {
-					// update user session & token
-					// eventually navigate with customer id
-					if (result.data.status == "Customer") {
+					handleLoginIn(result.data);
+					if (result.data.savedUser.status == "Customer") {
+						// eventually navigate with customer id
 						navigate("/customer-profile");
-					} else if (result.data.status == "RestaurantManager") {
+					} else if (
+						result.data.savedUser.status == "RestaurantManager"
+					) {
 						navigate("/restaurant-manager-home");
+					} else if (result.data.savedUser.status == "Admin") {
+						navigate("/admin-dash");
 					}
 				} else {
 					if (result.response.data) {
