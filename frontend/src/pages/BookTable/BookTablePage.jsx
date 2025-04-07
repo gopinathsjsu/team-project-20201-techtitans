@@ -16,35 +16,55 @@ const BookTablePage = () => {
 
     // Fetch all restaurants when component mounts
     useEffect(() => {
+        let isMounted = true;
+        const controller = new AbortController();
+
         const fetchRestaurants = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("/restaurants"); // Remove hardcoded localhost:5173
+                const response = await axios.get('/restaurants', {
+                    signal: controller.signal,
+                    timeout: 5000,
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Expires': '0',
+                    }
+                });
                 
-                if (response.data) {
-                    // Transform the data into the format needed for display
+                if (isMounted && response.data) {
                     const restaurantData = response.data.map(restaurant => ({
                         id: restaurant._id,
                         name: restaurant.name,
                         cuisineType: restaurant.cuisineType,
                         costRating: restaurant.costRating,
                         avgRating: restaurant.avgRating,
-                        // Generate sample available times (this should come from your backend in production)
                         times: ["17:30", "18:00", "18:30", "19:00", "19:30"]
                     }));
                     
                     setAllRestaurants(restaurantData);
-                    setSearchResults(restaurantData); // Initially show all restaurants
+                    setSearchResults(restaurantData);
                 }
-                setLoading(false);
             } catch (err) {
-                console.error("Error fetching restaurants:", err);
-                setError("Failed to load restaurants. Please try again later.");
-                setLoading(false);
+                if (isMounted) {
+                    console.error("Error fetching restaurants:", err);
+                    setError(err.code === 'ECONNABORTED' 
+                        ? 'Connection timeout - please try again' 
+                        : `Failed to load restaurants: ${err.message}`);
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         };
 
         fetchRestaurants();
+
+        return () => {
+            isMounted = false;
+            controller.abort();
+        };
     }, []);
 
     const handleSearch = () => {
@@ -62,6 +82,31 @@ const BookTablePage = () => {
         
         setSearchResults(filteredResults);
     };
+
+    // Add loading state UI
+    if (loading) {
+        return (
+            <div className="book-table-page">
+                <Navbar role="customer" />
+                <div className="loading-state">
+                    <p>Loading restaurants...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Add error state UI
+    if (error) {
+        return (
+            <div className="book-table-page">
+                <Navbar role="customer" />
+                <div className="error-state">
+                    <p>{error}</p>
+                    <button onClick={fetchRestaurants}>Retry</button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="book-table-page">

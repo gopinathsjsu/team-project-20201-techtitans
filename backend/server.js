@@ -12,6 +12,8 @@ import {
 	updateRestaurantStatus,
 	getVerifiedRestaurants,
 	getPendingRestaurants,
+	getRestaurants,
+	getRestaurantById
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -23,11 +25,8 @@ import {
 	getReviewsByRestaurantId,
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
-import { RestaurantSchema } from "./models/restaurantSchema.js";
-import { addRestaurant, getRestaurants, getRestaurantById } from "./models/restaurantServices.js";
 
 const app = express();
-//const PORT = 5173;
 const PORT = 5000;
  
 app.use(cors());
