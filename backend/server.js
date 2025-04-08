@@ -85,7 +85,8 @@ app.post("/users", async (req, res) => {
 		res.status(400).send("Bad request: Invalid input for email.");
 	} else if (!password) {
 		res.status(400).send("Bad request: Invalid input for password.");
-	} try {
+	}
+	try {
 		const salt = await bcrypt.genSalt(10);
 		const hashedPwd = await bcrypt.hash(password, salt);
 		const savedUser = await addUser(user, hashedPwd);
@@ -114,7 +115,9 @@ app.post("/users", async (req, res) => {
 		}
 	} catch (error) {
 		console.error("Registration error:", error);
-		return res.status(500).send("Internal server error during registration.");
+		return res
+			.status(500)
+			.send("Internal server error during registration.");
 	}
 });
 

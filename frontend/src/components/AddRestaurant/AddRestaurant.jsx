@@ -15,30 +15,24 @@ function AddRestaurant() {
 		Sat: false,
 	});
 
-	const days = [
-		"Sun",
-		"Mon",
-		"Tue",
-		"Wed",
-		"Thu",
-		"Fri",
-		"Sat",
-	];
+	const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 	const dayTitles = {
-		"Sun" : "Sunday",
-		"Mon" : "Monday",
-		"Tue" : "Tuesday",
-		"Wed" : "Wednesday",
-		"Thu" : "Thursday",
-		"Fri" : "Friday",
-		"Sat" : "Saturday"
+		Sun: "Sunday",
+		Mon: "Monday",
+		Tue: "Tuesday",
+		Wed: "Wednesday",
+		Thu: "Thursday",
+		Fri: "Friday",
+		Sat: "Saturday",
 	};
 
 	const handleTimeChange = (day, type, value) => {
 		setRestaurant((prev) => {
 			const newHours = { ...prev.hours };
-			let currentHours = newHours[day] ? newHours[day].split(" - ") : ["", ""];
+			let currentHours = newHours[day]
+				? newHours[day].split(" - ")
+				: ["", ""];
 			if (type === "start") {
 				currentHours[0] = value;
 			} else if (type === "end") {
@@ -194,7 +188,8 @@ function AddRestaurant() {
 			errors.contactInfo = "Please enter a phone number.";
 			bool = false;
 		} else if (!phonePattern.test(restaurant.contactInfo)) {
-			errors.contactInfo = "Please enter a phone number in this format: 123-456-7890.";
+			errors.contactInfo =
+				"Please enter a phone number in this format: 123-456-7890.";
 			bool = false;
 		}
 		if (restaurant.description.length === 0) {
@@ -206,14 +201,21 @@ function AddRestaurant() {
 		const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 		daysOfWeek.forEach((day) => {
 			const currentHours = (restaurant.hours[day] || "").trim();
-			if (!currentHours || currentHours === "" || currentHours === "-" || currentHours.startsWith("-") || currentHours.endsWith("-")) {
+			if (
+				!currentHours ||
+				currentHours === "" ||
+				currentHours === "-" ||
+				currentHours.startsWith("-") ||
+				currentHours.endsWith("-")
+			) {
 				hasErrors = true;
 			} else if (currentHours !== "Closed") {
 				open = true;
 			}
 		});
 		if (hasErrors) {
-			errors.hours = "Please enter all operating hours for all days of the week.";
+			errors.hours =
+				"Please enter all operating hours for all days of the week.";
 			bool = false;
 		} else if (!open) {
 			errors.hours = "Please have at least one day of the week open.";
@@ -244,7 +246,8 @@ function AddRestaurant() {
 					window.location.reload();
 					setAlertMessages({
 						isOpen: true,
-						message: "Restaurant Successfully Added, waiting for Approval",
+						message:
+							"Restaurant Successfully Added, waiting for Approval",
 						type: "success",
 					});
 				} else if (result.response.status === 500) {
@@ -397,8 +400,18 @@ function AddRestaurant() {
 									<label className="add-restaurant-from-to-hours">
 										<label>From:</label>
 										<select
-											value={restaurant.hours[day]?.split(" - ")[0] || ""}
-											onChange={(e) => handleTimeChange(day, "start", e.target.value)}
+											value={
+												restaurant.hours[day]?.split(
+													" - "
+												)[0] || ""
+											}
+											onChange={(e) =>
+												handleTimeChange(
+													day,
+													"start",
+													e.target.value
+												)
+											}
 										>
 											<option value="" disabled selected>
 												00:00 AM
@@ -406,15 +419,33 @@ function AddRestaurant() {
 											<option value="12 AM">
 												12:00 AM
 											</option>
-											<option value="1 AM">1:00 AM</option>
-											<option value="2 AM">2:00 AM</option>
-											<option value="3 AM">3:00 AM</option>
-											<option value="4 AM">4:00 AM</option>
-											<option value="5 AM">5:00 AM</option>
-											<option value="6 AM">6:00 AM</option>
-											<option value="7 AM">7:00 AM</option>
-											<option value="8 AM">8:00 AM</option>
-											<option value="9 AM">9:00 AM</option>
+											<option value="1 AM">
+												1:00 AM
+											</option>
+											<option value="2 AM">
+												2:00 AM
+											</option>
+											<option value="3 AM">
+												3:00 AM
+											</option>
+											<option value="4 AM">
+												4:00 AM
+											</option>
+											<option value="5 AM">
+												5:00 AM
+											</option>
+											<option value="6 AM">
+												6:00 AM
+											</option>
+											<option value="7 AM">
+												7:00 AM
+											</option>
+											<option value="8 AM">
+												8:00 AM
+											</option>
+											<option value="9 AM">
+												9:00 AM
+											</option>
 											<option value="10 AM">
 												10:00 AM
 											</option>
@@ -424,15 +455,33 @@ function AddRestaurant() {
 											<option value="12 PM">
 												12:00 PM
 											</option>
-											<option value="1 PM">1:00 PM</option>
-											<option value="2 PM">2:00 PM</option>
-											<option value="3 PM">3:00 PM</option>
-											<option value="4 PM">4:00 PM</option>
-											<option value="5 PM">5:00 PM</option>
-											<option value="6 PM">6:00 PM</option>
-											<option value="7 PM">7:00 PM</option>
-											<option value="8 PM">8:00 PM</option>
-											<option value="9 PM">9:00 PM</option>
+											<option value="1 PM">
+												1:00 PM
+											</option>
+											<option value="2 PM">
+												2:00 PM
+											</option>
+											<option value="3 PM">
+												3:00 PM
+											</option>
+											<option value="4 PM">
+												4:00 PM
+											</option>
+											<option value="5 PM">
+												5:00 PM
+											</option>
+											<option value="6 PM">
+												6:00 PM
+											</option>
+											<option value="7 PM">
+												7:00 PM
+											</option>
+											<option value="8 PM">
+												8:00 PM
+											</option>
+											<option value="9 PM">
+												9:00 PM
+											</option>
 											<option value="10 PM">
 												10:00 PM
 											</option>
@@ -442,8 +491,18 @@ function AddRestaurant() {
 										</select>
 										<label>To:</label>
 										<select
-											value={restaurant.hours[day]?.split(" - ")[1] || ""}
-											onChange={(e) => handleTimeChange(day, "end", e.target.value)}
+											value={
+												restaurant.hours[day]?.split(
+													" - "
+												)[1] || ""
+											}
+											onChange={(e) =>
+												handleTimeChange(
+													day,
+													"end",
+													e.target.value
+												)
+											}
 										>
 											<option value="" disabled selected>
 												00:00 PM
@@ -451,15 +510,33 @@ function AddRestaurant() {
 											<option value="12 PM">
 												12:00 PM
 											</option>
-											<option value="1 PM">1:00 PM</option>
-											<option value="2 PM">2:00 PM</option>
-											<option value="3 PM">3:00 PM</option>
-											<option value="4 PM">4:00 PM</option>
-											<option value="5 PM">5:00 PM</option>
-											<option value="6 PM">6:00 PM</option>
-											<option value="7 PM">7:00 PM</option>
-											<option value="8 PM">8:00 PM</option>
-											<option value="9 PM">9:00 PM</option>
+											<option value="1 PM">
+												1:00 PM
+											</option>
+											<option value="2 PM">
+												2:00 PM
+											</option>
+											<option value="3 PM">
+												3:00 PM
+											</option>
+											<option value="4 PM">
+												4:00 PM
+											</option>
+											<option value="5 PM">
+												5:00 PM
+											</option>
+											<option value="6 PM">
+												6:00 PM
+											</option>
+											<option value="7 PM">
+												7:00 PM
+											</option>
+											<option value="8 PM">
+												8:00 PM
+											</option>
+											<option value="9 PM">
+												9:00 PM
+											</option>
 											<option value="10 PM">
 												10:00 PM
 											</option>
@@ -469,15 +546,33 @@ function AddRestaurant() {
 											<option value="12 AM">
 												12:00 AM
 											</option>
-											<option value="1 AM">1:00 AM</option>
-											<option value="2 AM">2:00 AM</option>
-											<option value="3 AM">3:00 AM</option>
-											<option value="4 AM">4:00 AM</option>
-											<option value="5 AM">5:00 AM</option>
-											<option value="6 AM">6:00 AM</option>
-											<option value="7 AM">7:00 AM</option>
-											<option value="8 AM">8:00 AM</option>
-											<option value="9 AM">9:00 AM</option>
+											<option value="1 AM">
+												1:00 AM
+											</option>
+											<option value="2 AM">
+												2:00 AM
+											</option>
+											<option value="3 AM">
+												3:00 AM
+											</option>
+											<option value="4 AM">
+												4:00 AM
+											</option>
+											<option value="5 AM">
+												5:00 AM
+											</option>
+											<option value="6 AM">
+												6:00 AM
+											</option>
+											<option value="7 AM">
+												7:00 AM
+											</option>
+											<option value="8 AM">
+												8:00 AM
+											</option>
+											<option value="9 AM">
+												9:00 AM
+											</option>
 											<option value="10 AM">
 												10:00 AM
 											</option>
@@ -592,16 +687,24 @@ function AddRestaurant() {
 						<p style={{ color: "red" }}>Error: {error.address}</p>
 					)}
 					{error.contactInfo && (
-						<p style={{ color: "red" }}>Error: {error.contactInfo}</p>
+						<p style={{ color: "red" }}>
+							Error: {error.contactInfo}
+						</p>
 					)}
 					{error.cuisineType && (
-						<p style={{ color: "red" }}>Error: {error.cuisineType}</p>
+						<p style={{ color: "red" }}>
+							Error: {error.cuisineType}
+						</p>
 					)}
 					{error.costRating && (
-						<p style={{ color: "red" }}>Error: {error.costRating}</p>
+						<p style={{ color: "red" }}>
+							Error: {error.costRating}
+						</p>
 					)}
 					{error.description && (
-						<p style={{ color: "red" }}>Error: {error.description}</p>
+						<p style={{ color: "red" }}>
+							Error: {error.description}
+						</p>
 					)}
 					{error.hours && (
 						<p style={{ color: "red" }}>Error: {error.hours}</p>
