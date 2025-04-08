@@ -102,3 +102,30 @@ export async function updateRestaurantStatus(name, status) {
 		return false;
 	}
 }
+
+export async function getRestaurants() {
+    const conn = getDbConnection();
+    const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+    try {
+        const restaurants = await RestaurantModel.find({ pendingApproval: false });
+        return restaurants;
+    } catch (error) {
+        console.error("Error fetching restaurants:", error);
+        return null;
+    }
+}
+
+export async function getRestaurantById(id) {
+    const conn = getDbConnection();
+    const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return null;
+        }
+        const restaurant = await RestaurantModel.findById(id);
+        return restaurant;
+    } catch (error) {
+        console.error("Error in getRestaurantById:", error);
+        return null;
+    }
+}
