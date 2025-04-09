@@ -100,10 +100,8 @@ app.post("/users", async (req, res) => {
 				text: `Hi ${username || "there"}, thanks for registering!`,
 				html: `<strong>Hi ${username || "there"}, welcome </strong>`,
 			};
-
 			try {
 				await sgMail.send(msg);
-				console.log(`Welcome email sent to ${email}`);
 			} catch (emailError) {
 				console.error("Error sending email:", emailError);
 			}
