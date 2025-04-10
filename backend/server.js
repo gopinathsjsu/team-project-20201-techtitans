@@ -13,7 +13,7 @@ import {
 	getVerifiedRestaurants,
 	getPendingRestaurants,
 	getRestaurants,
-	getRestaurantById
+	getRestaurantById,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -28,7 +28,7 @@ import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 
 const app = express();
 const PORT = 5173;
- 
+
 app.use(cors());
 app.use(express.json());
 
@@ -118,17 +118,17 @@ app.post("/log-in", async (req, res) => {
 });
 
 app.get("/restaurants", async (req, res) => {
-    try {
-        const result = await getRestaurants();
-        if (result && result.length > 0) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).send("No restaurants found");
-        }
-    } catch (error) {
-        console.error("Error fetching restaurants:", error);
-        res.status(500).send("Internal Server Error");
-    }
+	try {
+		const result = await getRestaurants();
+		if (result && result.length > 0) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("No restaurants found");
+		}
+	} catch (error) {
+		console.error("Error fetching restaurants:", error);
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/restaurants/verified", async (req, res) => {
@@ -273,17 +273,17 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 });
 
 app.get("/restaurants/:id", async (req, res) => {
-    try {
-        const restaurantId = req.params.id;
-        const result = await getRestaurantById(restaurantId);
-        
-        if (result) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).send("Restaurant not found");
-        }
-    } catch (error) {
-        console.error("Error fetching restaurant:", error);
-        res.status(500).send("Internal Server Error");
-    }
+	try {
+		const restaurantId = req.params.id;
+		const result = await getRestaurantById(restaurantId);
+
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Restaurant not found");
+		}
+	} catch (error) {
+		console.error("Error fetching restaurant:", error);
+		res.status(500).send("Internal Server Error");
+	}
 });
