@@ -181,10 +181,7 @@ function App() {
 					element={<RestaurantManagerAddRestaurant />}
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />
-				<Route
-					path="/restaurant/:id"
-					element={<Restaurant />}
-				/>
+				<Route path="/restaurant/:id" element={<Restaurant />} />
 				<Route
 					path="/reservation-confirmation"
 					element={<ReservationConfirmation />}
