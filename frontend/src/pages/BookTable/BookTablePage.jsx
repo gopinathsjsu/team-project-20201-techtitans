@@ -23,7 +23,7 @@ const BookTablePage = () => {
         const fetchRestaurants = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('/restaurants');
+                const response = await axios.get('http://127.0.0.1:5173/restaurants');
                 console.log('API Response:', response.data);
                 
                 if (response.data) {
