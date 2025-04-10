@@ -129,3 +129,23 @@ export async function getRestaurantById(id) {
         return null;
     }
 }
+
+export async function searchRestaurants(criteria) {
+    const conn = getDbConnection();
+    const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+    
+    try {
+        let query = { pendingApproval: false };
+        
+        // Add location search if provided
+        if (criteria.location) {
+            query.address = new RegExp(criteria.location, 'i');
+        }
+
+        const restaurants = await RestaurantModel.find(query);
+        return restaurants;
+    } catch (error) {
+        console.error("Error searching restaurants:", error);
+        return null;
+    }
+}

@@ -1,89 +1,122 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Navbar/Navbar";
 import "./BookTablePage.css";
 
 const BookTablePage = () => {
-    const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
-    const [people, setPeople] = useState(1);
-    const [searchText, setSearchText] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchCriteria, setSearchCriteria] = useState({
+        date: "",
+        time: "",
+        people: 1,
+        location: ""
+    });
     const [allRestaurants, setAllRestaurants] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [visibleCount, setVisibleCount] = useState(5); // show first 5 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    // Fetch all restaurants when component mounts
+    // Initial load of all restaurants
     useEffect(() => {
-        let isMounted = true;
-        const controller = new AbortController();
-
         const fetchRestaurants = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get('/restaurants', {
-                    signal: controller.signal,
-                    timeout: 5000,
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache',
-                        'Expires': '0',
-                    }
-                });
+                const response = await axios.get('/restaurants');
+                console.log('API Response:', response.data);
                 
-                if (isMounted && response.data) {
+                if (response.data) {
                     const restaurantData = response.data.map(restaurant => ({
                         id: restaurant._id,
                         name: restaurant.name,
                         cuisineType: restaurant.cuisineType,
                         costRating: restaurant.costRating,
-                        avgRating: restaurant.avgRating,
-                        times: ["17:30", "18:00", "18:30", "19:00", "19:30"]
+                        avgRating: restaurant.avgRating || 0,
+                        bookingsToday: restaurant.bookingsToday || 0,
+                        availableTimes: ["17:30", "18:00", "18:30", "19:00", "19:30"],
+                        image: restaurant.image || null,  // optional image field
+                        address: restaurant.address || ""   // used in search filtering
                     }));
                     
                     setAllRestaurants(restaurantData);
                     setSearchResults(restaurantData);
                 }
             } catch (err) {
-                if (isMounted) {
-                    console.error("Error fetching restaurants:", err);
-                    setError(err.code === 'ECONNABORTED' 
-                        ? 'Connection timeout - please try again' 
-                        : `Failed to load restaurants: ${err.message}`);
-                }
+                console.error("Error fetching restaurants:", err);
+                setError("Failed to load restaurants. Please try again.");
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                setLoading(false);
             }
         };
 
         fetchRestaurants();
-
-        return () => {
-            isMounted = false;
-            controller.abort();
-        };
     }, []);
 
-    const handleSearch = () => {
-        // In a real application, you would send the search parameters to the backend
-        // For now, we'll filter the existing restaurants based on the search text
-        if (!searchText.trim()) {
-            setSearchResults(allRestaurants);
+    const handleSearch = async () => {
+        if (!searchCriteria.date || !searchCriteria.time || !searchCriteria.people) {
+            setError("Please fill in all required fields");
             return;
         }
 
-        const filteredResults = allRestaurants.filter(restaurant => 
-            restaurant.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            restaurant.cuisineType.toLowerCase().includes(searchText.toLowerCase())
-        );
-        
-        setSearchResults(filteredResults);
+        try {
+            setLoading(true);
+            const filteredResults = allRestaurants.filter(restaurant => {
+                if (searchCriteria.location && 
+                    !restaurant.address.toLowerCase().includes(searchCriteria.location.toLowerCase())) {
+                    return false;
+                }
+                // (Availability logic can be added here)
+                return true;
+            });
+
+            setSearchResults(filteredResults);
+            setVisibleCount(5); // reset visible count on new search
+            setError(null);
+        } catch (err) {
+            setError("Error searching restaurants: " + err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Add loading state UI
+    const handleTimeSlotClick = (restaurantId, time) => {
+        navigate(`/reservation-confirmation`, {
+            state: {
+                restaurantId,
+                date: searchCriteria.date,
+                time,
+                people: searchCriteria.people
+            }
+        });
+    };
+
+    const timeToMinutes = (time) => {
+        if (!time) return 0;
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const getAvailableTimeSlots = (requestedTime, hours, bookingsToday) => {
+        const slots = [];
+        const maxBookings = 20;
+        
+        for (let offset = -30; offset <= 30; offset += 30) {
+            const slotTime = requestedTime + offset;
+            const hrs = Math.floor(slotTime / 60);
+            const mins = slotTime % 60;
+            const timeString = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+            if (bookingsToday < maxBookings) {
+                slots.push(timeString);
+            }
+        }
+        return slots;
+    };
+
+    const handleLoadMore = () => {
+        setVisibleCount(prev => prev + 5);
+    };
+
     if (loading) {
         return (
             <div className="book-table-page">
@@ -95,14 +128,12 @@ const BookTablePage = () => {
         );
     }
 
-    // Add error state UI
     if (error) {
         return (
             <div className="book-table-page">
                 <Navbar role="customer" />
                 <div className="error-state">
                     <p>{error}</p>
-                    <button onClick={fetchRestaurants}>Retry</button>
                 </div>
             </div>
         );
@@ -111,61 +142,93 @@ const BookTablePage = () => {
     return (
         <div className="book-table-page">
             <Navbar role="customer" />
-            <div className="search-form">
-                <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                />
-                <input
-                    type="time"
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                />
-                <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={people}
-                    onChange={(e) => setPeople(e.target.value)}
-                    placeholder="Number of people"
-                />
-                <input
-                    type="text"
-                    value={searchText}
-                    onChange={(e) => setSearchText(e.target.value)}
-                    placeholder="Search for restaurant"
-                />
-                <button onClick={handleSearch}>Search</button>
+            <div className="search-section">
+                <h1>Find your perfect dining experience</h1>
+                <div className="search-form">
+                    <input
+                        type="date"
+                        value={searchCriteria.date}
+                        min={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => setSearchCriteria({ ...searchCriteria, date: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="time"
+                        value={searchCriteria.time}
+                        onChange={(e) => setSearchCriteria({ ...searchCriteria, time: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={searchCriteria.people}
+                        onChange={(e) => setSearchCriteria({ ...searchCriteria, people: parseInt(e.target.value) })}
+                        placeholder="Number of people"
+                        required
+                    />
+                    <input
+                        type="text"
+                        value={searchCriteria.location}
+                        onChange={(e) => setSearchCriteria({ ...searchCriteria, location: e.target.value })}
+                        placeholder="City, State or Zip code"
+                    />
+                    <button 
+                        onClick={handleSearch}
+                        disabled={!searchCriteria.date || !searchCriteria.time || !searchCriteria.people}
+                    >
+                        Find Restaurants
+                    </button>
+                </div>
             </div>
+
             <div className="search-results">
-                <h2>Search Results</h2>
-                {loading ? (
-                    <p>Loading restaurants...</p>
-                ) : error ? (
-                    <p className="error-message">{error}</p>
-                ) : searchResults.length === 0 ? (
-                    <p>No restaurants found matching your search criteria.</p>
-                ) : (
-                    searchResults.map((result) => (
-                        <div key={result.id} className="restaurant-result">
+                {searchResults.slice(0, visibleCount).map((result) => (
+                    <div key={result.id} className="restaurant-result">
+                        <img 
+                            src={result.image || '/images/default-restaurant.jpg'} 
+                            alt={result.name}
+                            className="restaurant-image"
+                        />
+                        <div className="restaurant-content">
                             <h3>{result.name}</h3>
-                            <p>Cuisine: {result.cuisineType}</p>
-                            <p>Price: {result.costRating}</p>
-                            <p>Rating: {result.avgRating} ⭐</p>
+                            <div className="restaurant-info">
+                                <p>🍴 {result.cuisineType}</p>
+                                <p>💰 {result.costRating}</p>
+                                <p>⭐ {result.avgRating.toFixed(1)}</p>
+                                <p>📊 {result.bookingsToday} today</p>
+                            </div>
                             <div className="available-times">
                                 <p>Available times:</p>
-                                {result.times.map((time, idx) => (
-                                    <button key={idx}>{time}</button>
-                                ))}
+                                <div className="time-slots">
+                                    {result.availableTimes.map((time, idx) => (
+                                        <button 
+                                            key={idx}
+                                            onClick={() => handleTimeSlotClick(result.id, time)}
+                                            className="time-slot-button"
+                                        >
+                                            {time}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             <Link to={`/restaurant/${result.id}`}>
-                                <button>View Restaurant</button>
+                                <button className="view-details-button">
+                                    View Restaurant Details
+                                </button>
                             </Link>
                         </div>
-                    ))
-                )}
+                    </div>
+                ))}
             </div>
+            
+            {visibleCount < searchResults.length && (
+                <div className="load-more-container">
+                    <button className="load-more-button" onClick={handleLoadMore}>
+                        Load More
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
