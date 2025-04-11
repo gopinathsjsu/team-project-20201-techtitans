@@ -27,7 +27,6 @@ const Restaurant = () => {
 					`http://127.0.0.1:5173/restaurants/${id}`
 				);
 				if (response.data) {
-					console.log("Restaurant data:", response.data);
 					setRestaurant(response.data);
 				} else {
 					console.error("No restaurant data received");

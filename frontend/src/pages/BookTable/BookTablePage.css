@@ -82,9 +82,8 @@
 /* Center align search-results */
 .search-results {
 	display: grid;
-	grid-template-columns: repeat(5, 350px); /* set to 350px per column */
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	gap: 20px;
-	justify-content: center; /* This will center the grid in the container */
 	padding: 20px;
 	margin: 0 auto;
 }
