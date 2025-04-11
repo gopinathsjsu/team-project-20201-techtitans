@@ -126,7 +126,6 @@ app.get("/restaurants", async (req, res) => {
 			res.status(404).send("No restaurants found");
 		}
 	} catch (error) {
-		console.error("Error fetching restaurants:", error);
 		res.status(500).send("Internal Server Error");
 	}
 });
@@ -283,7 +282,6 @@ app.get("/restaurants/:id", async (req, res) => {
 			res.status(404).send("Restaurant not found");
 		}
 	} catch (error) {
-		console.error("Error fetching restaurant:", error);
 		res.status(500).send("Internal Server Error");
 	}
 });
