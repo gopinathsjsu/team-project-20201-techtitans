@@ -1,11 +1,11 @@
 import Navbar from "../../components/Navbar/Navbar";
 import AddRestaurant from "../../components/AddRestaurant/AddRestaurant";
 
-function RestaurantManagerAddRestaurant() {
+function RestaurantManagerAddRestaurant({user}) {
 	return (
 		<>
 			<Navbar role="restaurant-manager" />
-			<AddRestaurant />
+			<AddRestaurant userEmail={user?.email}/>
 		</>
 	);
 }

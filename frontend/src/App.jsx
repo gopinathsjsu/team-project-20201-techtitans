@@ -178,7 +178,7 @@ function App() {
 				/>
 				<Route
 					path="/restaurant-manager-add-restaurant"
-					element={<RestaurantManagerAddRestaurant />}
+					element={<RestaurantManagerAddRestaurant user={user} />}
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />
 				<Route
