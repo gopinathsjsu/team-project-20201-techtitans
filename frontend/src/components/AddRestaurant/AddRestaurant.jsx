@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
+import TimeSelect, { timeOptions } from "./TimeSelect";
 
 function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
@@ -398,188 +399,56 @@ function AddRestaurant() {
 								</label>
 								{!closedDays[day] && (
 									<label className="add-restaurant-from-to-hours">
-										<label>From:</label>
-										<select
-											value={
-												restaurant.hours[day]?.split(
-													" - "
-												)[0] || ""
-											}
-											onChange={(e) =>
-												handleTimeChange(
-													day,
-													"start",
-													e.target.value
-												)
-											}
-										>
-											<option value="" disabled selected>
-												00:00 AM
-											</option>
-											<option value="12 AM">
-												12:00 AM
-											</option>
-											<option value="1 AM">
-												1:00 AM
-											</option>
-											<option value="2 AM">
-												2:00 AM
-											</option>
-											<option value="3 AM">
-												3:00 AM
-											</option>
-											<option value="4 AM">
-												4:00 AM
-											</option>
-											<option value="5 AM">
-												5:00 AM
-											</option>
-											<option value="6 AM">
-												6:00 AM
-											</option>
-											<option value="7 AM">
-												7:00 AM
-											</option>
-											<option value="8 AM">
-												8:00 AM
-											</option>
-											<option value="9 AM">
-												9:00 AM
-											</option>
-											<option value="10 AM">
-												10:00 AM
-											</option>
-											<option value="11 AM">
-												11:00 AM
-											</option>
-											<option value="12 PM">
-												12:00 PM
-											</option>
-											<option value="1 PM">
-												1:00 PM
-											</option>
-											<option value="2 PM">
-												2:00 PM
-											</option>
-											<option value="3 PM">
-												3:00 PM
-											</option>
-											<option value="4 PM">
-												4:00 PM
-											</option>
-											<option value="5 PM">
-												5:00 PM
-											</option>
-											<option value="6 PM">
-												6:00 PM
-											</option>
-											<option value="7 PM">
-												7:00 PM
-											</option>
-											<option value="8 PM">
-												8:00 PM
-											</option>
-											<option value="9 PM">
-												9:00 PM
-											</option>
-											<option value="10 PM">
-												10:00 PM
-											</option>
-											<option value="11 PM">
-												11:00 PM
-											</option>
-										</select>
-										<label>To:</label>
-										<select
-											value={
-												restaurant.hours[day]?.split(
-													" - "
-												)[1] || ""
-											}
-											onChange={(e) =>
-												handleTimeChange(
-													day,
-													"end",
-													e.target.value
-												)
-											}
-										>
-											<option value="" disabled selected>
-												00:00 PM
-											</option>
-											<option value="12 PM">
-												12:00 PM
-											</option>
-											<option value="1 PM">
-												1:00 PM
-											</option>
-											<option value="2 PM">
-												2:00 PM
-											</option>
-											<option value="3 PM">
-												3:00 PM
-											</option>
-											<option value="4 PM">
-												4:00 PM
-											</option>
-											<option value="5 PM">
-												5:00 PM
-											</option>
-											<option value="6 PM">
-												6:00 PM
-											</option>
-											<option value="7 PM">
-												7:00 PM
-											</option>
-											<option value="8 PM">
-												8:00 PM
-											</option>
-											<option value="9 PM">
-												9:00 PM
-											</option>
-											<option value="10 PM">
-												10:00 PM
-											</option>
-											<option value="11 PM">
-												11:00 PM
-											</option>
-											<option value="12 AM">
-												12:00 AM
-											</option>
-											<option value="1 AM">
-												1:00 AM
-											</option>
-											<option value="2 AM">
-												2:00 AM
-											</option>
-											<option value="3 AM">
-												3:00 AM
-											</option>
-											<option value="4 AM">
-												4:00 AM
-											</option>
-											<option value="5 AM">
-												5:00 AM
-											</option>
-											<option value="6 AM">
-												6:00 AM
-											</option>
-											<option value="7 AM">
-												7:00 AM
-											</option>
-											<option value="8 AM">
-												8:00 AM
-											</option>
-											<option value="9 AM">
-												9:00 AM
-											</option>
-											<option value="10 AM">
-												10:00 AM
-											</option>
-											<option value="11 AM">
-												11:00 AM
-											</option>
-										</select>
+										{!closedDays[day] && (
+											<label className="add-restaurant-from-to-hours">
+												<label>From:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[0]
+																	.trim()
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"start",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
+
+												<label>To:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[1]
+																	?.trim() ||
+																""
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"end",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
+											</label>
+										)}
 									</label>
 								)}
 							</div>
@@ -590,73 +459,58 @@ function AddRestaurant() {
 							Booking Times:
 						</label>
 						<label>From:</label>
-						<select name="start-booking-time">
-							<option value="" disabled selected>
-								00:00 AM
-							</option>
-							<option value="12 AM">12:00 AM</option>
-							<option value="1 AM">1:00 AM</option>
-							<option value="2 AM">2:00 AM</option>
-							<option value="3 AM">3:00 AM</option>
-							<option value="4 AM">4:00 AM</option>
-							<option value="5 AM">5:00 AM</option>
-							<option value="6 AM">6:00 AM</option>
-							<option value="7 AM">7:00 AM</option>
-							<option value="8 AM">8:00 AM</option>
-							<option value="9 AM">9:00 AM</option>
-							<option value="10 AM">10:00 AM</option>
-							<option value="11 AM">11:00 AM</option>
-							<option value="12 PM">12:00 PM</option>
-							<option value="1 PM">1:00 PM</option>
-							<option value="2 PM">2:00 PM</option>
-							<option value="3 PM">3:00 PM</option>
-							<option value="4 PM">4:00 PM</option>
-							<option value="5 PM">5:00 PM</option>
-							<option value="6 PM">6:00 PM</option>
-							<option value="7 PM">7:00 PM</option>
-							<option value="8 PM">8:00 PM</option>
-							<option value="9 PM">9:00 PM</option>
-							<option value="10 PM">10:00 PM</option>
-							<option value="11 PM">11:00 PM</option>
-						</select>
+						<TimeSelect
+							value={restaurant.bookingTimes?.From || ""}
+							onChange={(e) =>
+								setRestaurant((prev) => ({
+									...prev,
+									bookingTimes: {
+										...prev.bookingTimes,
+										From: e.target.value,
+									},
+								}))
+							}
+							placeholder="00:00"
+						/>
+
 						<label>To:</label>
-						<select name="end-booking-time">
-							<option value="" disabled selected>
-								00:00 PM
-							</option>
-							<option value="12 PM">12:00 PM</option>
-							<option value="1 PM">1:00 PM</option>
-							<option value="2 PM">2:00 PM</option>
-							<option value="3 PM">3:00 PM</option>
-							<option value="4 PM">4:00 PM</option>
-							<option value="5 PM">5:00 PM</option>
-							<option value="6 PM">6:00 PM</option>
-							<option value="7 PM">7:00 PM</option>
-							<option value="8 PM">8:00 PM</option>
-							<option value="9 PM">9:00 PM</option>
-							<option value="10 PM">10:00 PM</option>
-							<option value="11 PM">11:00 PM</option>
-							<option value="12 AM">12:00 AM</option>
-							<option value="1 AM">1:00 AM</option>
-							<option value="2 AM">2:00 AM</option>
-							<option value="3 AM">3:00 AM</option>
-							<option value="4 AM">4:00 AM</option>
-							<option value="5 AM">5:00 AM</option>
-							<option value="6 AM">6:00 AM</option>
-							<option value="7 AM">7:00 AM</option>
-							<option value="8 AM">8:00 AM</option>
-							<option value="9 AM">9:00 AM</option>
-							<option value="10 AM">10:00 AM</option>
-							<option value="11 AM">11:00 AM</option>
-						</select>
+						<TimeSelect
+							value={restaurant.bookingTimes?.To || ""}
+							onChange={(e) =>
+								setRestaurant((prev) => ({
+									...prev,
+									bookingTimes: {
+										...prev.bookingTimes,
+										To: e.target.value,
+									},
+								}))
+							}
+							placeholder="00:00"
+						/>
+
 						<label>Every</label>
-						<select name="booking-time-minutes">
-							<option value="" disabled selected>
+						<select
+							value={restaurant.bookingTimes?.Every || ""}
+							onChange={(e) =>
+								setRestaurant((prev) => ({
+									...prev,
+									bookingTimes: {
+										...prev.bookingTimes,
+										Every: e.target.value,
+									},
+								}))
+							}
+						>
+							<option value="" disabled>
 								0 Minutes
 							</option>
-							<option value="10 Minutes">10 Minutes</option>
-							<option value="20 Minutes">20 Minutes</option>
-							<option value="30 Minutes">30 Minutes</option>
+							{["10 Minutes", "20 Minutes", "30 Minutes"].map(
+								(interval) => (
+									<option key={interval} value={interval}>
+										{interval}
+									</option>
+								)
+							)}
 						</select>
 					</label>
 					<label className="add-restaurant-form-section-label">
