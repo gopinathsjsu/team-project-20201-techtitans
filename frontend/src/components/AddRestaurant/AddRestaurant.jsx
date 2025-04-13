@@ -5,7 +5,6 @@ import axios from "axios";
 import AlertMessage from "../AlertMessage";
 import TimeSelect, { timeOptions } from "./TimeSelect";
 
-
 function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
 		Sun: false,
@@ -403,15 +402,33 @@ function AddRestaurant() {
 										<label>From:</label>
 
 										<TimeSelect
-											value={restaurant.hours[day]?.start || ""}
-											onChange={(e) => handleTimeChange(day, "start", e.target.value)}
+											value={
+												restaurant.hours[day]?.start ||
+												""
+											}
+											onChange={(e) =>
+												handleTimeChange(
+													day,
+													"start",
+													e.target.value
+												)
+											}
 											placeholder="00:00"
 										/>
 
 										<label>To:</label>
 										<TimeSelect
-											value={restaurant.hours[day]?.start || ""}
-											onChange={(e) => handleTimeChange(day, "start", e.target.value)}
+											value={
+												restaurant.hours[day]?.start ||
+												""
+											}
+											onChange={(e) =>
+												handleTimeChange(
+													day,
+													"start",
+													e.target.value
+												)
+											}
 											placeholder="00:00"
 										/>
 									</label>
@@ -466,12 +483,17 @@ function AddRestaurant() {
 								}))
 							}
 						>
-							<option value="" disabled>0 Minutes</option>
-							{["10 Minutes", "20 Minutes", "30 Minutes"].map((interval) => (
-								<option key={interval} value={interval}>{interval}</option>
-							))}
+							<option value="" disabled>
+								0 Minutes
+							</option>
+							{["10 Minutes", "20 Minutes", "30 Minutes"].map(
+								(interval) => (
+									<option key={interval} value={interval}>
+										{interval}
+									</option>
+								)
+							)}
 						</select>
-
 					</label>
 					<label className="add-restaurant-form-section-label">
 						Table Sizes
