@@ -1,5 +1,5 @@
 .book-table-page {
-	width: 100vw; /* Use full viewport width */
+	width: 100vw;
 	padding: 20px;
 	min-height: 100vh;
 }
@@ -15,7 +15,6 @@
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust header in the search section */
 .search-section {
 	background:
 		linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -26,38 +25,33 @@
 	margin: 80px 0 40px;
 	border-radius: 15px;
 	text-align: center;
-	color: white; /* Header text stays white */
+	color: white;
 }
 
 .search-section h1 {
 	font-size: 2.5rem;
 	margin-bottom: 30px;
-	color: white; /* Ensure the header stays white */
+	color: white;
 	text-align: center;
 }
 
 .search-form {
 	display: grid;
-	grid-template-columns: repeat(
-		auto-fit,
-		minmax(250px, 1fr)
-	); /* increased min-width */
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 15px;
-	max-width: 1100px; /* increased overall width */
+	max-width: 1100px;
 	margin: 0 auto;
 	padding: 20px;
 	background: rgba(255, 255, 255, 0.9);
 	border-radius: 10px;
 }
 
-/* Keep other text (inputs, labels, etc.) black as needed */
 .search-form input,
 .search-form button {
 	padding: 12px 15px;
 	border: 1px solid #ddd;
 	border-radius: 8px;
 	font-size: 1rem;
-	/* Set text color to grey for inputs */
 	color: #555;
 }
 
@@ -79,7 +73,6 @@
 	cursor: not-allowed;
 }
 
-/* Center align search-results */
 .search-results {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -88,15 +81,14 @@
 	margin: 0 auto;
 }
 
-/* Make restaurant-result bigger */
 .restaurant-result {
 	background: white;
 	border-radius: 12px;
 	overflow: hidden;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	transition: transform 0.3s;
-	padding: 10px; /* added padding */
-	font-size: 1.1rem; /* slightly larger text */
+	padding: 10px;
+	font-size: 1.1rem;
 }
 
 .restaurant-result:hover {
@@ -113,7 +105,6 @@
 	padding: 20px;
 }
 
-/* Ensure restaurant card header is black */
 .restaurant-content h3 {
 	color: black;
 }

@@ -4,28 +4,55 @@ import axios from "axios";
 import Navbar from "../../components/Navbar/Navbar";
 import "./BookTablePage.css";
 
-const getCurrentTimeString = () => {
-	// Format current time as "HH:MM" in 24-hour format which will automatically be parsed by <input type="time">
-	const now = new Date();
-	return now.toTimeString().slice(0, 5);
-};
+// Custom hook to track window size
+function useWindowSize() {
+	const [windowSize, setWindowSize] = useState({
+		width: window.innerWidth,
+		height: window.innerHeight,
+	});
+
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	return windowSize;
+}
 
 const BookTablePage = () => {
+	const { width } = useWindowSize();
+
+	// Dynamically calculate the number of visible cards
+	const [visibleCount, setVisibleCount] = useState(5);
+
+	// Update visibleCount based on screen width
+	useEffect(() => {
+		// Assume each card needs a minimum width of 300px plus around 20px for gap/margin
+		// This example uses 320px total per card.
+		const columns = Math.max(Math.floor(width / 320), 1);
+		const rows = 2; // Set the number of rows you want visible by default
+		setVisibleCount(columns * rows);
+	}, [width]);
+
 	const [searchCriteria, setSearchCriteria] = useState({
-		date: new Date().toISOString().split("T")[0], // current date
-		time: getCurrentTimeString(), // current time
+		date: new Date().toISOString().split("T")[0],
+		time: new Date().toTimeString().slice(0, 5),
 		people: 1,
 		location: "",
 	});
-
 	const [allRestaurants, setAllRestaurants] = useState([]);
 	const [searchResults, setSearchResults] = useState([]);
-	const [visibleCount, setVisibleCount] = useState(5); // show first 5
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
 
-	// Initial load of all restaurants
 	useEffect(() => {
 		const fetchRestaurants = async () => {
 			try {
@@ -46,7 +73,6 @@ const BookTablePage = () => {
 							"Sat",
 						];
 						const currentDay = days[new Date().getDay()];
-
 						const hours =
 							restaurant.hours[currentDay] ||
 							Object.values(restaurant.hours)[0] ||
@@ -83,29 +109,23 @@ const BookTablePage = () => {
 	// Helper function to generate time slots from hours string
 	const generateTimeSlots = (hoursString) => {
 		if (hoursString === "Closed") {
-			// Return an array with a message instead of an empty array.
 			return ["Restaurant is Closed"];
 		}
-
 		try {
-			// Parse hours string (e.g., "11 AM - 11 PM")
 			const [openTime, closeTime] = hoursString.split(" - ");
 
-			// Function to parse a time string into total minutes
 			const parseTime = (timeStr) => {
 				const [time, period] = timeStr.split(" ");
 				let [hours, minutes] = time.split(":").map(Number);
 				if (minutes === undefined) minutes = 0;
 				if (period === "PM" && hours !== 12) hours += 12;
 				if (period === "AM" && hours === 12) hours = 0;
-				const totalMinutes = hours * 60 + minutes;
-				return totalMinutes;
+				return hours * 60 + minutes;
 			};
 
 			const openMinutes = parseTime(openTime);
 			const closeMinutes = parseTime(closeTime);
 
-			// Convert minutes in 24-hour format to 12-hour format with AM/PM
 			const convertTo12Hour = (totalMinutes) => {
 				const hrs24 = Math.floor(totalMinutes / 60);
 				const mins = totalMinutes % 60;
@@ -114,7 +134,6 @@ const BookTablePage = () => {
 				return `${hrs12}:${mins.toString().padStart(2, "0")} ${period}`;
 			};
 
-			// Generate 30-minute slots in 12-hour format
 			const slots = [];
 			for (let time = openMinutes; time < closeMinutes; time += 30) {
 				slots.push(convertTo12Hour(time));
@@ -135,7 +154,6 @@ const BookTablePage = () => {
 			setError("Please fill in all required fields");
 			return;
 		}
-
 		try {
 			setLoading(true);
 			const filteredResults = allRestaurants.filter((restaurant) => {
@@ -147,12 +165,9 @@ const BookTablePage = () => {
 				) {
 					return false;
 				}
-				// (Availability logic can be added here)
 				return true;
 			});
-
 			setSearchResults(filteredResults);
-			setVisibleCount(5); // reset visible count on new search
 			setError(null);
 		} catch (err) {
 			setError("Error searching restaurants: " + err.message);
@@ -172,30 +187,8 @@ const BookTablePage = () => {
 		});
 	};
 
-	const timeToMinutes = (time) => {
-		if (!time) return 0;
-		const [hours, minutes] = time.split(":").map(Number);
-		return hours * 60 + minutes;
-	};
-
-	const getAvailableTimeSlots = (requestedTime, hours, bookingsToday) => {
-		const slots = [];
-		const maxBookings = 20;
-
-		for (let offset = -30; offset <= 30; offset += 30) {
-			const slotTime = requestedTime + offset;
-			const hrs = Math.floor(slotTime / 60);
-			const mins = slotTime % 60;
-			const timeString = `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
-			if (bookingsToday < maxBookings) {
-				slots.push(timeString);
-			}
-		}
-		return slots;
-	};
-
 	const handleLoadMore = () => {
-		setVisibleCount((prev) => prev + 5);
+		setVisibleCount((prev) => prev + visibleCount); // Load one “page” worth of new items
 	};
 
 	if (loading) {
