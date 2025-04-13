@@ -399,38 +399,56 @@ function AddRestaurant() {
 								</label>
 								{!closedDays[day] && (
 									<label className="add-restaurant-from-to-hours">
-										<label>From:</label>
+										{!closedDays[day] && (
+											<label className="add-restaurant-from-to-hours">
+												<label>From:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[0]
+																	.trim()
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"start",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
 
-										<TimeSelect
-											value={
-												restaurant.hours[day]?.start ||
-												""
-											}
-											onChange={(e) =>
-												handleTimeChange(
-													day,
-													"start",
-													e.target.value
-												)
-											}
-											placeholder="00:00"
-										/>
-
-										<label>To:</label>
-										<TimeSelect
-											value={
-												restaurant.hours[day]?.start ||
-												""
-											}
-											onChange={(e) =>
-												handleTimeChange(
-													day,
-													"start",
-													e.target.value
-												)
-											}
-											placeholder="00:00"
-										/>
+												<label>To:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[1]
+																	?.trim() ||
+																""
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"end",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
+											</label>
+										)}
 									</label>
 								)}
 							</div>
