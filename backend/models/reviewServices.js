@@ -33,9 +33,13 @@ export async function addReview(review) {
 export async function getReviewsByRestaurantId(restaurantId) {
 	const conn = getDbConnection();
 	const ReviewModel = conn.model("Review", ReviewSchema);
+
 	try {
-		const reviews = await ReviewModel.find({ restaurantId });
-		return reviews;
+		const allReviews = await ReviewModel.find();
+		const filteredReviews = allReviews.filter((review) => {
+			return review.restaurantId.toString() === restaurantId.toString();
+		});
+		return filteredReviews;
 	} catch (error) {
 		return false;
 	}

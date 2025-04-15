@@ -9,6 +9,8 @@ import {
 	Legend,
 } from "chart.js";
 import "./Reviews.css";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 ChartJS.register(
 	CategoryScale,
@@ -33,7 +35,25 @@ const sampleReviews = [
 	},
 ];
 
-const Reviews = ({ reviews = sampleReviews }) => {
+const Reviews = () => {
+	const { id } = useParams();
+	const [reviews, setReviews] = useState([]);
+
+	useEffect(() => {
+		const fetchReviews = async () => {
+			try {
+				const res = await fetch(`/restaurants/${id}`);
+				const data = await res.json();
+				setReviews(data.reviews || []);
+			} catch (err) {
+				console.error("Failed to fetch reviews", err);
+				setReviews([]);
+			}
+		};
+
+		if (id) fetchReviews();
+	}, [id]);
+
 	const averageRating = reviews.length
 		? (
 				reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import Gallery from "../../components/Gallery/Gallery";
 import Reviews from "../../components/Reviews/Reviews";
 import PopularDishes from "../../components/PopularDishes/PopularDishes";
@@ -23,21 +23,23 @@ const Restaurant = () => {
 		const fetchRestaurant = async () => {
 			try {
 				setRestaurant(null); // Reset restaurant while loading
-				const response = await axios.get(`http://localhost:5000/restaurants/${id}`);
+				const response = await axios.get(
+					`http://localhost:5000/restaurants/${id}`
+				);
 				if (response.data) {
-					console.log('Restaurant data:', response.data);
+					console.log("Restaurant data:", response.data);
 					setRestaurant(response.data);
 				} else {
-					console.error('No restaurant data received');
+					console.error("No restaurant data received");
 				}
 			} catch (error) {
-				console.error('Error fetching restaurant:', error);
+				console.error("Error fetching restaurant:", error);
 				// Add user-friendly error handling
 				if (error.response?.status === 404) {
-					alert('Restaurant not found');
-					navigate('/book-table'); // Redirect to booking page
+					alert("Restaurant not found");
+					navigate("/book-table"); // Redirect to booking page
 				} else {
-					alert('Error loading restaurant details');
+					alert("Error loading restaurant details");
 				}
 			}
 		};
@@ -76,7 +78,12 @@ const Restaurant = () => {
 		<div className="restaurant-page">
 			<Navbar role="customer" />
 			<div className="main-image">
-				<img src={restaurant.imageUrl || "https://resizer.otstatic.com/v2/photos/wide-huge/3/48791525.jpg"} />
+				<img
+					src={
+						restaurant.imageUrl ||
+						"https://resizer.otstatic.com/v2/photos/wide-huge/3/48791525.jpg"
+					}
+				/>
 			</div>
 			<h1 className="restaurant-title">{restaurant.name}</h1>
 
@@ -92,7 +99,10 @@ const Restaurant = () => {
 					<div className="content">
 						<section id="overview" className="restaurant-section">
 							<h2>Overview</h2>
-							<p>{restaurant.description || "Overview content goes here..."}</p>
+							<p>
+								{restaurant.description ||
+									"Overview content goes here..."}
+							</p>
 						</section>
 						<section id="reviews" className="restaurant-section">
 							<Reviews />
@@ -100,7 +110,10 @@ const Restaurant = () => {
 						<section id="gallery" className="restaurant-section">
 							<Gallery />
 						</section>
-						<section id="popular-dishes" className="restaurant-section">
+						<section
+							id="popular-dishes"
+							className="restaurant-section"
+						>
 							<PopularDishes />
 						</section>
 						<section id="menu" className="restaurant-section">
