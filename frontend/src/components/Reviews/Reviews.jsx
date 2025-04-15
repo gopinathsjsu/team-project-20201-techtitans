@@ -21,20 +21,6 @@ ChartJS.register(
 	Legend
 );
 
-const sampleReviews = [
-	{ user: "Alice", rating: 5, comment: "Amazing food and great service!" },
-	{
-		user: "Bob",
-		rating: 4,
-		comment: "Good experience, but a bit expensive.",
-	},
-	{
-		user: "Charlie",
-		rating: 3,
-		comment: "Food was okay, service could be better.",
-	},
-];
-
 const Reviews = () => {
 	const { id } = useParams();
 	const [reviews, setReviews] = useState([]);
