@@ -1,16 +1,22 @@
 .menu {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
+	border-style: solid;
+	border-color: white;
+	border-width: 2px;
 }
 
-.menu-item {
-	width: 150px;
+.menu-title {
 	text-align: center;
 }
 
-.menu-item img {
-	width: 100%;
-	height: auto;
-	border-radius: 8px;
+.menu-item {
+	display: flex;
+}
+
+.item-text {
+	margin-left: 20px;
+}
+
+.item-price {
+	margin-left: auto;
+	margin-right: 20px;
 }

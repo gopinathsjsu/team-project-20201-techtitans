@@ -141,8 +141,8 @@ html {
 }
 
 .loading {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.2rem;
-    color: #666;
+	text-align: center;
+	padding: 2rem;
+	font-size: 1.2rem;
+	color: #666;
 }
