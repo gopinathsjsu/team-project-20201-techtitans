@@ -21,7 +21,16 @@ const BookTablePage = () => {
 		const fetchRestaurants = async () => {
 			try {
 				setLoading(true);
-				const response = await axios.get(
+				const response = await axios.get("/restaurants", {
+					signal: controller.signal,
+					timeout: 5000,
+					headers: {
+						"Cache-Control": "no-cache",
+						Pragma: "no-cache",
+						Expires: "0",
+					},
+				});
+				/*const response = await axios.get(
 					"http://127.0.0.1:5173/restaurants",
 					{
 						signal: controller.signal,
@@ -32,7 +41,7 @@ const BookTablePage = () => {
 							Expires: "0",
 						},
 					}
-				);
+				); */
 
 				if (isMounted && response.data) {
 					const restaurantData = response.data.map((restaurant) => ({
@@ -110,6 +119,7 @@ const BookTablePage = () => {
 				<Navbar role="customer" />
 				<div className="error-state">
 					<p>{error}</p>
+					<button onClick={fetchRestaurants}>Retry</button>
 				</div>
 			</div>
 		);
