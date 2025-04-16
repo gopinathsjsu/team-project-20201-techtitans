@@ -23,7 +23,7 @@ const Restaurant = () => {
 			try {
 				setRestaurant(null); // Reset restaurant while loading
 				const response = await axios.get(
-					`http://127.0.0.1:5173/restaurants/${id}`
+					`http://127.0.0.1:5000/restaurants/${id}`
 				);
 				if (response.data) {
 					setRestaurant(response.data);

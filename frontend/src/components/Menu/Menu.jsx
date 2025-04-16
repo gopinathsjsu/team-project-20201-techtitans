@@ -9,7 +9,7 @@ function Menu(props) {
 	async function fetchMenus() {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5173/menu/${id}`
+				`http://127.0.0.1:5000/menu/${id}`
 			);
 			return response;
 		} catch (error) {

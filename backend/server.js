@@ -41,7 +41,7 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
-const PORT = 5173;
+const PORT = 5000;
 
 app.use(cors());
 
