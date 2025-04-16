@@ -18,26 +18,29 @@ const Restaurant = () => {
 	const [time, setTime] = useState("");
 	const [people, setPeople] = useState("");
 
-	// Fetch restaurant data
 	useEffect(() => {
 		const fetchRestaurant = async () => {
 			try {
 				setRestaurant(null); // Reset restaurant while loading
 				const response = await axios.get(
+
 					`http://localhost:5000/restaurants/${id}`
 				);
 				if (response.data) {
 					console.log("Restaurant data:", response.data);
+				/*	`http://127.0.0.1:5173/restaurants/${id}`
+				);
+				if (response.data) { */
+
 					setRestaurant(response.data);
 				} else {
 					console.error("No restaurant data received");
 				}
 			} catch (error) {
 				console.error("Error fetching restaurant:", error);
-				// Add user-friendly error handling
 				if (error.response?.status === 404) {
 					alert("Restaurant not found");
-					navigate("/book-table"); // Redirect to booking page
+					navigate("/book-table");
 				} else {
 					alert("Error loading restaurant details");
 				}
@@ -64,7 +67,6 @@ const Restaurant = () => {
 		setActiveTab(tab);
 	};
 
-	// Show loading state
 	if (!restaurant) {
 		return (
 			<div className="restaurant-page">
@@ -86,7 +88,6 @@ const Restaurant = () => {
 				/>
 			</div>
 			<h1 className="restaurant-title">{restaurant.name}</h1>
-
 			<div className="content-container">
 				<div className="main-content">
 					<nav className="restaurant-nav">
@@ -117,11 +118,10 @@ const Restaurant = () => {
 							<PopularDishes />
 						</section>
 						<section id="menu" className="restaurant-section">
-							<Menu />
+							<Menu id={id} />
 						</section>
 					</div>
 				</div>
-
 				<div className="reservation-form">
 					<h3>Make a reservation</h3>
 					<div className="form-row">
