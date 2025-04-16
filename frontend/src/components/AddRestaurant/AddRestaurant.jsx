@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
-import TimeSelect, { timeOptions } from "./TimeSelect";
+import TimeSelect from "./TimeSelect";
 
 function AddRestaurant(props) {
 	const { userEmail } = props;
@@ -305,7 +305,7 @@ function AddRestaurant(props) {
 			setDisable(true);
 			makeRestaurantCall(restaurant).then((result) => {
 				if (result && result.status === 201) {
-					navigate("/restaurant-manager-home");
+					navigate(`/restaurant-manager-add-menu/${result.data._id}`);
 					window.location.reload();
 					setAlertMessages({
 						isOpen: true,
