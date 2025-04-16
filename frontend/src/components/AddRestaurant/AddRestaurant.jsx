@@ -3,8 +3,9 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
+import { useCookies } from "react-cookie";
 
-function AddRestaurant({ userEmail }) {
+function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
 		Sun: false,
 		Mon: false,
@@ -139,14 +140,17 @@ function AddRestaurant({ userEmail }) {
 		photos: [],
 	});
 
+	const [cookies, setCookie] = useCookies(["userEmail"]);
+
 	useEffect(() => {
-		if (userEmail) {
+		const currentUserEmail = cookies.userEmail;
+		if (currentUserEmail) {
 			setRestaurant((prev) => ({
 				...prev,
-				email: userEmail,
+				email: currentUserEmail,
 			}));
 		}
-	}, [userEmail]);
+	}, [cookies.userEmail]);
 
 	const handleLocationChange = (e) => {
 		const { name, value } = e.target;
@@ -364,6 +368,7 @@ function AddRestaurant({ userEmail }) {
 						ref={fileInputRef}
 					/>
 					<button
+						type="button"
 						className="add-restaurant-insert-pics-btn"
 						onClick={() => fileInputRef.current.click()}
 					>
@@ -371,8 +376,8 @@ function AddRestaurant({ userEmail }) {
 					</button>
 					{restaurant.photos.length > 0 && (
 						<p style={{ color: "green", marginBottom: "10px" }}>
-							{restaurant.photos.length} photo
-							{restaurant.photos.length > 1 ? "s" : ""} added.
+							{restaurant.photos.length}/5 photo
+							{restaurant.photos.length > 1 ? "s" : ""} added. 👍
 						</p>
 					)}
 					<label className="add-restaurant-form-group">

@@ -40,7 +40,7 @@ function App() {
 	const [user, setUser] = useState({});
 	const [pendingRestaurants, setPendingRestaurants] = useState([]);
 	const [verifiedRestaurants, setVerifiedRestaurants] = useState([]);
-	const [cookies, setCookie] = useCookies(["auth_token"]);
+	const [cookies, setCookie] = useCookies(["auth_token", "userEmail"]);
 	const [alertMessages, setAlertMessages] = useState({
 		isOpen: false,
 		message: "",
@@ -58,6 +58,7 @@ function App() {
 	function updateUser(data) {
 		setToken(data.token);
 		setUser(data.savedUser);
+		setCookie("userEmail", data.savedUser.email, { path: "/" });
 	}
 
 	async function fetchUser() {
@@ -66,7 +67,7 @@ function App() {
 				headers: { Authorization: `Bearer ${cookies.auth_token}` },
 			};
 			const response = await axios.get(
-				"http://127.0.0.1:5173/user",
+				"http://127.0.0.1:5000/user",
 				config
 			);
 			return response;
@@ -78,7 +79,7 @@ function App() {
 	async function fetchPendingRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5173/restaurants/pending"
+				"http://127.0.0.1:5000/restaurants/pending"
 			);
 			return response.data;
 		} catch (error) {
@@ -89,7 +90,7 @@ function App() {
 	async function fetchVerifiedRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5173/restaurants/verified"
+				"http://127.0.0.1:5000/restaurants/verified"
 			);
 			return response.data;
 		} catch (error) {
@@ -178,13 +179,10 @@ function App() {
 				/>
 				<Route
 					path="/restaurant-manager-add-restaurant"
-					element={<RestaurantManagerAddRestaurant user={user} />}
+					element={<RestaurantManagerAddRestaurant />}
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />
-				<Route
-					path="/restaurant/:id"
-					element={<Restaurant />}
-				/>
+				<Route path="/restaurant/:id" element={<Restaurant />} />
 				<Route
 					path="/reservation-confirmation"
 					element={<ReservationConfirmation />}

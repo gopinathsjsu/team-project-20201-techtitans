@@ -10,7 +10,7 @@ function RestaurantListing(props) {
 				updateStatus: status,
 			};
 			const updatedRestaurant = await axios.patch(
-				`http://127.0.0.1:5173/restaurants/${name}`,
+				`http://127.0.0.1:5000/restaurants/${name}`,
 				restaurantStatus
 			);
 			return updatedRestaurant;

@@ -44,7 +44,7 @@ function Login(props) {
 	async function makeLoginCall(user) {
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5173/log-in",
+				"http://127.0.0.1:5000/log-in",
 				user
 			);
 			return response;

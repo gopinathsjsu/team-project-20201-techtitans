@@ -52,7 +52,7 @@ function Register(props) {
 	async function makeUserCall(user) {
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5173/users",
+				"http://127.0.0.1:5000/users",
 				user
 			);
 			return response;
