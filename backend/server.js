@@ -13,7 +13,7 @@ import {
 	getVerifiedRestaurants,
 	getPendingRestaurants,
 	getRestaurants,
-	getRestaurantById
+	getRestaurantById,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -25,6 +25,7 @@ import {
 	getReviewsByRestaurantId,
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
+import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
 
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
@@ -40,8 +41,8 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
-const PORT = 5000;
- 
+const PORT = 5173;
+
 app.use(cors());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -151,17 +152,17 @@ app.post("/log-in", async (req, res) => {
 });
 
 app.get("/restaurants", async (req, res) => {
-    try {
-        const result = await getRestaurants();
-        if (result && result.length > 0) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).send("No restaurants found");
-        }
-    } catch (error) {
-        console.error("Error fetching restaurants:", error);
-        res.status(500).send("Internal Server Error");
-    }
+	try {
+		const result = await getRestaurants();
+		if (result && result.length > 0) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("No restaurants found");
+		}
+	} catch (error) {
+		console.error("Error fetching restaurants:", error);
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.get("/restaurants/verified", async (req, res) => {
@@ -204,6 +205,44 @@ app.patch("/restaurants/:name", async (req, res) => {
 		res.status(404).send("Resource not found.");
 	} else {
 		res.status(201).send(result);
+	}
+});
+
+app.post("/menu", async (req, res) => {
+	const menu = req.body;
+	const savedMenu = await addMenu(menu);
+	if (savedMenu) {
+		res.status(201).send(savedMenu);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.get("/menu/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getMenuByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Menu(s) not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error.");
+	}
+});
+
+app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReservationsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
 	}
 });
 

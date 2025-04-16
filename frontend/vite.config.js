@@ -11,7 +11,7 @@ export default defineConfig({
 			"/log-in": "http://localhost:5000",
 			"/reservations": "http://localhost:5000",
 			"/reviews": "http://localhost:5000",
-			"/gallery": "http://localhost:5000"
+			"/gallery": "http://localhost:5000",
 		},
 	},
 });
