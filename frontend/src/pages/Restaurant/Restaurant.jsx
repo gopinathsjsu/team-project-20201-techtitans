@@ -125,7 +125,6 @@ const Restaurant = () => {
 		setActiveTab(tab);
 	};
 
-	// Show a loading state if the restaurant data hasn't loaded yet
 	if (!restaurant) {
 		return (
 			<div className="restaurant-page">
@@ -148,7 +147,6 @@ const Restaurant = () => {
 				/>
 			</div>
 			<h1 className="restaurant-title">{restaurant.name}</h1>
-
 			<div className="content-container">
 				<div className="main-content">
 					<nav className="restaurant-nav">
@@ -179,7 +177,7 @@ const Restaurant = () => {
 							<PopularDishes />
 						</section>
 						<section id="menu" className="restaurant-section">
-							<Menu />
+							<Menu id={id} />
 						</section>
 					</div>
 				</div>

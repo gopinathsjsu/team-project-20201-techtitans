@@ -25,6 +25,13 @@ import {
 	getReviewsByRestaurantId,
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
+import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
+
+import sgMail from "@sendgrid/mail";
+import dotenv from "dotenv";
+
+dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
 const PORT = 5173;
@@ -75,26 +82,43 @@ app.get("/user", authenticateUser, async (req, res) => {
 
 app.post("/users", async (req, res) => {
 	const user = req.body;
-	const { email } = user;
-	const { password } = user;
+	const { email, username, password } = user;
 
 	if (!email) {
 		res.status(400).send("Bad request: Invalid input for email.");
 	} else if (!password) {
 		res.status(400).send("Bad request: Invalid input for password.");
-	} else {
+	}
+	try {
 		const salt = await bcrypt.genSalt(10);
 		const hashedPwd = await bcrypt.hash(password, salt);
 		const savedUser = await addUser(user, hashedPwd);
 
 		// generate access token in the future
 		if (savedUser && savedUser != "existing user") {
+			const msg = {
+				to: email,
+				from: "BookTable <isla2000@gmail.com>",
+				subject: "Welcome to the BookTable!",
+				text: `Hi ${username || "there"}, thanks for registering!`,
+				html: `<strong>Hi ${username || "there"}, welcome </strong>`,
+			};
+			try {
+				await sgMail.send(msg);
+			} catch (emailError) {
+				console.error("Error sending email:", emailError);
+			}
 			res.status(201).send(savedUser);
 		} else if (savedUser == "existing user") {
 			res.status(401).end();
 		} else {
 			res.status(500).end();
 		}
+	} catch (error) {
+		console.error("Registration error:", error);
+		return res
+			.status(500)
+			.send("Internal server error during registration.");
 	}
 });
 
@@ -170,6 +194,44 @@ app.patch("/restaurants/:name", async (req, res) => {
 		res.status(404).send("Resource not found.");
 	} else {
 		res.status(201).send(result);
+	}
+});
+
+app.post("/menu", async (req, res) => {
+	const menu = req.body;
+	const savedMenu = await addMenu(menu);
+	if (savedMenu) {
+		res.status(201).send(savedMenu);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.get("/menu/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getMenuByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Menu(s) not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error.");
+	}
+});
+
+app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const result = await getReservationsByRestaurantId(restaurantId);
+		if (result) {
+			res.status(200).json(result);
+		} else {
+			res.status(404).send("Reservations not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
 	}
 });
 
