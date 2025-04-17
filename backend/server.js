@@ -26,6 +26,11 @@ import {
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
+import {
+	addTable,
+	updateTableStatus,
+	getAvailableTablesbyTime,
+} from "./models/tableServices.js";
 
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
@@ -63,7 +68,7 @@ function authenticateUser(req, res, next) {
 
 function generateAccessToken(email) {
 	// change the token duration for your testing
-	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "10s" });
+	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "24h" });
 }
 
 app.get("/", (req, res) => {
@@ -224,6 +229,50 @@ app.get("/menu/:restaurantId", async (req, res) => {
 	}
 });
 
+app.get("/table/:restaurantId/:timeSlot/:numPeople", async (req, res) => {
+	const { restaurantId, timeSlot, numPeople } = req.params;
+	const tables = await getAvailableTablesbyTime(
+		restaurantId,
+		timeSlot,
+		numPeople
+	);
+	if (tables) {
+		res.status(201).send(tables);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.post("/table", async (req, res) => {
+	const table = req.body;
+	const savedTable = await addTable(table);
+	if (savedTable) {
+		res.status(201).send(savedTable);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.patch("/table/:tableNum", async (req, res) => {
+	const { tableNum } = req.params;
+	const updates = req.body;
+	let result = null;
+	if (updates.isTaken != undefined || updates.isTaken != null) {
+		result = await updateTableStatus(
+			tableNum,
+			updates.timeSlot,
+			updates.restaurantId,
+			updates.isTaken
+		);
+	}
+
+	if (result === undefined || result === null) {
+		res.status(404).send("Resource not found.");
+	} else {
+		res.status(201).send(result);
+	}
+});
+
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 	try {
 		const restaurantId = req.params.restaurantId;
@@ -339,20 +388,14 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 app.get("/restaurants/:id", async (req, res) => {
 	try {
 		const restaurantId = req.params.id;
-		const restaurantDoc = await getRestaurantById(restaurantId);
+		const restaurant = await getRestaurantById(restaurantId);
 
-		if (!restaurantDoc) {
+		if (!restaurant) {
 			return res.status(404).send("Restaurant not found");
 		}
 
-		// Convert to plain object if it's a Mongoose document
-		const restaurant = restaurantDoc.toObject
-			? restaurantDoc.toObject()
-			: restaurantDoc;
-
 		const reviews = await getReviewsByRestaurantId(restaurantId);
 		restaurant.reviews = reviews || [];
-
 		res.status(200).json(restaurant);
 	} catch (error) {
 		res.status(500).send("Internal Server Error");

@@ -2,11 +2,6 @@ import mongoose from "mongoose";
 
 export const ReservationSchema = new mongoose.Schema(
 	{
-		reservationId: {
-			type: mongoose.Schema.Types.ObjectId,
-			default: () => new mongoose.Types.ObjectId(),
-			required: true,
-		},
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
@@ -17,6 +12,17 @@ export const ReservationSchema = new mongoose.Schema(
 			ref: "Restaurant",
 			required: true,
 		},
+		table: {
+			tableNum: {
+				type: Number,
+				required: true,
+			},
+			timeSlot: {
+				type: String,
+				required: true,
+				trim: true,
+			},
+		},
 		date: {
 			type: Date,
 			required: true,
@@ -24,6 +30,7 @@ export const ReservationSchema = new mongoose.Schema(
 		time: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		numberOfPeople: {
 			type: Number,

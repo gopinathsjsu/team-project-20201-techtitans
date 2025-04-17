@@ -1,6 +1,6 @@
 import Navbar from "../../components/Navbar/Navbar";
 import RestaurantListing from "../../components/RestaurantListing/RestaurantListing";
-import RestaurantReservationConfirmation from "../../components/RestaurantReservationConfirmation/RestaurantReservationConfirmation";
+import RestaurantReservationConfirmation from "../../components/Reservation/RestaurantReservationConfirmation";
 
 function RestaurantManagerHome(props) {
 	// temporarily show all pending & verified restaurants
@@ -32,6 +32,7 @@ function RestaurantManagerHome(props) {
 				date="3/18/25"
 				time="4:00 PM"
 				numPeople="8"
+				table="1"
 			/>
 			<h2>This is the Restaurant Manager's Home Page</h2>
 			<h2 className="restaurants-listing-title">Pending Approval</h2>

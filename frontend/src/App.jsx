@@ -50,7 +50,7 @@ function App() {
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
 		setCookie("auth_token", token, {
-			maxAge: 10,
+			maxAge: 7200,
 			path: "/",
 		});
 	}

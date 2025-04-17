@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
 import { useCookies } from "react-cookie";
-import TimeSelect, { timeOptions } from "./TimeSelect";
+import TimeSelect from "./TimeSelect";
 import { jwtDecode } from "jwt-decode";
 
 function AddRestaurant() {
