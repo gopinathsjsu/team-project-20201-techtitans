@@ -66,7 +66,7 @@ function App() {
 				headers: { Authorization: `Bearer ${cookies.auth_token}` },
 			};
 			const response = await axios.get(
-				"http://127.0.0.1:5173/user",
+				"http://127.0.0.1:5000/user",
 				config
 			);
 			return response;
@@ -78,7 +78,7 @@ function App() {
 	async function fetchPendingRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5173/restaurants/pending"
+				"http://127.0.0.1:5000/restaurants/pending"
 			);
 			return response.data;
 		} catch (error) {
@@ -89,7 +89,7 @@ function App() {
 	async function fetchVerifiedRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5173/restaurants/verified"
+				"http://127.0.0.1:5000/restaurants/verified"
 			);
 			return response.data;
 		} catch (error) {
