@@ -26,7 +26,6 @@ export async function addReservation(reservation) {
 		const savedReservation = await reservationToAdd.save();
 		return savedReservation;
 	} catch (error) {
-		console.error("Error saving reservation:", error);
 		return false;
 	}
 }
@@ -38,7 +37,6 @@ export async function getReservationsByUserId(userId) {
 		const reservations = await ReservationModel.find({ userId });
 		return reservations;
 	} catch (error) {
-		console.error("Error fetching reservations by user ID:", error);
 		return false;
 	}
 }
@@ -50,7 +48,6 @@ export async function getReservationsByRestaurantId(restaurantId) {
 		const reservations = await ReservationModel.find({ restaurantId });
 		return reservations;
 	} catch (error) {
-		console.error("Error fetching reservations by restaurant ID:", error);
 		return false;
 	}
 }

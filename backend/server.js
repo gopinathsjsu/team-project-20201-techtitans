@@ -160,7 +160,6 @@ app.get("/restaurants", async (req, res) => {
 			res.status(404).send("No restaurants found");
 		}
 	} catch (error) {
-		console.error("Error fetching restaurants:", error);
 		res.status(500).send("Internal Server Error");
 	}
 });
@@ -189,7 +188,7 @@ app.post("/restaurants", async (req, res) => {
 	if (savedRestaurant && savedRestaurant != "existing restaurant") {
 		res.status(201).send(savedRestaurant);
 	} else {
-		res.status(500).end();
+		res.status(500).end("existing restaurant");
 	}
 });
 

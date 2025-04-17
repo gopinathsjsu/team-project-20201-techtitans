@@ -14,14 +14,51 @@ const Restaurant = () => {
 
 	const [restaurant, setRestaurant] = useState(null);
 	const [activeTab, setActiveTab] = useState("overview");
-	const [date, setDate] = useState("");
+	// Initialize date to today; you can modify as needed.
+	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 	const [time, setTime] = useState("");
-	const [people, setPeople] = useState("");
+	const [people, setPeople] = useState("1");
 
+	// Helper to generate 30-minute time slots from an hours string (e.g. "11 AM - 11 PM")
+	const generateTimeSlots = (hoursString) => {
+		if (hoursString === "Closed") {
+			return ["Restaurant is Closed"];
+		}
+		try {
+			const [openTime, closeTime] = hoursString.split(" - ");
+			const parseTime = (timeStr) => {
+				const [time, period] = timeStr.split(" ");
+				let [hours, minutes] = time.split(":").map(Number);
+				if (minutes === undefined) minutes = 0;
+				if (period === "PM" && hours !== 12) hours += 12;
+				if (period === "AM" && hours === 12) hours = 0;
+				return hours * 60 + minutes;
+			};
+			const openMinutes = parseTime(openTime);
+			const closeMinutes = parseTime(closeTime);
+			const convertMinutesTo12Hour = (totalMinutes) => {
+				const hrs24 = Math.floor(totalMinutes / 60);
+				const mins = totalMinutes % 60;
+				const period = hrs24 >= 12 ? "PM" : "AM";
+				const hrs12 = hrs24 % 12 === 0 ? 12 : hrs24 % 12;
+				return `${hrs12}:${mins.toString().padStart(2, "0")} ${period}`;
+			};
+			const slots = [];
+			for (let t = openMinutes; t < closeMinutes; t += 30) {
+				slots.push(convertMinutesTo12Hour(t));
+			}
+			return slots;
+		} catch (error) {
+			console.error("Error generating time slots:", error);
+			return [];
+		}
+	};
+
+	// Fetch restaurant details from the DB
 	useEffect(() => {
 		const fetchRestaurant = async () => {
 			try {
-				setRestaurant(null); // Reset restaurant while loading
+				setRestaurant(null); // reset while loading
 				const response = await axios.get(
 
 					`http://localhost:5000/restaurants/${id}`
@@ -51,6 +88,33 @@ const Restaurant = () => {
 			fetchRestaurant();
 		}
 	}, [id, navigate]);
+
+	// Compute available time slots based on the selected date.
+	// This calculation is done every time either the restaurant data or date changes.
+	const availableTimes = React.useMemo(() => {
+		if (!restaurant || !restaurant.hours) return [];
+		const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+		const selectedDate = new Date(date);
+		const dayOfWeek = days[selectedDate.getDay()];
+		// Use hours for the selected day, or fall back to the first available set
+		const hoursForDay =
+			restaurant.hours[dayOfWeek] || Object.values(restaurant.hours)[0];
+		return generateTimeSlots(hoursForDay);
+	}, [restaurant, date]);
+
+	// When available times change and a valid time exists, set the default time if none is selected.
+	useEffect(() => {
+		if (
+			availableTimes.length > 0 &&
+			availableTimes[0] !== "Restaurant is Closed"
+		) {
+			if (!time) {
+				setTime(availableTimes[0]);
+			}
+		} else {
+			setTime("");
+		}
+	}, [availableTimes, time]);
 
 	const handleReserveClick = () => {
 		navigate("/reservation-confirmation", {
@@ -85,6 +149,7 @@ const Restaurant = () => {
 						restaurant.imageUrl ||
 						"https://resizer.otstatic.com/v2/photos/wide-huge/3/48791525.jpg"
 					}
+					alt={restaurant.name}
 				/>
 			</div>
 			<h1 className="restaurant-title">{restaurant.name}</h1>
@@ -149,11 +214,20 @@ const Restaurant = () => {
 								value={time}
 								onChange={(e) => setTime(e.target.value)}
 							>
-								<option value="5:30">5:30 PM</option>
-								<option value="6:00">6:00 PM</option>
-								<option value="6:30">6:30 PM</option>
-								<option value="6:45">6:45 PM</option>
-								<option value="7:00">7:00 PM</option>
+								{availableTimes.length === 0 ||
+								(availableTimes.length === 1 &&
+									availableTimes[0] ===
+										"Restaurant is Closed") ? (
+									<option value="">
+										Restaurant is Closed
+									</option>
+								) : (
+									availableTimes.map((slot, idx) => (
+										<option key={idx} value={slot}>
+											{slot}
+										</option>
+									))
+								)}
 							</select>
 						</div>
 						<div className="form-group button-container">
