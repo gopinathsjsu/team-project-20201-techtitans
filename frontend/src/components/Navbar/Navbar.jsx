@@ -4,10 +4,9 @@ import { Link } from "react-router-dom";
 
 function Navbar(props) {
 	const { role } = props;
-	const [, , removeCookie] = useCookies(["auth_token", "userEmail"]);
+	const [, , removeCookie] = useCookies(["auth_token"]);
 	const handleLogOut = () => {
 		removeCookie("auth_token", { path: "/" });
-		removeCookie("userEmail", { path: "/" });
 	};
 
 	return (

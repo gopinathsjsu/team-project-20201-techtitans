@@ -40,7 +40,7 @@ function App() {
 	const [user, setUser] = useState({});
 	const [pendingRestaurants, setPendingRestaurants] = useState([]);
 	const [verifiedRestaurants, setVerifiedRestaurants] = useState([]);
-	const [cookies, setCookie] = useCookies(["auth_token", "userEmail"]);
+	const [cookies, setCookie] = useCookies(["auth_token"]);
 	const [alertMessages, setAlertMessages] = useState({
 		isOpen: false,
 		message: "",
@@ -58,7 +58,6 @@ function App() {
 	function updateUser(data) {
 		setToken(data.token);
 		setUser(data.savedUser);
-		setCookie("userEmail", data.savedUser.email, { path: "/" });
 	}
 
 	async function fetchUser() {

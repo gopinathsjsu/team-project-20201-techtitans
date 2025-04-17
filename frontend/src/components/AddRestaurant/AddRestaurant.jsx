@@ -5,6 +5,7 @@ import axios from "axios";
 import AlertMessage from "../AlertMessage";
 import { useCookies } from "react-cookie";
 import TimeSelect, { timeOptions } from "./TimeSelect";
+import { jwtDecode } from "jwt-decode";
 
 function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
@@ -141,17 +142,23 @@ function AddRestaurant() {
 		photos: [],
 	});
 
-	const [cookies, setCookie] = useCookies(["userEmail"]);
+	const [cookies] = useCookies(["auth_token"]);
 
 	useEffect(() => {
-		const currentUserEmail = cookies.userEmail;
-		if (currentUserEmail) {
-			setRestaurant((prev) => ({
-				...prev,
-				email: currentUserEmail,
-			}));
+		if (typeof cookies.auth_token === "string") {
+			try {
+				const userEmail = jwtDecode(cookies.auth_token)?.email;
+				if (userEmail) {
+					setRestaurant((prev) => ({
+						...prev,
+						email: userEmail,
+					}));
+				}
+			} catch (err) {
+				console.error("Invalid JWT token:", err);
+			}
 		}
-	}, [cookies.userEmail]);
+	}, [cookies.auth_token]);	
 
 	const handleLocationChange = (e) => {
 		const { name, value } = e.target;
