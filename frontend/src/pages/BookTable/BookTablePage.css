@@ -1,12 +1,7 @@
 .book-table-page {
-	width: 100%;
-	max-width: 100vw;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+	width: 100vw;
 	padding: 20px;
 	min-height: 100vh;
-	box-sizing: border-box;
 }
 
 .header {
@@ -20,64 +15,152 @@
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.search-section {
+	background:
+		linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+		url("/images/restaurant-bg.jpg");
+	background-size: cover;
+	background-position: center;
+	padding: 60px 20px;
+	margin: 80px 0 40px;
+	border-radius: 15px;
+	text-align: center;
+	color: white;
+}
+
+.search-section h1 {
+	font-size: 2.5rem;
+	margin-bottom: 30px;
+	color: white;
+	text-align: center;
+}
+
 .search-form {
-	display: flex;
-	gap: 10px;
-	margin-bottom: 20px;
-	background-color: #fff;
-	padding: 10px;
-	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	margin-top: 80px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 15px;
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 20px;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 10px;
 }
 
 .search-form input,
 .search-form button {
-	padding: 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
+	padding: 12px 15px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 1rem;
+	color: #555;
 }
 
 .search-form button {
-	background-color: #007bff;
-	color: #fff;
+	background-color: #e63946;
+	color: white;
+	border: none;
 	cursor: pointer;
+	transition: background-color 0.3s;
+	grid-column: 1 / -1;
+}
+
+.search-form button:hover {
+	background-color: #d62828;
+}
+
+.search-form button:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
 }
 
 .search-results {
-	margin-top: 20px;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 20px;
+	padding: 20px;
+	margin: 0 auto;
 }
 
 .restaurant-result {
-	margin-bottom: 10px;
-	background-color: #fff;
+	background: white;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: transform 0.3s;
 	padding: 10px;
-	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+	font-size: 1.1rem;
+}
+
+.restaurant-result:hover {
+	transform: translateY(-5px);
+}
+
+.restaurant-image {
 	width: 100%;
-	max-width: 100%;
-	box-sizing: border-box;
-	color: #000;
+	height: 250px;
+	object-fit: cover;
+}
+
+.restaurant-content {
+	padding: 20px;
+}
+
+.restaurant-content h3 {
+	color: black;
+}
+
+.restaurant-info {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px;
+	margin: 15px 0;
+}
+
+.restaurant-info p {
+	margin: 5px 0;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	color: black;
 }
 
 .available-times {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
+	margin-top: 15px;
+	border-top: 1px solid #eee;
+	padding-top: 15px;
+	color: black;
 }
 
-.available-times button {
-	margin-right: 5px;
-	padding: 5px 10px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	background-color: #007bff;
-	color: #fff;
+.time-slot-button {
+	padding: 8px 12px;
+	margin: 5px;
+	background-color: #4caf50;
+	color: white;
+	border: none;
+	border-radius: 20px;
 	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.time-slot-button:hover {
+	background-color: #45a049;
+	transform: scale(1.05);
+}
+
+.view-details-button {
+	width: 100%;
+	padding: 12px;
+	background-color: #2d3436;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	margin-top: 15px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.view-details-button:hover {
+	background-color: #636e72;
 }
 
 .loading-state,
@@ -103,4 +186,23 @@
 
 .error-state button:hover {
 	background-color: #0056b3;
+}
+
+.load-more-container {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.load-more-button {
+	padding: 10px 20px;
+	background-color: #e63946;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.load-more-button:hover {
+	background-color: #d62828;
 }

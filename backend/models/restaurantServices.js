@@ -28,16 +28,6 @@ async function findRestaurantByName(name) {
 	}
 }
 
-async function findRestaurantByLoc(loc) {
-	const conn = getDbConnection();
-	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
-	try {
-		return await RestaurantModel.findOne({ loc });
-	} catch (error) {
-		return undefined;
-	}
-}
-
 export async function getVerifiedRestaurants() {
 	const conn = getDbConnection();
 	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
@@ -73,9 +63,13 @@ export async function addRestaurant(restaurant) {
 
 		let savedRestaurant;
 		const checkRestaurantName = await findRestaurantByName(restaurant.name);
-		const checkRestaurantLoc = await findRestaurantByLoc(
-			restaurant.location
-		);
+		const restaurantsAtLoc = await searchRestaurants({
+			location: restaurant.location,
+		});
+		const checkRestaurantLoc =
+			restaurantsAtLoc && restaurantsAtLoc.length > 0
+				? restaurantsAtLoc[0]
+				: null;
 
 		if (!checkRestaurantName && !checkRestaurantLoc) {
 			savedRestaurant = await restaurantToAdd.save();
@@ -128,6 +122,40 @@ export async function getRestaurantById(id) {
 		return restaurant;
 	} catch (error) {
 		console.error("Error in getRestaurantById:", error);
+		return null;
+	}
+}
+
+export async function searchRestaurants(criteria) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+
+	try {
+		let query = { pendingApproval: false };
+
+		if (criteria.location) {
+			// If criteria.location is a string, use regex to search in the address field.
+			if (typeof criteria.location === "string") {
+				query.address = new RegExp(criteria.location, "i");
+			}
+			// Otherwise, if it's an array (assuming [longitude, latitude]), perform a geospatial query.
+			else if (Array.isArray(criteria.location)) {
+				query.location = {
+					$near: {
+						$geometry: {
+							type: "Point",
+							coordinates: criteria.location,
+						},
+						$maxDistance: 5000, // adjust the radius (in meters) as needed
+					},
+				};
+			}
+		}
+
+		const restaurants = await RestaurantModel.find(query);
+		return restaurants;
+	} catch (error) {
+		console.error("Error searching restaurants:", error);
 		return null;
 	}
 }
