@@ -345,19 +345,26 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 });
 
 app.get("/restaurants/:id", async (req, res) => {
-    try {
-        const restaurantId = req.params.id;
-        const result = await getRestaurantById(restaurantId);
-        
-        if (result) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).send("Restaurant not found");
-        }
-    } catch (error) {
-        console.error("Error fetching restaurant:", error);
-        res.status(500).send("Internal Server Error");
-    }
+	try {
+		const restaurantId = req.params.id;
+		const restaurantDoc = await getRestaurantById(restaurantId);
+
+		if (!restaurantDoc) {
+			return res.status(404).send("Restaurant not found");
+		}
+
+		// Convert to plain object if it's a Mongoose document
+		const restaurant = restaurantDoc.toObject
+			? restaurantDoc.toObject()
+			: restaurantDoc;
+
+		const reviews = await getReviewsByRestaurantId(restaurantId);
+		restaurant.reviews = reviews || [];
+
+		res.status(200).json(restaurant);
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
 });
 
 app.post("/upload", upload.single("image"), async (req, res) => {
