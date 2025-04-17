@@ -34,7 +34,7 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
-const PORT = 5173;
+const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -336,13 +336,21 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 app.get("/restaurants/:id", async (req, res) => {
 	try {
 		const restaurantId = req.params.id;
-		const result = await getRestaurantById(restaurantId);
+		const restaurantDoc = await getRestaurantById(restaurantId);
 
-		if (result) {
-			res.status(200).json(result);
-		} else {
-			res.status(404).send("Restaurant not found");
+		if (!restaurantDoc) {
+			return res.status(404).send("Restaurant not found");
 		}
+
+		// Convert to plain object if it's a Mongoose document
+		const restaurant = restaurantDoc.toObject
+			? restaurantDoc.toObject()
+			: restaurantDoc;
+
+		const reviews = await getReviewsByRestaurantId(restaurantId);
+		restaurant.reviews = reviews || [];
+
+		res.status(200).json(restaurant);
 	} catch (error) {
 		res.status(500).send("Internal Server Error");
 	}

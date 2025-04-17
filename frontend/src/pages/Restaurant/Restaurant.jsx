@@ -60,9 +60,15 @@ const Restaurant = () => {
 			try {
 				setRestaurant(null); // reset while loading
 				const response = await axios.get(
-					`http://127.0.0.1:5173/restaurants/${id}`
+
+					`http://localhost:5000/restaurants/${id}`
 				);
 				if (response.data) {
+					console.log("Restaurant data:", response.data);
+				/*	`http://127.0.0.1:5173/restaurants/${id}`
+				);
+				if (response.data) { */
+
 					setRestaurant(response.data);
 				} else {
 					console.error("No restaurant data received");

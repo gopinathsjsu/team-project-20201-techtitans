@@ -234,6 +234,7 @@ const BookTablePage = () => {
 				<Navbar role="customer" />
 				<div className="error-state">
 					<p>{error}</p>
+					<button onClick={fetchRestaurants}>Retry</button>
 				</div>
 			</div>
 		);
