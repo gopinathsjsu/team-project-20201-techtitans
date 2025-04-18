@@ -158,7 +158,7 @@ function AddRestaurant() {
 				console.error("Invalid JWT token:", err);
 			}
 		}
-	}, [cookies.auth_token]);	
+	}, [cookies.auth_token]);
 
 	const handleLocationChange = (e) => {
 		const { name, value } = e.target;
@@ -186,7 +186,7 @@ function AddRestaurant() {
 					"http://localhost:5000/upload",
 					formData
 				);
-				uploadedUrls.push(`http://localhost:5000${res.data.fileUrl}`);
+				uploadedUrls.push(res.data.fileUrl);
 			} catch (err) {
 				console.error("Error uploading image:", err);
 			}
