@@ -30,12 +30,7 @@ import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 
-import upload from "./middleware/upload.js";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import upload, { uploadToS3 } from "./middleware/upload.js";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -44,8 +39,6 @@ const app = express();
 const PORT = 5000;
 
 app.use(cors());
-
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(express.json());
 
@@ -371,8 +364,8 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 		if (!req.file) {
 			return res.status(400).send("No file uploaded.");
 		}
-		const fileUrl = `/uploads/${req.file.filename}`;
 
+		const fileUrl = await uploadToS3(req.file);
 		res.status(201).json({ message: "Upload successful", fileUrl });
 	} catch (error) {
 		console.error("Upload error:", error);
