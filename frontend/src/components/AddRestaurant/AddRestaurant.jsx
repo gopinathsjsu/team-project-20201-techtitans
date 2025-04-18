@@ -1,9 +1,11 @@
 import "./AddRestaurant.css";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
+import { useCookies } from "react-cookie";
 import TimeSelect, { timeOptions } from "./TimeSelect";
+import { jwtDecode } from "jwt-decode";
 
 function AddRestaurant() {
 	const [closedDays, setClosedDays] = useState({
@@ -70,7 +72,7 @@ function AddRestaurant() {
 
 	const renderTableSizes = () => {
 		const tableSizeOptions = Array.from({ length: 20 }, (_, i) => (
-			<option key={i + 1} value={`${i + 1}-seats`}>
+			<option key={i + 1} value={`${i + 1}`}>
 				{i + 1}
 			</option>
 		));
@@ -82,8 +84,9 @@ function AddRestaurant() {
 			>
 				Size for Table {i + 1}:
 				<select
-					name={`size-table-${i + 1}`}
+					name={`Table ${i + 1} Size`}
 					className="add-restaurant-form-select-smallest"
+					onChange={handleTableSizeChange}
 				>
 					<option value="" disabled selected>
 						0
@@ -92,6 +95,17 @@ function AddRestaurant() {
 				</select>
 			</label>
 		));
+	};
+
+	const handleTableSizeChange = (e) => {
+		const { name, value } = e.target;
+		setRestaurant((prev) => ({
+			...prev,
+			tableSizes: {
+				...prev.tableSizes,
+				[name]: value,
+			},
+		}));
 	};
 
 	const [alertMessages, setAlertMessages] = useState({
@@ -122,38 +136,66 @@ function AddRestaurant() {
 		location: [0, 0],
 		pendingApproval: true,
 		approved: false,
+		email: "",
+		tableSizes: {},
+		bookingDuration: "",
+		photos: [],
 	});
 
-	/*
-	const [restaurant, setRestaurant] = useState({
-		name: "",
-		cuisineType: "",
-		costRating: "",
-		avgRating: 0,
-		bookingsToday: 0,
-		address: "",
-		contactInfo: "",
-		hours: {
-			Mon: "",
-			Tue: "",
-			Wed: "",
-			Thu: "",
-			Fri: "",
-			Sat: "",
-			Sun: "",
-		},
-		description: "",
-		location: [0, 0],
-		pendingApproval: true,
-		approved: false,
-		bookingTimes: {
-			From: "",
-			To: "",
-			Every: "",
-		},
-		tables: {},
-	});
-	*/
+	const [cookies] = useCookies(["auth_token"]);
+
+	useEffect(() => {
+		if (typeof cookies.auth_token === "string") {
+			try {
+				const userEmail = jwtDecode(cookies.auth_token)?.email;
+				if (userEmail) {
+					setRestaurant((prev) => ({
+						...prev,
+						email: userEmail,
+					}));
+				}
+			} catch (err) {
+				console.error("Invalid JWT token:", err);
+			}
+		}
+	}, [cookies.auth_token]);	
+
+	const handleLocationChange = (e) => {
+		const { name, value } = e.target;
+		const index = name === "latitude" ? 0 : 1;
+		const newLocation = [...restaurant.location];
+		newLocation[index] = parseFloat(value);
+		setRestaurant((prev) => ({
+			...prev,
+			location: newLocation,
+		}));
+	};
+
+	const fileInputRef = useRef(null);
+
+	const handleImageInsert = async (e) => {
+		const files = e.target.files;
+		if (!files || files.length === 0) return;
+		const uploadedUrls = [];
+		for (let i = 0; i < Math.min(files.length, 5); i++) {
+			const formData = new FormData();
+			formData.append("image", files[i]);
+
+			try {
+				const res = await axios.post(
+					"http://localhost:5000/upload",
+					formData
+				);
+				uploadedUrls.push(`http://localhost:5000${res.data.fileUrl}`);
+			} catch (err) {
+				console.error("Error uploading image:", err);
+			}
+		}
+		setRestaurant((prev) => ({
+			...prev,
+			photos: [...prev.photos, ...uploadedUrls].slice(0, 5),
+		}));
+	};
 
 	const navigate = useNavigate();
 
@@ -168,6 +210,15 @@ function AddRestaurant() {
 	function validate() {
 		let bool = true;
 		const errors = {};
+		if (restaurant.email.length === 0) {
+			errors.email =
+				"Please wait until your email is synced to this restaurant.";
+			bool = false;
+		}
+		if (!restaurant.photos || restaurant.photos.length === 0) {
+			errors.photos = "Please upload at least one photo.";
+			bool = false;
+		}
 		if (restaurant.name.length === 0) {
 			errors.name = "Please enter a restaurant name.";
 			bool = false;
@@ -195,6 +246,36 @@ function AddRestaurant() {
 		}
 		if (restaurant.description.length === 0) {
 			errors.description = "Please enter a description.";
+			bool = false;
+		}
+		if (
+			isNaN(restaurant.location[0]) ||
+			restaurant.location[0] < 37.1 ||
+			restaurant.location[0] > 37.5
+		) {
+			errors.latitude =
+				"Latitude must be between 37.1 and 37.5 (San Jose area).";
+			bool = false;
+		}
+		if (
+			isNaN(restaurant.location[1]) ||
+			restaurant.location[1] < -122.1 ||
+			restaurant.location[1] > -121.5
+		) {
+			errors.longitude =
+				"Longitude must be between -122.1 and -121.5 (San Jose area).";
+			bool = false;
+		}
+		if (restaurant.bookingDuration === "") {
+			errors.bookingDuration = "Please choose a booking duration.";
+			bool = false;
+		}
+		if (
+			!restaurant.tableSizes ||
+			Object.keys(restaurant.tableSizes).length === 0 ||
+			Object.keys(restaurant.tableSizes).length !== numTables
+		) {
+			errors.tableSizes = "Please choose sizes for all tables.";
 			bool = false;
 		}
 		let open = false;
@@ -229,7 +310,7 @@ function AddRestaurant() {
 	async function makeRestaurantCall(restaurant) {
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5173/restaurants",
+				"http://127.0.0.1:5000/restaurants",
 				restaurant
 			);
 			return response;
@@ -286,6 +367,27 @@ function AddRestaurant() {
 				}}
 			>
 				<div className="add-restaurant-restaurant-form">
+					<input
+						type="file"
+						multiple
+						accept="image/*"
+						onChange={handleImageInsert}
+						style={{ display: "none" }}
+						ref={fileInputRef}
+					/>
+					<button
+						type="button"
+						className="add-restaurant-insert-pics-btn"
+						onClick={() => fileInputRef.current.click()}
+					>
+						Insert Images
+					</button>
+					{restaurant.photos.length > 0 && (
+						<p style={{ color: "green", marginBottom: "10px" }}>
+							{restaurant.photos.length}/5 photo
+							{restaurant.photos.length > 1 ? "s" : ""} added. 👍
+						</p>
+					)}
 					<label className="add-restaurant-form-group">
 						Name:
 						<input
@@ -305,6 +407,23 @@ function AddRestaurant() {
 						/>
 					</label>
 					<label className="add-restaurant-form-group">
+						Location:
+						<div className="add-restaurant-form-coordinates">
+							<input
+								type="text"
+								name="latitude"
+								placeholder="Enter Latitude..."
+								onChange={handleLocationChange}
+							/>
+							<input
+								type="text"
+								name="longitude"
+								placeholder="Enter Longitude..."
+								onChange={handleLocationChange}
+							/>
+						</div>
+					</label>
+					<label className="add-restaurant-form-group">
 						Phone Number:
 						<input
 							type="text"
@@ -313,16 +432,6 @@ function AddRestaurant() {
 							onChange={handleChange}
 						/>
 					</label>
-					{/*
-					<label className="add-restaurant-form-group">
-						Email:
-						<input
-							type="text"
-							name="email"
-							placeholder="Enter Email..."
-						/>
-					</label>
-					*/}
 					<label className="add-restaurant-form-group">
 						Cuisine Type:
 						<select
@@ -454,63 +563,19 @@ function AddRestaurant() {
 							</div>
 						))}
 					</div>
-					<label className="add-restaurant-form-group-booking">
-						<label className="add-restaurant-booking-times-title">
-							Booking Times:
-						</label>
-						<label>From:</label>
-						<TimeSelect
-							value={restaurant.bookingTimes?.From || ""}
-							onChange={(e) =>
-								setRestaurant((prev) => ({
-									...prev,
-									bookingTimes: {
-										...prev.bookingTimes,
-										From: e.target.value,
-									},
-								}))
-							}
-							placeholder="00:00"
-						/>
-
-						<label>To:</label>
-						<TimeSelect
-							value={restaurant.bookingTimes?.To || ""}
-							onChange={(e) =>
-								setRestaurant((prev) => ({
-									...prev,
-									bookingTimes: {
-										...prev.bookingTimes,
-										To: e.target.value,
-									},
-								}))
-							}
-							placeholder="00:00"
-						/>
-
-						<label>Every</label>
+					<label className="add-restaurant-form-group">
+						Booking Duration:
 						<select
-							value={restaurant.bookingTimes?.Every || ""}
-							onChange={(e) =>
-								setRestaurant((prev) => ({
-									...prev,
-									bookingTimes: {
-										...prev.bookingTimes,
-										Every: e.target.value,
-									},
-								}))
-							}
+							name="bookingDuration"
+							className="add-restaurant-form-select-smaller"
+							onChange={handleChange}
 						>
-							<option value="" disabled>
-								0 Minutes
+							<option value="" disabled selected>
+								Choose Booking Duration...
 							</option>
-							{["10 Minutes", "20 Minutes", "30 Minutes"].map(
-								(interval) => (
-									<option key={interval} value={interval}>
-										{interval}
-									</option>
-								)
-							)}
+							<option value="1 Hour">1 Hour</option>
+							<option value="2 Hours">2 Hours</option>
+							<option value="3 Hours">3 Hours</option>
 						</select>
 					</label>
 					<label className="add-restaurant-form-section-label">
@@ -534,11 +599,23 @@ function AddRestaurant() {
 						</select>
 					</label>
 					{renderTableSizes()}
+					{error.email && (
+						<p style={{ color: "red" }}>Error: {error.email}</p>
+					)}
+					{error.photos && (
+						<p style={{ color: "red" }}>Error: {error.photos}</p>
+					)}
 					{error.name && (
 						<p style={{ color: "red" }}>Error: {error.name}</p>
 					)}
 					{error.address && (
 						<p style={{ color: "red" }}>Error: {error.address}</p>
+					)}
+					{error.latitude && (
+						<p style={{ color: "red" }}>Error: {error.latitude}</p>
+					)}
+					{error.longitude && (
+						<p style={{ color: "red" }}>Error: {error.longitude}</p>
 					)}
 					{error.contactInfo && (
 						<p style={{ color: "red" }}>
@@ -562,6 +639,16 @@ function AddRestaurant() {
 					)}
 					{error.hours && (
 						<p style={{ color: "red" }}>Error: {error.hours}</p>
+					)}
+					{error.bookingDuration && (
+						<p style={{ color: "red" }}>
+							Error: {error.bookingDuration}
+						</p>
+					)}
+					{error.tableSizes && (
+						<p style={{ color: "red" }}>
+							Error: {error.tableSizes}
+						</p>
 					)}
 					<button className="add-restaurant-save-btn">Save</button>
 					<AlertMessage

@@ -78,6 +78,26 @@ export const RestaurantSchema = new mongoose.Schema(
 		approved: {
 			type: Boolean,
 		},
+		email: {
+			type: String,
+			required: true,
+			trim: true,
+		},
+		tableSizes: {
+			type: Map,
+			of: Number,
+			required: true,
+		},
+		bookingDuration: {
+			type: String,
+			required: true,
+			trim: true,
+		},
+		photos: {
+			type: [String],
+			default: [],
+			required: true,
+		},
 	},
 	{ collection: "Restaurants" }
 );
