@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
 import StartLogin from "./pages/StartLogin/StartLogin";
 
 import AdminDash from "./pages/AdminDash/AdminDash";
@@ -40,7 +41,9 @@ function App() {
 	const [user, setUser] = useState({});
 	const [pendingRestaurants, setPendingRestaurants] = useState([]);
 	const [verifiedRestaurants, setVerifiedRestaurants] = useState([]);
+	const [restaurantsByEmail, setRestaurantsByEmail] = useState([]);
 	const [cookies, setCookie] = useCookies(["auth_token"]);
+	const [userEmail, setUserEmail] = useState("");
 	const [alertMessages, setAlertMessages] = useState({
 		isOpen: false,
 		message: "",
@@ -50,7 +53,7 @@ function App() {
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
 		setCookie("auth_token", token, {
-			maxAge: 10,
+			maxAge: 3600,
 			path: "/",
 		});
 	}
@@ -98,6 +101,30 @@ function App() {
 	}
 
 	useEffect(() => {
+		if (typeof cookies.auth_token === "string") {
+			try {
+				const email = jwtDecode(cookies.auth_token)?.email;
+				if (email) {
+					setUserEmail(email);
+				}
+			} catch (err) {
+				console.error("Invalid JWT token:", err);
+			}
+		}
+	}, [cookies.auth_token]);
+
+	async function fetchRestaurantsByEmail() {
+		try {
+			const response = await axios.get(
+				`http://127.0.0.1:5000/restaurants/owner/${userEmail}`
+			);
+			return response.data;
+		} catch (error) {
+			return false;
+		}
+	}
+
+	useEffect(() => {
 		if (Object.keys(user).length === 0) {
 			/* user got overridden so we have to reset it again
 		  call the token to get the user data from backend
@@ -120,7 +147,16 @@ function App() {
 		fetchVerifiedRestaurants().then((result) => {
 			setVerifiedRestaurants(result);
 		});
-	}, []);
+		if (userEmail) {
+			fetchRestaurantsByEmail().then((result) => {
+				if (result) {
+					setRestaurantsByEmail(result);
+				}
+			});
+		}
+	}, [userEmail]);
+
+	console.log("Email: " + userEmail);
 
 	return (
 		<BrowserRouter>
@@ -170,8 +206,7 @@ function App() {
 					path="/restaurant-manager-home"
 					element={
 						<RestaurantManagerHome
-							pendingRestaurants={pendingRestaurants}
-							verifiedRestaurants={verifiedRestaurants}
+							restaurantsByEmail={restaurantsByEmail}
 							setAlertMessages={setAlertMessages}
 						/>
 					}

@@ -14,6 +14,7 @@ import {
 	getPendingRestaurants,
 	getRestaurants,
 	getRestaurantById,
+	getRestaurantsByEmail,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -63,7 +64,7 @@ function authenticateUser(req, res, next) {
 
 function generateAccessToken(email) {
 	// change the token duration for your testing
-	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "10s" });
+	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "3600" });
 }
 
 app.get("/", (req, res) => {
@@ -356,6 +357,16 @@ app.get("/restaurants/:id", async (req, res) => {
 		res.status(200).json(restaurant);
 	} catch (error) {
 		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/restaurants/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getRestaurantsByEmail(restaurantManagerEmail);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send("Unable to fetch restaurants belonging to that email.");
 	}
 });
 
