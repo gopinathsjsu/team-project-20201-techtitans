@@ -131,7 +131,7 @@ function ReservationForm(props) {
 				setTable(availableTables[0]);
 			} else {
 				setAvailableTables(result);
-				if (!table) {
+				if (!table || table == noTablesMsg) {
 					setTable(availableTables[0].tableNum);
 				}
 			}
