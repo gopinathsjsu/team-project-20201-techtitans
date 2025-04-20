@@ -12,8 +12,8 @@ import AdminAnalytics from "./pages/AdminAnalytics/AdminAnalytics";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
-import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
-import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
+import RestaurantManagerHome from "./pages/RestaurantManagerHome/RestaurantManagerHome";
+import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddRestaurant";
 import BookTablePage from "./pages/BookTable/BookTablePage";
 import Restaurant from "./pages/Restaurant/Restaurant";
 import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
@@ -41,14 +41,18 @@ function App() {
 	const [user, setUser] = useState({});
 	const [pendingRestaurants, setPendingRestaurants] = useState([]);
 	const [verifiedRestaurants, setVerifiedRestaurants] = useState([]);
-	const [restaurantsByEmail, setRestaurantsByEmail] = useState([]);
 	const [cookies, setCookie] = useCookies(["auth_token"]);
-	const [userEmail, setUserEmail] = useState("");
 	const [alertMessages, setAlertMessages] = useState({
 		isOpen: false,
 		message: "",
 		type: "error",
 	});
+	const [userEmail, setUserEmail] = useState("");
+	const [pendingRestaurantsByEmail, setPendingRestaurantsByEmail] = useState(
+		[]
+	);
+	const [verifiedRestaurantsByEmail, setVerifiedRestaurantsByEmail] =
+		useState([]);
 
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
@@ -113,10 +117,21 @@ function App() {
 		}
 	}, [cookies.auth_token]);
 
-	async function fetchRestaurantsByEmail() {
+	async function fetchPendingRestaurantsByEmail() {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5000/restaurants/owner/${userEmail}`
+				`http://127.0.0.1:5000/restaurants/pending/owner/${userEmail}`
+			);
+			return response.data;
+		} catch (error) {
+			return false;
+		}
+	}
+
+	async function fetchVerifiedRestaurantsByEmail() {
+		try {
+			const response = await axios.get(
+				`http://127.0.0.1:5000/restaurants/verified/owner/${userEmail}`
 			);
 			return response.data;
 		} catch (error) {
@@ -148,15 +163,18 @@ function App() {
 			setVerifiedRestaurants(result);
 		});
 		if (userEmail) {
-			fetchRestaurantsByEmail().then((result) => {
+			fetchPendingRestaurantsByEmail().then((result) => {
 				if (result) {
-					setRestaurantsByEmail(result);
+					setPendingRestaurantsByEmail(result);
+				}
+			});
+			fetchVerifiedRestaurantsByEmail().then((result) => {
+				if (result) {
+					setVerifiedRestaurantsByEmail(result);
 				}
 			});
 		}
 	}, [userEmail]);
-
-	console.log("Email: " + userEmail);
 
 	return (
 		<BrowserRouter>
@@ -206,14 +224,21 @@ function App() {
 					path="/restaurant-manager-home"
 					element={
 						<RestaurantManagerHome
-							restaurantsByEmail={restaurantsByEmail}
+							pendingRestaurantsByEmail={
+								pendingRestaurantsByEmail
+							}
+							verifiedRestaurantsByEmail={
+								verifiedRestaurantsByEmail
+							}
 							setAlertMessages={setAlertMessages}
 						/>
 					}
 				/>
 				<Route
 					path="/restaurant-manager-add-restaurant"
-					element={<RestaurantManagerAddRestaurant />}
+					element={
+						<RestaurantManagerAddRestaurant userEmail={userEmail} />
+					}
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />
 				<Route path="/restaurant/:id" element={<Restaurant />} />

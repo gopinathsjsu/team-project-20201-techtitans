@@ -15,6 +15,8 @@ import {
 	getRestaurants,
 	getRestaurantById,
 	getRestaurantsByEmail,
+	getPendingRestaurantsByEmail,
+	getVerifiedRestaurantsByEmail,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -360,26 +362,55 @@ app.get("/restaurants/:id", async (req, res) => {
 	}
 });
 
+app.post("/upload", upload.single("image"), async (req, res) => {
+	try {
+		if (!req.file) {
+			return res.status(400).send("No file uploaded.");
+		}
+		const fileUrl = await uploadToS3(req.file);
+		res.status(201).json({ message: "Upload successful", fileUrl });
+	} catch (error) {
+		console.error("Upload error:", error);
+		res.status(500).send("Internal server error during upload.");
+	}
+});
+
 app.get("/restaurants/owner/:email", async (req, res) => {
 	try {
 		const restaurantManagerEmail = req.params.email;
 		const result = await getRestaurantsByEmail(restaurantManagerEmail);
 		res.status(201).send(result);
 	} catch (error) {
-		res.status(500).send("Unable to fetch restaurants belonging to that email.");
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
 	}
 });
 
-app.post("/upload", upload.single("image"), async (req, res) => {
+app.get("/restaurants/pending/owner/:email", async (req, res) => {
 	try {
-		if (!req.file) {
-			return res.status(400).send("No file uploaded.");
-		}
-
-		const fileUrl = await uploadToS3(req.file);
-		res.status(201).json({ message: "Upload successful", fileUrl });
+		const restaurantManagerEmail = req.params.email;
+		const result = await getPendingRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
 	} catch (error) {
-		console.error("Upload error:", error);
-		res.status(500).send("Internal server error during upload.");
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/verified/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getVerifiedRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
 	}
 });
