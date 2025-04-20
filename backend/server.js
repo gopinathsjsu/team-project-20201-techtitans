@@ -66,7 +66,7 @@ function authenticateUser(req, res, next) {
 
 function generateAccessToken(email) {
 	// change the token duration for your testing
-	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "3600" });
+	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "10s" });
 }
 
 app.get("/", (req, res) => {
