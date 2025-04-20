@@ -26,6 +26,7 @@ export async function addReservation(reservation) {
 		const savedReservation = await reservationToAdd.save();
 		return savedReservation;
 	} catch (error) {
+		console.error("addReservation error:", error);
 		return false;
 	}
 }

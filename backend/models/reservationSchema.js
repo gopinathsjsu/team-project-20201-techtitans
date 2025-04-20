@@ -29,6 +29,11 @@ export const ReservationSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		status: {
+			type: String,
+			enum: ["booked", "cancelled"],
+			default: "booked",
+		},
 	},
 	{ collection: "Reservations" }
 );

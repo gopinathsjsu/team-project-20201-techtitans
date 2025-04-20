@@ -50,7 +50,7 @@ function App() {
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
 		setCookie("auth_token", token, {
-			maxAge: 10,
+			maxAge: 86400,
 			path: "/",
 		});
 	}
@@ -180,7 +180,7 @@ function App() {
 					path="/restaurant-manager-add-restaurant"
 					element={<RestaurantManagerAddRestaurant />}
 				/>
-				<Route path="/book-table" element={<BookTablePage />} />
+				<Route path="/book-table" element={<BookTablePage user={user} />} />
 				<Route path="/restaurant/:id" element={<Restaurant />} />
 				<Route
 					path="/reservation-confirmation"

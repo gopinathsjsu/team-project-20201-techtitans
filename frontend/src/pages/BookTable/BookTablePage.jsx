@@ -25,7 +25,7 @@ function useWindowSize() {
 	return windowSize;
 }
 
-const BookTablePage = () => {
+const BookTablePage = ({user}) => {
 	const { width } = useWindowSize();
 
 	const [visibleCount, setVisibleCount] = useState(5);
@@ -202,13 +202,16 @@ const BookTablePage = () => {
 		}
 	};
 
-	const handleTimeSlotClick = (restaurantId, time) => {
+	const handleTimeSlotClick = (restaurantId, restaurantName, time) => {
+		console.log("Navigating with restaurantId and name:", restaurantId, restaurantName);
 		navigate(`/reservation-confirmation`, {
 			state: {
 				restaurantId,
+				restaurantName,
 				date: searchCriteria.date,
 				time,
 				people: searchCriteria.people,
+				userId: user._id,
 			},
 		});
 	};
@@ -330,6 +333,7 @@ const BookTablePage = () => {
 														onClick={() =>
 															handleTimeSlotClick(
 																result.id,
+																result.name,
 																time
 															)
 														}

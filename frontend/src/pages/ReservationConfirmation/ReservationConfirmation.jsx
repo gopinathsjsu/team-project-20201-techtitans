@@ -1,32 +1,54 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import {useState} from "react";
+import axios from "axios";
 import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
 
 const ReservationConfirmation = () => {
 	const location = useLocation();
-	const { restaurantName, date, time, people } = location.state || {};
+	const navigate = useNavigate();
+	const { restaurantId, restaurantName, date, time, people, userId } = location.state || {};
+
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+
+	const handleReservation = async () => {
+		try {
+			setLoading(true);
+			const res = await axios.post("http://localhost:5000/reservations", {
+				userId,
+				restaurantId,
+				date,
+				time,
+				numberOfPeople: people,
+			});
+			if (res.status === 201) {
+				navigate("/customer-profile"); 
+			}
+		} catch (err) {
+			console.error("Reservation failed", err);
+			setError("Reservation could not be completed.");
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<div className="reservation-confirmation-page">
 			<Navbar role="customer" />
 			<div className="confirmation-details">
 				<h2>{restaurantName}</h2>
-				<div className="details">
-					<div className="detail-item">
-						<span>Date</span>
-						<span>{date}</span>
-					</div>
-					<div className="detail-item">
-						<span>Time</span>
-						<span>{time}</span>
-					</div>
-					<div className="detail-item">
-						<span>No of people</span>
-						<span>{people}</span>
-					</div>
-				</div>
-				<button className="complete-reservation-button">
-					Complete Reservation
+				<h2>Confirm Reservation</h2>
+				<p>Date: {date}</p>
+				<p>Time: {time}</p>
+				<p>People: {people}</p>
+				{error && <p className="error">{error}</p>}
+				<button
+					onClick={handleReservation}
+					disabled={loading}
+					className="complete-reservation-button"
+				>
+					{loading ? "Booking..." : "Complete Reservation"}
 				</button>
 			</div>
 		</div>

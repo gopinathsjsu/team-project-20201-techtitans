@@ -63,7 +63,7 @@ function authenticateUser(req, res, next) {
 
 function generateAccessToken(email) {
 	// change the token duration for your testing
-	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "10s" });
+	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "24h" });
 }
 
 app.get("/", (req, res) => {
@@ -239,6 +239,8 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 });
 
 app.post("/reservations", async (req, res) => {
+	console.log("POST /reservations received");
+	console.log("Request body:", req.body);
 	try {
 		const reservation = req.body;
 		const result = await addReservation(reservation);
@@ -248,6 +250,7 @@ app.post("/reservations", async (req, res) => {
 			res.status(500).end();
 		}
 	} catch (error) {
+		console.error("Error in /reservations:", error);
 		res.status(500).send("Internal Server Error");
 	}
 });

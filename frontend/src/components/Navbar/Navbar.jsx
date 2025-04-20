@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 
 function Navbar(props) {
 	const { role } = props;
-	const [, , removeCookie] = useCookies(["auth_token"]);
+	const [cookies, , removeCookie] = useCookies(["auth_token", "username"]); 
+
 	const handleLogOut = () => {
 		removeCookie("auth_token", { path: "/" });
+		removeCookie("username", { path: "/" });
 	};
 
 	return (
@@ -39,7 +41,7 @@ function Navbar(props) {
 							<div className="user-pic"></div>
 						</Link>
 						<Link to="/customer-profile">
-							<div className="user-name">User Name</div>
+							<div className="user-name">{cookies.username || "User Name"}</div>
 						</Link>
 					</>
 				)}
