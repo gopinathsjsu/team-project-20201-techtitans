@@ -31,6 +31,12 @@ export async function addReservation(reservation) {
 	}
 }
 
+export async function cancelReservation(reservationId) {
+	const conn = getDbConnection();
+	const ReservationModel = conn.model("Reservation", ReservationSchema);
+	return await ReservationModel.findByIdAndDelete(reservationId);
+}
+
 export async function getReservationsByUserId(userId) {
 	const conn = getDbConnection();
 	const ReservationModel = conn.model("Reservation", ReservationSchema);

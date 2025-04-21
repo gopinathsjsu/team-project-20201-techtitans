@@ -19,6 +19,7 @@ import {
 	addReservation,
 	getReservationsByUserId,
 	getReservationsByRestaurantId,
+	cancelReservation,
 } from "./models/reservationServices.js";
 import {
 	addReview,
@@ -282,6 +283,22 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 		res.status(500).send("Internal Server Error");
 	}
 });
+
+app.delete("/reservations/:id", async (req, res) => {
+	try {
+		const reservationId = req.params.id;
+		const deleted = await cancelReservation(reservationId);
+		if (deleted) {
+			res.status(200).send("Reservation cancelled successfully");
+		} else {
+			res.status(404).send("Reservation not found");
+		}
+	} catch (error) {
+		console.error("Cancel reservation error:", error);
+		res.status(500).send("Internal Server Error");
+	}
+});
+
 
 app.post("/reviews", async (req, res) => {
 	try {
