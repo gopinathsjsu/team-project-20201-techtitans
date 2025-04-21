@@ -19,14 +19,16 @@ function CustomerProfile() {
 		}
 	};
 
-
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
 				const config = {
 					headers: { Authorization: `Bearer ${cookies.auth_token}` },
 				};
-				const res = await axios.get("http://localhost:5000/user", config);
+				const res = await axios.get(
+					"http://localhost:5000/user",
+					config
+				);
 				setUser(res.data);
 			} catch (err) {
 				console.error("Failed to fetch user:", err);
@@ -81,23 +83,23 @@ function CustomerProfile() {
 				) : (
 					reservations.map((res, i) => (
 						<div key={i}>
-							<RestaurantListing name={res.restaurantName || "Restaurant"} />
+							<RestaurantListing
+								name={res.restaurantName || "Restaurant"}
+							/>
 							<h3>
-							Reservation: {new Date(res.date).toLocaleDateString()} at {res.time}
+								Reservation:{" "}
+								{new Date(res.date).toLocaleDateString()} at{" "}
+								{res.time}
 							</h3>
-							<button
-								onClick={() => handleCancel(res._id)}
-							>
+							<button onClick={() => handleCancel(res._id)}>
 								Cancel Reservation
 							</button>
 						</div>
 					))
 				)}
 			</div>
-			
-			<h2>
-				Restaurants You've Reviewed
-			</h2>
+
+			<h2>Restaurants You've Reviewed</h2>
 			<div className="restaurants-listing">
 				<RestaurantListing
 					name="Mario's Place"

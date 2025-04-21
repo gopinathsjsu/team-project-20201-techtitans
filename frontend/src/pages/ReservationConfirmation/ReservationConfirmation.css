@@ -39,11 +39,12 @@
 	width: 100%;
 	max-width: 800px;
 	box-sizing: border-box;
-	padding: 0 20px;
+	padding: 20px;
+	text-align: center;
 }
 
 .confirmation-details h2 {
-	margin-bottom: 20px;
+	margin-bottom: 16px;
 	text-align: center;
 }
 
@@ -72,4 +73,8 @@
 
 .complete-reservation-button:hover {
 	background-color: #45a049;
+}
+
+body {
+	overflow-x: hidden;
 }

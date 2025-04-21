@@ -299,7 +299,6 @@ app.delete("/reservations/:id", async (req, res) => {
 	}
 });
 
-
 app.post("/reviews", async (req, res) => {
 	try {
 		const review = req.body;

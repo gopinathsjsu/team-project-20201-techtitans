@@ -180,7 +180,10 @@ function App() {
 					path="/restaurant-manager-add-restaurant"
 					element={<RestaurantManagerAddRestaurant />}
 				/>
-				<Route path="/book-table" element={<BookTablePage user={user} />} />
+				<Route
+					path="/book-table"
+					element={<BookTablePage user={user} />}
+				/>
 				<Route path="/restaurant/:id" element={<Restaurant />} />
 				<Route
 					path="/reservation-confirmation"
