@@ -124,6 +124,7 @@ function App() {
 			);
 			return response.data;
 		} catch (error) {
+			console.error(`Failed to fetch pending restaurants for ${userEmail}:`, error);
 			return false;
 		}
 	}
@@ -135,6 +136,7 @@ function App() {
 			);
 			return response.data;
 		} catch (error) {
+			console.error(`Failed to fetch verified restaurants for ${userEmail}:`, error);
 			return false;
 		}
 	}
