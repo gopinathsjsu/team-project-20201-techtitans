@@ -83,17 +83,23 @@ function CustomerProfile() {
 				) : (
 					reservations.map((res, i) => (
 						<div key={i}>
-							<RestaurantListing
-								name={res.restaurantName || "Restaurant"}
-							/>
 							<h3>
-								Reservation:{" "}
-								{new Date(res.date).toLocaleDateString( "en-US", {
-									timeZone:"UTC",
-								})} at{" "}
-								{res.time}, {res.numberOfPeople} {res.numberOfPeople === 1 ? "person" : "people"}
+								<RestaurantListing
+									name={res.restaurantName || "Restaurant"}
+								/>{" "}
+								{new Date(res.date).toLocaleDateString(
+									"en-US",
+									{
+										timeZone: "UTC",
+									}
+								)}{" "}
+								at {res.time} <br /> {res.numberOfPeople}{" "}
+								{res.numberOfPeople === 1 ? "person" : "people"}
 							</h3>
-							<button onClick={() => handleCancel(res._id)}>
+							<button
+								className="cancel-button"
+								onClick={() => handleCancel(res._id)}
+							>
 								Cancel Reservation
 							</button>
 						</div>
