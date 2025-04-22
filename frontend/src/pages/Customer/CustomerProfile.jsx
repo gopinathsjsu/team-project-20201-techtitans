@@ -88,10 +88,14 @@ function CustomerProfile() {
 							/>
 							<h3>
 								Reservation:{" "}
-								{new Date(res.date).toLocaleDateString( "en-US", {
-									timeZone:"UTC",
-								})} at{" "}
-								{res.time}, {res.numberOfPeople} {res.numberOfPeople === 1 ? "person" : "people"}
+								{new Date(res.date).toLocaleDateString(
+									"en-US",
+									{
+										timeZone: "UTC",
+									}
+								)}{" "}
+								at {res.time}, {res.numberOfPeople}{" "}
+								{res.numberOfPeople === 1 ? "person" : "people"}
 							</h3>
 							<button onClick={() => handleCancel(res._id)}>
 								Cancel Reservation

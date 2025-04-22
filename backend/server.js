@@ -6,6 +6,7 @@ import {
 	addUser,
 	findUserByEmail,
 	findUserByUsername,
+	findUserById,
 } from "./models/userServices.js";
 import {
 	addRestaurant,
@@ -246,6 +247,30 @@ app.post("/reservations", async (req, res) => {
 		const reservation = req.body;
 		const result = await addReservation(reservation);
 		if (result) {
+			const user = await findUserById(reservation.userId);
+			const restaurant = await getRestaurantById(
+				reservation.restaurantId
+			);
+
+			if (user && user.email && restaurant?.name) {
+				const msg = {
+					to: user.email,
+					from: "BookTable <isla2000@gmail.com>",
+					subject: "Reservation Confirmed!",
+					text: `Hi ${user.username}, your reservation at ${restaurant.name} for ${reservation.numberOfPeople} people at ${reservation.time} on ${new Date(reservation.date).toLocaleDateString("en-US", { timeZone: "UTC" })} has been successfully booked.`,
+					html: `<p>Hi <strong>${user.username}</strong>,</p>
+						<p>Your reservation at <strong>${restaurant.name}</strong> for <strong>${reservation.numberOfPeople}</strong> people at <strong>${reservation.time}</strong> on <strong>${new Date(reservation.date).toLocaleDateString("en-US", { timeZone: "UTC" })}</strong> has been successfully booked.</p>`,
+				};
+
+				try {
+					await sgMail.send(msg);
+					console.log(
+						"Reservation confirmation email sent successfully."
+					);
+				} catch (emailError) {
+					console.error("Email send error:", emailError);
+				}
+			}
 			res.status(201).json(result);
 		} else {
 			res.status(500).end();
