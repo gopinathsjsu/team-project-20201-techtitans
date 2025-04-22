@@ -13,22 +13,40 @@ function ReservationForm(props) {
 	const [table, setTable] = useState("");
 	const [availableTables, setAvailableTables] = useState([]);
 	const [people, setPeople] = useState("1");
+	const [error, setError] = useState({});
 
 	const restaurantClosedMsg =
 		"Restaurant is closed on this day. Please choose another date.";
 	const noTablesMsg =
 		"There are no available tables at this time. Please choose another time.";
 
+	function validate() {
+		let bool = true;
+		const errors = {};
+		if (!time.length || time.length === 0 || time == restaurantClosedMsg) {
+			errors.time = restaurantClosedMsg;
+			bool = false;
+		}
+		if (table.length === 0 || table == noTablesMsg) {
+			errors.table = noTablesMsg;
+			bool = false;
+		}
+		setError(errors);
+		return bool;
+	}
+
 	const handleReserveClick = () => {
-		navigate("/reservation-confirmation", {
-			state: {
-				restaurantName: restaurant?.name || "Restaurant",
-				date,
-				time,
-				people,
-				table,
-			},
-		});
+		if (validate()) {
+			navigate("/reservation-confirmation", {
+				state: {
+					restaurantName: restaurant?.name || "Restaurant",
+					date,
+					time,
+					people,
+					table,
+				},
+			});
+		}
 	};
 
 	const generateTimeSlots = (hoursString) => {
@@ -110,6 +128,7 @@ function ReservationForm(props) {
 		fetchTablesbyTime(time, people).then((result) => {
 			if (!result || result.length == 0) {
 				setAvailableTables([noTablesMsg]);
+				setTable(availableTables[0]);
 			} else {
 				setAvailableTables(result);
 				if (!table) {
@@ -144,6 +163,7 @@ function ReservationForm(props) {
 				<div className="form-group">
 					<label>Time</label>
 					<select
+						name="time"
 						value={time}
 						onChange={(e) => setTime(e.target.value)}
 					>
@@ -159,10 +179,14 @@ function ReservationForm(props) {
 							))
 						)}
 					</select>
+					{error.time && (
+						<p style={{ color: "red" }}>Error: {error.time}</p>
+					)}
 				</div>
 				<div className="form-group">
 					<label>Table Selection</label>
 					<select
+						name="table"
 						value={table}
 						onChange={(e) => setTable(e.target.value)}
 					>
@@ -179,6 +203,9 @@ function ReservationForm(props) {
 							))
 						)}
 					</select>
+					{error.table && (
+						<p style={{ color: "red" }}>Error: {error.table}</p>
+					)}
 				</div>
 				<div className="form-group button-container">
 					<button
