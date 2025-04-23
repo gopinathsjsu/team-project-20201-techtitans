@@ -25,6 +25,26 @@ function useWindowSize() {
 	return windowSize;
 }
 
+const getRoundedTime = (timeString) => {
+    const [hour, minute] = timeString.split(":").map(Number);
+    let roundedHour = hour;
+    let roundedMinute = minute;
+
+    if (minute === 0 || minute === 30) {
+        // Already aligned to 00 or 30
+        roundedMinute = minute;
+    } else if (minute < 30) {
+        roundedMinute = 30;
+    } else {
+        roundedMinute = 0;
+        roundedHour = (hour + 1) % 24; // Increment hour if rounding up to the next hour
+    }
+
+    return `${roundedHour.toString().padStart(2, "0")}:${roundedMinute
+        .toString()
+        .padStart(2, "0")}`;
+};
+
 const BookTablePage = () => {
 	const { width } = useWindowSize();
 
@@ -37,7 +57,7 @@ const BookTablePage = () => {
 
 	const [searchCriteria, setSearchCriteria] = useState({
 		date: new Date().toISOString().split("T")[0],
-		time: new Date().toTimeString().slice(0, 5),
+		time: getRoundedTime(new Date().toTimeString().slice(0, 5)), // Initialize with rounded time
 		people: 1,
 		location: "",
 	});
@@ -155,25 +175,18 @@ const BookTablePage = () => {
 		try {
 			setLoading(true);
 			const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-			// Determine the day of the week from selected date
 			const searchDate = new Date(searchCriteria.date);
 			const dayOfWeek = days[searchDate.getDay()];
 
-			// Convert the selected time to 12-hour format for comparison
-			const formattedSearchTime = convertTo12Hour(searchCriteria.time);
+			// Round the selected time to the nearest 00 or 30
+			const roundedTime = getRoundedTime(searchCriteria.time);
+			console.log("Rounded Time:", roundedTime);
+
+			// Convert the rounded time to 12-hour format for comparison
+			const formattedSearchTime = convertTo12Hour(roundedTime);
+			console.log("Formatted Search Time:", formattedSearchTime);
 
 			const filteredResults = allRestaurants.filter((restaurant) => {
-				// Filter by location if provided
-				if (
-					searchCriteria.location &&
-					!restaurant.address
-						.toLowerCase()
-						.includes(searchCriteria.location.toLowerCase())
-				) {
-					return false;
-				}
-
-				// Get the hours for the selected day, fallback to the first available day if not available
 				let hoursForDay =
 					restaurant.hours[dayOfWeek] ||
 					Object.values(restaurant.hours)[0];
@@ -181,14 +194,12 @@ const BookTablePage = () => {
 					return false;
 				}
 				const availableTimes = generateTimeSlots(hoursForDay);
+				console.log("Available Times for Restaurant:", availableTimes);
 
-				// Check if the search time is included in the restaurant's available times
+				// Check if the rounded search time is included
 				if (!availableTimes.includes(formattedSearchTime)) {
 					return false;
 				}
-
-				// Number of people check can be included here if there's a capacity parameter.
-				// e.g., if (restaurant.capacity && restaurant.capacity < searchCriteria.people) return false;
 
 				return true;
 			});
@@ -296,66 +307,76 @@ const BookTablePage = () => {
 			</div>
 
 			<div className="search-results">
-				{searchResults.slice(0, visibleCount).map((result) => (
-					<div key={result.id} className="restaurant-result">
-						<img
-							src={
-								result.image || "/images/default-restaurant.jpg"
-							}
-							alt={result.name}
-							className="restaurant-image"
-						/>
-						<div className="restaurant-content">
-							<h3>{result.name}</h3>
-							<div className="restaurant-info">
-								<p>🍴 {result.cuisineType}</p>
-								<p>💰 {result.costRating}</p>
-								<p>⭐ {result.avgRating.toFixed(1)}</p>
-								<p>📊 {result.bookingsToday} today</p>
-							</div>
-							<div className="available-times">
-								<p>Available times:</p>
-								<div className="time-slots">
-									{result.availableTimes.length === 1 &&
-									result.availableTimes[0] ===
-										"Restaurant is Closed" ? (
-										<p>Restaurant is Closed</p>
-									) : (
-										<>
-											{result.availableTimes
-												.slice(0, 5)
-												.map((time, idx) => (
+				{searchResults.length === 0 ? (
+					<div className="no-results">
+						<h2>Oops! We don't have any restaurants with this time slot.</h2>
+						<h2>Try adjusting your search criteria or selecting a different time slot.</h2>
+					</div>
+				) : (
+					searchResults.slice(0, visibleCount).map((result) => (
+						<div key={result.id} className="restaurant-result">
+							<img
+								src={
+									result.image || "/images/default-restaurant.jpg"
+								}
+								alt={result.name}
+								className="restaurant-image"
+							/>
+							<div className="restaurant-content">
+								<h3>{result.name}</h3>
+								<div className="restaurant-info">
+									<p>🍴 {result.cuisineType}</p>
+									<p>💰 {result.costRating}</p>
+									<p>⭐ {result.avgRating.toFixed(1)}</p>
+									<p>📊 {result.bookingsToday} today</p>
+								</div>
+								<div className="available-times">
+									<p>Available times:</p>
+									<div className="time-slots">
+										{result.availableTimes.length === 1 &&
+										result.availableTimes[0] ===
+											"Restaurant is Closed" ? (
+											<p>Restaurant is Closed</p>
+										) : (
+											<>
+												{(() => {
+												const selectedTime = convertTo12Hour(searchCriteria.time);
+												const index = result.availableTimes.indexOf(selectedTime);
+												if (index === -1) return null;
+
+												const start = Math.max(0, index - 2);
+												const visibleSlots = result.availableTimes.slice(start, index + 1);
+
+												return visibleSlots.map((time, idx) => (
 													<button
 														key={idx}
-														onClick={() =>
-															handleTimeSlotClick(
-																result.id,
-																time
-															)
-														}
+														onClick={() => handleTimeSlotClick(result.id, time)}
 														className="time-slot-button"
 													>
 														{time}
 													</button>
-												))}
-											{result.availableTimes.length >
-												5 && (
-												<span className="more-slots-indicator">
-													...
-												</span>
-											)}
-										</>
-									)}
+												));
+											})()}
+
+												{result.availableTimes.length >
+													5 && (
+													<span className="more-slots-indicator">
+														...
+													</span>
+												)}
+											</>
+										)}
+									</div>
 								</div>
+								<Link to={`/restaurant/${result.id}`}>
+									<button className="view-details-button">
+										View Restaurant Details
+									</button>
+								</Link>
 							</div>
-							<Link to={`/restaurant/${result.id}`}>
-								<button className="view-details-button">
-									View Restaurant Details
-								</button>
-							</Link>
 						</div>
-					</div>
-				))}
+					))
+				)}
 			</div>
 
 			{visibleCount < searchResults.length && (
