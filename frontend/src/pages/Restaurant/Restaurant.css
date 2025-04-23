@@ -81,11 +81,15 @@ html {
 
 .form-group input,
 .form-group select {
+	height: 40px;
 	width: 100%;
 	padding: 8px;
 	border: 1px solid #ddd;
+	box-sizing: border-box;
 	border-radius: 4px;
-	height: 40px;
+	vertical-align: top;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 .button-container {

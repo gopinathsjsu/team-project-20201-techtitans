@@ -159,3 +159,48 @@ export async function searchRestaurants(criteria) {
 		return null;
 	}
 }
+
+export async function getRestaurantsByEmail(email) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const restaurants = await RestaurantModel.find({
+			email: email,
+		});
+		return restaurants;
+	} catch (error) {
+		console.error("Error in getRestaurantsByEmail:", error);
+		return null;
+	}
+}
+
+export async function getPendingRestaurantsByEmail(email) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const restaurants = await RestaurantModel.find({
+			pendingApproval: true,
+			email: email,
+		});
+		return restaurants;
+	} catch (error) {
+		console.error("Error in getPendingRestaurantsByEmail:", error);
+		return null;
+	}
+}
+
+export async function getVerifiedRestaurantsByEmail(email) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const restaurants = await RestaurantModel.find({
+			pendingApproval: false,
+			approved: true,
+			email: email,
+		});
+		return restaurants;
+	} catch (error) {
+		console.error("Error in getVerifiedRestaurantsByEmail:", error);
+		return null;
+	}
+}
