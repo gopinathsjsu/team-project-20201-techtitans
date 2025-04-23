@@ -57,7 +57,7 @@ function App() {
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
 		setCookie("auth_token", token, {
-			maxAge: 10,
+			maxAge: 7200,
 			path: "/",
 		});
 	}
@@ -124,7 +124,10 @@ function App() {
 			);
 			return response.data;
 		} catch (error) {
-			console.error(`Failed to fetch pending restaurants for ${userEmail}:`, error);
+			console.error(
+				`Failed to fetch pending restaurants for ${userEmail}:`,
+				error
+			);
 			return false;
 		}
 	}
@@ -136,7 +139,10 @@ function App() {
 			);
 			return response.data;
 		} catch (error) {
-			console.error(`Failed to fetch verified restaurants for ${userEmail}:`, error);
+			console.error(
+				`Failed to fetch verified restaurants for ${userEmail}:`,
+				error
+			);
 			return false;
 		}
 	}

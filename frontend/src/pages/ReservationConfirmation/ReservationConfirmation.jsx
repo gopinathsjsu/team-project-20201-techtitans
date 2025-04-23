@@ -4,7 +4,7 @@ import "./ReservationConfirmation.css";
 
 const ReservationConfirmation = () => {
 	const location = useLocation();
-	const { restaurantName, date, time, people } = location.state || {};
+	const { restaurantName, date, time, people, table } = location.state || {};
 
 	return (
 		<div className="reservation-confirmation-page">
@@ -23,6 +23,10 @@ const ReservationConfirmation = () => {
 					<div className="detail-item">
 						<span>No of people</span>
 						<span>{people}</span>
+					</div>
+					<div className="detail-item">
+						<span>Table Number</span>
+						<span>{table}</span>
 					</div>
 				</div>
 				<button className="complete-reservation-button">
