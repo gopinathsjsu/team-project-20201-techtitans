@@ -115,7 +115,6 @@ const BookTablePage = () => {
 		}
 	};
 
-	// Fetch all restaurant data initially – now include tableSizes for capacity filtering.
 	useEffect(() => {
 		const fetchRestaurants = async () => {
 			try {
@@ -149,7 +148,7 @@ const BookTablePage = () => {
 							costRating: restaurant.costRating,
 							avgRating: restaurant.avgRating || 0,
 							bookingsToday: restaurant.bookingsToday || 0,
-							hours: restaurant.hours, // raw hours data for filtering
+							hours: restaurant.hours, // keep raw hours data for filtering
 							availableTimes, // initial available times (for today)
 							image: restaurant.image || null,
 							address: restaurant.address || "",
