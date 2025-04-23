@@ -15,6 +15,9 @@ import {
 	getPendingRestaurants,
 	getRestaurants,
 	getRestaurantById,
+	getRestaurantsByEmail,
+	getPendingRestaurantsByEmail,
+	getVerifiedRestaurantsByEmail,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -28,6 +31,11 @@ import {
 } from "./models/reviewServices.js";
 import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
+import {
+	addTable,
+	updateTableStatus,
+	getAvailableTablesbyTime,
+} from "./models/tableServices.js";
 
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
@@ -226,6 +234,50 @@ app.get("/menu/:restaurantId", async (req, res) => {
 	}
 });
 
+app.get("/table/:restaurantId/:timeSlot/:numPeople", async (req, res) => {
+	const { restaurantId, timeSlot, numPeople } = req.params;
+	const tables = await getAvailableTablesbyTime(
+		restaurantId,
+		timeSlot,
+		numPeople
+	);
+	if (tables) {
+		res.status(201).send(tables);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.post("/table", async (req, res) => {
+	const table = req.body;
+	const savedTable = await addTable(table);
+	if (savedTable) {
+		res.status(201).send(savedTable);
+	} else {
+		res.status(500).end();
+	}
+});
+
+app.patch("/table/:tableNum", async (req, res) => {
+	const { tableNum } = req.params;
+	const updates = req.body;
+	let result = null;
+	if (updates.isTaken != undefined || updates.isTaken != null) {
+		result = await updateTableStatus(
+			tableNum,
+			updates.timeSlot,
+			updates.restaurantId,
+			updates.isTaken
+		);
+	}
+
+	if (result === undefined || result === null) {
+		res.status(404).send("Resource not found.");
+	} else {
+		res.status(201).send(result);
+	}
+});
+
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 	try {
 		const restaurantId = req.params.restaurantId;
@@ -383,20 +435,14 @@ app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
 app.get("/restaurants/:id", async (req, res) => {
 	try {
 		const restaurantId = req.params.id;
-		const restaurantDoc = await getRestaurantById(restaurantId);
+		const restaurant = await getRestaurantById(restaurantId);
 
-		if (!restaurantDoc) {
+		if (!restaurant) {
 			return res.status(404).send("Restaurant not found");
 		}
 
-		// Convert to plain object if it's a Mongoose document
-		const restaurant = restaurantDoc.toObject
-			? restaurantDoc.toObject()
-			: restaurantDoc;
-
 		const reviews = await getReviewsByRestaurantId(restaurantId);
 		restaurant.reviews = reviews || [];
-
 		res.status(200).json(restaurant);
 	} catch (error) {
 		res.status(500).send("Internal Server Error");
@@ -408,11 +454,50 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 		if (!req.file) {
 			return res.status(400).send("No file uploaded.");
 		}
-
 		const fileUrl = await uploadToS3(req.file);
 		res.status(201).json({ message: "Upload successful", fileUrl });
 	} catch (error) {
 		console.error("Upload error:", error);
 		res.status(500).send("Internal server error during upload.");
+	}
+});
+
+app.get("/restaurants/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getRestaurantsByEmail(restaurantManagerEmail);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/pending/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getPendingRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/verified/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getVerifiedRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
 	}
 });

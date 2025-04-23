@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { jwtDecode } from "jwt-decode";
 import StartLogin from "./pages/StartLogin/StartLogin";
 
 import AdminDash from "./pages/AdminDash/AdminDash";
@@ -11,8 +12,8 @@ import AdminAnalytics from "./pages/AdminAnalytics/AdminAnalytics";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
-import RestaurantManagerHome from "./pages/RestaurantManager/RestaurantManagerHome";
-import RestaurantManagerAddRestaurant from "./pages/RestaurantManager/RestaurantManagerAddRestaurant";
+import RestaurantManagerHome from "./pages/RestaurantManagerHome/RestaurantManagerHome";
+import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddRestaurant";
 import BookTablePage from "./pages/BookTable/BookTablePage";
 import Restaurant from "./pages/Restaurant/Restaurant";
 import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
@@ -46,11 +47,17 @@ function App() {
 		message: "",
 		type: "error",
 	});
+	const [userEmail, setUserEmail] = useState("");
+	const [pendingRestaurantsByEmail, setPendingRestaurantsByEmail] = useState(
+		[]
+	);
+	const [verifiedRestaurantsByEmail, setVerifiedRestaurantsByEmail] =
+		useState([]);
 
 	function setToken(token) {
 		// change the token duration for your testing (make sure it's the same as the backend in seconds)
 		setCookie("auth_token", token, {
-			maxAge: 86400,
+			maxAge: 7200,
 			path: "/",
 		});
 	}
@@ -98,6 +105,49 @@ function App() {
 	}
 
 	useEffect(() => {
+		if (typeof cookies.auth_token === "string") {
+			try {
+				const email = jwtDecode(cookies.auth_token)?.email;
+				if (email) {
+					setUserEmail(email);
+				}
+			} catch (err) {
+				console.error("Invalid JWT token:", err);
+			}
+		}
+	}, [cookies.auth_token]);
+
+	async function fetchPendingRestaurantsByEmail() {
+		try {
+			const response = await axios.get(
+				`http://127.0.0.1:5000/restaurants/pending/owner/${userEmail}`
+			);
+			return response.data;
+		} catch (error) {
+			console.error(
+				`Failed to fetch pending restaurants for ${userEmail}:`,
+				error
+			);
+			return false;
+		}
+	}
+
+	async function fetchVerifiedRestaurantsByEmail() {
+		try {
+			const response = await axios.get(
+				`http://127.0.0.1:5000/restaurants/verified/owner/${userEmail}`
+			);
+			return response.data;
+		} catch (error) {
+			console.error(
+				`Failed to fetch verified restaurants for ${userEmail}:`,
+				error
+			);
+			return false;
+		}
+	}
+
+	useEffect(() => {
 		if (Object.keys(user).length === 0) {
 			/* user got overridden so we have to reset it again
 		  call the token to get the user data from backend
@@ -120,7 +170,19 @@ function App() {
 		fetchVerifiedRestaurants().then((result) => {
 			setVerifiedRestaurants(result);
 		});
-	}, []);
+		if (userEmail) {
+			fetchPendingRestaurantsByEmail().then((result) => {
+				if (result) {
+					setPendingRestaurantsByEmail(result);
+				}
+			});
+			fetchVerifiedRestaurantsByEmail().then((result) => {
+				if (result) {
+					setVerifiedRestaurantsByEmail(result);
+				}
+			});
+		}
+	}, [userEmail]);
 
 	return (
 		<BrowserRouter>
@@ -170,15 +232,21 @@ function App() {
 					path="/restaurant-manager-home"
 					element={
 						<RestaurantManagerHome
-							pendingRestaurants={pendingRestaurants}
-							verifiedRestaurants={verifiedRestaurants}
+							pendingRestaurantsByEmail={
+								pendingRestaurantsByEmail
+							}
+							verifiedRestaurantsByEmail={
+								verifiedRestaurantsByEmail
+							}
 							setAlertMessages={setAlertMessages}
 						/>
 					}
 				/>
 				<Route
 					path="/restaurant-manager-add-restaurant"
-					element={<RestaurantManagerAddRestaurant />}
+					element={
+						<RestaurantManagerAddRestaurant userEmail={userEmail} />
+					}
 				/>
 				<Route
 					path="/book-table"

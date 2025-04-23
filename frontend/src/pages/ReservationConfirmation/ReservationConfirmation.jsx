@@ -6,6 +6,7 @@ import "./ReservationConfirmation.css";
 
 const ReservationConfirmation = () => {
 	const location = useLocation();
+
 	const navigate = useNavigate();
 	const { restaurantId, restaurantName, date, time, userId } =
 		location.state || {};
