@@ -18,6 +18,7 @@ import RestaurantManagerAddMenu from "./pages/RestaurantManagerAddRestaurant/Res
 import BookTablePage from "./pages/BookTable/BookTablePage";
 import Restaurant from "./pages/Restaurant/Restaurant";
 import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
+import RestaurantManagerUpdateRestaurant from "./pages/RestaurantManagerUpdateRestaurant/RestaurantManagerUpdateRestaurant";
 
 function PrivateRoute(props) {
 	const [cookies] = useCookies(["auth_token"]);
@@ -268,6 +269,10 @@ function App() {
 				<Route
 					path="/reservation-confirmation"
 					element={<ReservationConfirmation />}
+				/>
+				<Route
+					path="/restaurant-manager-update-restaurant/:id"
+					element={<RestaurantManagerUpdateRestaurant />}
 				/>
 			</Routes>
 		</BrowserRouter>

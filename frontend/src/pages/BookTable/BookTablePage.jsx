@@ -25,6 +25,25 @@ function useWindowSize() {
 	return windowSize;
 }
 
+const getRoundedTime = (timeString) => {
+	const [hour, minute] = timeString.split(":").map(Number);
+	let roundedHour = hour;
+	let roundedMinute = minute;
+
+	if (minute === 0 || minute === 30) {
+		roundedMinute = minute;
+	} else if (minute < 30) {
+		roundedMinute = 30;
+	} else {
+		roundedMinute = 0;
+		roundedHour = (hour + 1) % 24;
+	}
+
+	return `${roundedHour.toString().padStart(2, "0")}:${roundedMinute
+		.toString()
+		.padStart(2, "0")}`;
+};
+
 const BookTablePage = () => {
 	const { width } = useWindowSize();
 
@@ -35,9 +54,10 @@ const BookTablePage = () => {
 		setVisibleCount(columns * rows);
 	}, [width]);
 
+	// Include tableSizes in the search criteria (number of people is used below)
 	const [searchCriteria, setSearchCriteria] = useState({
 		date: new Date().toISOString().split("T")[0],
-		time: new Date().toTimeString().slice(0, 5),
+		time: getRoundedTime(new Date().toTimeString().slice(0, 5)),
 		people: 1,
 		location: "",
 	});
@@ -47,7 +67,7 @@ const BookTablePage = () => {
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
 
-	// Helper function to convert 24-hour time string ("HH:MM") to 12-hour format ("H:MM AM/PM")
+	// Converts a 24-hour time string to 12-hour format
 	const convertTo12Hour = (timeString) => {
 		let [hour, minute] = timeString.split(":").map(Number);
 		const period = hour >= 12 ? "PM" : "AM";
@@ -56,7 +76,7 @@ const BookTablePage = () => {
 		return `${hour}:${minute.toString().padStart(2, "0")} ${period}`;
 	};
 
-	// Helper function to generate 30-minute time slots from an hours string (e.g. "11 AM - 11 PM")
+	// Generates 30-minute time slots from an hours string (e.g., "11 AM - 11 PM")
 	const generateTimeSlots = (hoursString) => {
 		if (hoursString === "Closed") {
 			return ["Restaurant is Closed"];
@@ -95,19 +115,15 @@ const BookTablePage = () => {
 		}
 	};
 
-	// Initial fetching of all restaurants data
 	useEffect(() => {
 		const fetchRestaurants = async () => {
 			try {
 				setLoading(true);
-
 				const response = await axios.get(
 					"http://127.0.0.1:5000/restaurants"
 				);
-
 				if (response.data) {
 					const restaurantData = response.data.map((restaurant) => {
-						// For initial load, use today's day
 						const days = [
 							"Sun",
 							"Mon",
@@ -117,6 +133,7 @@ const BookTablePage = () => {
 							"Fri",
 							"Sat",
 						];
+						// Use today's day for the initial load
 						const currentDay = days[new Date().getDay()];
 						const hours =
 							restaurant.hours[currentDay] ||
@@ -132,12 +149,12 @@ const BookTablePage = () => {
 							avgRating: restaurant.avgRating || 0,
 							bookingsToday: restaurant.bookingsToday || 0,
 							hours: restaurant.hours, // keep raw hours data for filtering
-							availableTimes, // initial available times (for today's day)
+							availableTimes, // initial available times (for today)
 							image: restaurant.image || null,
 							address: restaurant.address || "",
+							tableSizes: restaurant.tableSizes, // include capacity info
 						};
 					});
-
 					setAllRestaurants(restaurantData);
 					setSearchResults(restaurantData);
 				}
@@ -151,48 +168,60 @@ const BookTablePage = () => {
 		fetchRestaurants();
 	}, []);
 
-	// Updated search function that filters based on date, time, number of people, and location
+	// The updated search function recalculates available times based on the selected date
+	// and filters by the rounded time and capacity (number of people).
 	const handleSearch = async () => {
 		try {
 			setLoading(true);
 			const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-			// Determine the day of the week from selected date
 			const searchDate = new Date(searchCriteria.date);
 			const dayOfWeek = days[searchDate.getDay()];
 
-			// Convert the selected time to 12-hour format for comparison
-			const formattedSearchTime = convertTo12Hour(searchCriteria.time);
+			// Round the input time and convert it to 12-hour format for comparison
+			const roundedTime = getRoundedTime(searchCriteria.time);
+			const formattedSearchTime = convertTo12Hour(roundedTime);
 
-			const filteredResults = allRestaurants.filter((restaurant) => {
-				// Filter by location if provided
-				if (
-					searchCriteria.location &&
-					!restaurant.address
-						.toLowerCase()
-						.includes(searchCriteria.location.toLowerCase())
-				) {
-					return false;
-				}
-
-				// Get the hours for the selected day, fallback to the first available day if not available
-				let hoursForDay =
-					restaurant.hours[dayOfWeek] ||
-					Object.values(restaurant.hours)[0];
-				if (hoursForDay === "Closed") {
-					return false;
-				}
-				const availableTimes = generateTimeSlots(hoursForDay);
-
-				// Check if the search time is included in the restaurant's available times
-				if (!availableTimes.includes(formattedSearchTime)) {
-					return false;
-				}
-
-				// Number of people check can be included here if there's a capacity parameter.
-				// e.g., if (restaurant.capacity && restaurant.capacity < searchCriteria.people) return false;
-
-				return true;
-			});
+			// Recalculate available times using the selected day, then filter by time slot and capacity.
+			const filteredResults = allRestaurants
+				.map((restaurant) => {
+					const hoursForDay = restaurant.hours[dayOfWeek];
+					if (!hoursForDay || hoursForDay === "Closed") {
+						return {
+							...restaurant,
+							availableTimes: ["Restaurant is Closed"],
+						};
+					}
+					const availableTimes = generateTimeSlots(hoursForDay);
+					return { ...restaurant, availableTimes };
+				})
+				.filter((restaurant) => {
+					// Exclude if restaurant is closed on that day.
+					if (
+						restaurant.availableTimes.includes(
+							"Restaurant is Closed"
+						)
+					)
+						return false;
+					// Check capacity: at least one table should have seats >= the requested people.
+					if (restaurant.tableSizes) {
+						let capacityMatches = false;
+						for (let [size] of Object.entries(
+							restaurant.tableSizes
+						)) {
+							if (Number(size) >= searchCriteria.people) {
+								capacityMatches = true;
+								break;
+							}
+						}
+						if (!capacityMatches) return false;
+					}
+					if (
+						!restaurant.availableTimes.includes(formattedSearchTime)
+					) {
+						return false;
+					}
+					return true;
+				});
 
 			setSearchResults(filteredResults);
 			setError(null);
@@ -215,7 +244,7 @@ const BookTablePage = () => {
 	};
 
 	const handleLoadMore = () => {
-		setVisibleCount((prev) => prev + visibleCount); // Loads an additional "page" of items
+		setVisibleCount((prev) => prev + visibleCount);
 	};
 
 	if (loading) {
@@ -235,7 +264,7 @@ const BookTablePage = () => {
 				<Navbar role="customer" />
 				<div className="error-state">
 					<p>{error}</p>
-					<button onClick={fetchRestaurants}>Retry</button>
+					<button onClick={handleSearch}>Retry</button>
 				</div>
 			</div>
 		);
@@ -297,66 +326,102 @@ const BookTablePage = () => {
 			</div>
 
 			<div className="search-results">
-				{searchResults.slice(0, visibleCount).map((result) => (
-					<div key={result.id} className="restaurant-result">
-						<img
-							src={
-								result.image || "/images/default-restaurant.jpg"
-							}
-							alt={result.name}
-							className="restaurant-image"
-						/>
-						<div className="restaurant-content">
-							<h3>{result.name}</h3>
-							<div className="restaurant-info">
-								<p>🍴 {result.cuisineType}</p>
-								<p>💰 {result.costRating}</p>
-								<p>⭐ {result.avgRating.toFixed(1)}</p>
-								<p>📊 {result.bookingsToday} today</p>
-							</div>
-							<div className="available-times">
-								<p>Available times:</p>
-								<div className="time-slots">
-									{result.availableTimes.length === 1 &&
-									result.availableTimes[0] ===
-										"Restaurant is Closed" ? (
-										<p>Restaurant is Closed</p>
-									) : (
-										<>
-											{result.availableTimes
-												.slice(0, 5)
-												.map((time, idx) => (
-													<button
-														key={idx}
-														onClick={() =>
-															handleTimeSlotClick(
-																result.id,
-																time
-															)
-														}
-														className="time-slot-button"
-													>
-														{time}
-													</button>
-												))}
-											{result.availableTimes.length >
-												5 && (
-												<span className="more-slots-indicator">
-													...
-												</span>
-											)}
-										</>
-									)}
-								</div>
-							</div>
-							<Link to={`/restaurant/${result.id}`}>
-								<button className="view-details-button">
-									View Restaurant Details
-								</button>
-							</Link>
-						</div>
+				{searchResults.length === 0 ? (
+					<div className="no-results">
+						<h2>
+							Oops! We don't have any restaurants available for
+							the chosen slot.
+						</h2>
+						<h2>
+							Try adjusting your search criteria or selecting a
+							different time/date.
+						</h2>
 					</div>
-				))}
+				) : (
+					searchResults.slice(0, visibleCount).map((result) => (
+						<div key={result.id} className="restaurant-result">
+							<img
+								src={
+									result.image ||
+									"/images/default-restaurant.jpg"
+								}
+								alt={result.name}
+								className="restaurant-image"
+							/>
+							<div className="restaurant-content">
+								<h3>{result.name}</h3>
+								<div className="restaurant-info">
+									<p>🍴 {result.cuisineType}</p>
+									<p>💰 {result.costRating}</p>
+									<p>⭐ {result.avgRating.toFixed(1)}</p>
+									<p>📊 {result.bookingsToday} today</p>
+								</div>
+								<div className="available-times">
+									<p>Available times:</p>
+									<div className="time-slots">
+										{result.availableTimes.length === 1 &&
+										result.availableTimes[0] ===
+											"Restaurant is Closed" ? (
+											<p>Restaurant is Closed</p>
+										) : (
+											<>
+												{(() => {
+													const selectedTime =
+														convertTo12Hour(
+															getRoundedTime(
+																searchCriteria.time
+															)
+														);
+													const index =
+														result.availableTimes.indexOf(
+															selectedTime
+														);
+													if (index === -1)
+														return null;
+
+													// Show a few slots near the searched time
+													const start = Math.max(
+														0,
+														index - 2
+													);
+													const visibleSlots =
+														result.availableTimes.slice(
+															start,
+															index + 1
+														);
+
+													return visibleSlots.map(
+														(time, idx) => (
+															<button
+																key={idx}
+																onClick={() =>
+																	handleTimeSlotClick(
+																		result.id,
+																		time
+																	)
+																}
+																className="time-slot-button"
+															>
+																{time}
+															</button>
+														)
+													);
+												})()}
+												{result.availableTimes.length >
+													5}
+											</>
+										)}
+									</div>
+								</div>
+								<Link to={`/restaurant/${result.id}`}>
+									<button className="view-details-button">
+										View Restaurant Details
+									</button>
+								</Link>
+							</div>
+						</div>
+					))
+				)}
 			</div>
 
 			{visibleCount < searchResults.length && (

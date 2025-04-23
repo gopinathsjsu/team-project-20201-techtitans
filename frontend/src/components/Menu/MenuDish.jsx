@@ -55,8 +55,8 @@ function MenuDish(props) {
 	};
 
 	return (
-		<div className="add-restaurant-restaurant-form">
-			<label className="add-restaurant-form-group">
+		<div className="update-restaurant-restaurant-form">
+			<label className="update-restaurant-form-group">
 				Dish Name:
 				<input
 					type="text"
@@ -65,17 +65,17 @@ function MenuDish(props) {
 					onChange={handleChange}
 				/>
 			</label>
-			<label className="add-restaurant-form-group">
+			<label className="update-restaurant-form-group">
 				Description:
 				<textarea
 					type="text"
 					name="description"
 					placeholder="Enter a description..."
-					className="add-restaurant-description-text"
+					className="update-restaurant-description-text"
 					onChange={handleChange}
 				></textarea>
 			</label>
-			<label className="add-restaurant-form-group">
+			<label className="update-restaurant-form-group">
 				Cost:
 				<input
 					type="number"
@@ -98,7 +98,7 @@ function MenuDish(props) {
 				/>
 				<button
 					type="button"
-					className="add-restaurant-insert-pics-btn"
+					className="update-restaurant-insert-pics-btn"
 					onClick={() => fileInputRef.current.click()}
 				>
 					Insert Image

@@ -105,8 +105,8 @@ function AddMenu(props) {
 	}
 
 	return (
-		<div className="add-restaurant-restaurant-form">
-			<h2 className="add-restaurant-form-group">
+		<div className="update-restaurant-restaurant-form">
+			<h2 className="update-restaurant-form-group">
 				Menu Title:
 				<input
 					type="text"
