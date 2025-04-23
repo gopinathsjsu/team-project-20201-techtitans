@@ -208,7 +208,6 @@ const BookTablePage = () => {
 					// Check capacity: at least one table should have seats >= the requested people.
 					if (restaurant.tableSizes) {
 						let capacityMatches = false;
-						// tableSizes comes as an object/map; iterate over its keys.
 						for (let [size] of Object.entries(
 							restaurant.tableSizes
 						)) {
@@ -219,7 +218,6 @@ const BookTablePage = () => {
 						}
 						if (!capacityMatches) return false;
 					}
-					// Finally, include only restaurants that offer the desired (rounded) time slot.
 					if (
 						!restaurant.availableTimes.includes(formattedSearchTime)
 					) {
@@ -249,7 +247,7 @@ const BookTablePage = () => {
 	};
 
 	const handleLoadMore = () => {
-		setVisibleCount((prev) => prev + visibleCount); // load an additional "page" of items
+		setVisibleCount((prev) => prev + visibleCount);
 	};
 
 	if (loading) {
