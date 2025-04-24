@@ -1,0 +1,139 @@
+h2 {
+	margin-top: 100px;
+	text-align: center;
+	width: 100vw;
+}
+
+.update-restaurant-restaurant-form {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	width: 100vw;
+	margin-bottom: 60px;
+}
+
+.update-restaurant-form-group {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 500px;
+	justify-content: space-between;
+	font-weight: bold;
+}
+
+.update-restaurant-form-coordinates {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	justify-content: space-between;
+}
+
+.update-restaurant-form-group input {
+	width: 60%;
+	max-width: 300px;
+}
+
+.update-restaurant-form-group-description {
+	display: flex;
+	gap: 10px;
+	width: 500px;
+	justify-content: space-between;
+	font-weight: bold;
+}
+
+.update-restaurant-description-text {
+	width: 60%;
+	max-width: 300px;
+	height: 100px;
+	resize: none;
+}
+
+.update-restaurant-form-section-label {
+	display: flex;
+	width: 500px;
+	flex-shrink: 0;
+	font-weight: bold;
+}
+
+.update-restaurant-form-select {
+	width: 307px;
+}
+
+.update-restaurant-form-select-smaller {
+	width: 200px;
+}
+
+.update-restaurant-form-select-smallest {
+	width: 100px;
+}
+
+.update-restaurant-form-group-hours {
+	margin-bottom: 10px;
+}
+
+.update-restaurant-day {
+	display: flex;
+	align-items: center;
+	width: 500px;
+	justify-content: space-between;
+	margin-bottom: 10px;
+}
+
+.update-restaurant-day-closed {
+	display: flex;
+	align-items: center;
+	width: 200px;
+	justify-content: space-between;
+}
+
+.update-restaurant-day-title {
+	font-weight: bold;
+}
+
+.update-restaurant-from-to-hours {
+	display: flex;
+	align-items: center;
+	width: 250px;
+	justify-content: space-between;
+}
+
+.update-restaurant-form-group-booking {
+	display: flex;
+	align-items: center;
+	width: 500px;
+	justify-content: space-between;
+	gap: 4px;
+}
+
+.update-restaurant-booking-times-title {
+	font-weight: bold;
+}
+
+.update-restaurant-form-group-table-sizes {
+	display: flex;
+	align-items: center;
+	width: 500px;
+	justify-content: space-between;
+	gap: 5px;
+}
+
+.update-restaurant-save-btn {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: black;
+	margin-right: 20px;
+	background-color: #d9d9d9;
+	width: 150px;
+}
+
+.update-restaurant-insert-pics-btn {
+	font-weight: 600;
+	color: black;
+	margin-right: 20px;
+	background-color: #d9d9d9;
+	width: 150px;
+	margin-bottom: 10px;
+}
