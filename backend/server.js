@@ -186,7 +186,63 @@ app.get("/restaurants/pending", async (req, res) => {
 app.post("/restaurants", async (req, res) => {
 	const restaurant = req.body;
 	const savedRestaurant = await addRestaurant(restaurant);
+
 	if (savedRestaurant && savedRestaurant != "existing restaurant") {
+		const tables = savedRestaurant.tableSizes;
+		const bookingDuration =
+			parseInt(savedRestaurant.bookingDuration.split(" ")[0], 10) * 60;
+		const hours = Array.from(savedRestaurant.hours);
+		const openHours = hours.filter(([day, time]) => time !== "Closed");
+		const slots = new Set();
+
+		const parseTime = (timeStr) => {
+			const [time, period] = timeStr.split(" ");
+			let [hours, minutes] = time.split(":").map(Number);
+			if (minutes === undefined) minutes = 0;
+			if (period === "PM" && hours !== 12) hours += 12;
+			if (period === "AM" && hours === 12) hours = 0;
+			return hours * 60 + minutes;
+		};
+
+		const convertMinutesTo12Hour = (totalMinutes) => {
+			const hrs24 = Math.floor(totalMinutes / 60);
+			const mins = totalMinutes % 60;
+			const period = hrs24 >= 12 ? "PM" : "AM";
+			const hrs12 = hrs24 % 12 === 0 ? 12 : hrs24 % 12;
+			return `${hrs12}:${mins.toString().padStart(2, "0")} ${period}`;
+		};
+
+		openHours.forEach(([day, time]) => {
+			const [openTime, closeTime] = time.split(" - ");
+			const openMinutes = parseTime(openTime);
+			const closeMinutes = parseTime(closeTime);
+
+			for (let t = openMinutes; t < closeMinutes; t += bookingDuration) {
+				const slot =
+					convertMinutesTo12Hour(t) +
+					" - " +
+					convertMinutesTo12Hour(t + bookingDuration);
+				if (t + bookingDuration <= closeMinutes) {
+					slots.add(slot);
+				}
+			}
+		});
+
+		tables.forEach((seats, tableKey) => {
+			const tableNum = tableKey.split(" ")[1];
+			slots.forEach((timeSlot) => {
+				const tableEntry = {
+					tableNum: tableNum,
+					seats: seats,
+					timeSlot: timeSlot,
+					restaurantId: savedRestaurant._id,
+				};
+				const savedTable = addTable(tableEntry);
+				if (!savedTable) {
+					res.status(500).end("Failed to create restaurant tables.");
+				}
+			});
+		});
 		res.status(201).send(savedRestaurant);
 	} else {
 		res.status(500).end("existing restaurant");
