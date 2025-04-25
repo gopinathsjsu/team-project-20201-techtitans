@@ -1,6 +1,7 @@
 import "./UpdateRestaurant.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import TimeSelect, { timeOptions } from "../TimeSelect";
 
 function UpdateRestaurant(props) {
 	const { restaurantId } = props;
@@ -31,6 +32,119 @@ function UpdateRestaurant(props) {
 
 	const handleLocationChange = (e) => {};
 
+	const [closedDays, setClosedDays] = useState({
+		Sun: false,
+		Mon: false,
+		Tue: false,
+		Wed: false,
+		Thu: false,
+		Fri: false,
+		Sat: false,
+	});
+
+	const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+	const dayTitles = {
+		Sun: "Sunday",
+		Mon: "Monday",
+		Tue: "Tuesday",
+		Wed: "Wednesday",
+		Thu: "Thursday",
+		Fri: "Friday",
+		Sat: "Saturday",
+	};
+
+	const handleTimeChange = (day, type, value) => {
+		setRestaurant((prev) => {
+			const newHours = { ...prev.hours };
+			let currentHours = newHours[day]
+				? newHours[day].split(" - ")
+				: ["", ""];
+			if (type === "start") {
+				currentHours[0] = value;
+			} else if (type === "end") {
+				currentHours[1] = value;
+			}
+			newHours[day] = currentHours.join(" - ");
+			return {
+				...prev,
+				hours: newHours,
+			};
+		});
+	};
+
+	const handleCheckboxChange = (day) => {
+		setClosedDays((prev) => {
+			const newClosedDays = { ...prev, [day]: !prev[day] };
+			setRestaurant((prevRestaurant) => {
+				const newHours = { ...prevRestaurant.hours };
+				newHours[day] = newClosedDays[day] ? "Closed" : "";
+				return {
+					...prevRestaurant,
+					hours: newHours,
+				};
+			});
+			return newClosedDays;
+		});
+	};
+
+	useEffect(() => {
+		if (restaurant) {
+			const newClosedDays = {};
+			for (const day of days) {
+				newClosedDays[day] = restaurant.hours?.[day] === "Closed";
+			}
+			setClosedDays(newClosedDays);
+			const existingTableSizes = restaurant.tableSizes;
+			setNumTables(Object.keys(existingTableSizes).length);
+		}
+	}, [restaurant]);
+
+	const [numTables, setNumTables] = useState(0);
+
+	const handleTableChange = (e) => {
+		setNumTables(parseInt(e.target.value, 10));
+	};
+
+	const renderTableSizes = () => {
+		const tableSizeOptions = Array.from({ length: 20 }, (_, i) => (
+			<option key={i + 1} value={`${i + 1}`}>
+				{i + 1}
+			</option>
+		));
+
+		return Array.from({ length: numTables }, (_, i) => (
+			<label
+				key={`table-${i + 1}`}
+				className="update-restaurant-form-group-table-sizes"
+			>
+				Size for Table {i + 1}:
+				<select
+					name={`Table ${i + 1} Size`}
+					className="update-restaurant-form-select-smallest"
+					onChange={handleTableSizeChange}
+					value={restaurant.tableSizes?.[`Table ${i + 1} Size`] || ""}
+				>
+					<option value="" disabled selected>
+						0
+					</option>
+					{tableSizeOptions}
+				</select>
+			</label>
+		));
+	};
+
+	const handleTableSizeChange = (e) => {
+		const { name, value } = e.target;
+		setRestaurant((prev) => ({
+			...prev,
+			tableSizes: {
+				...prev.tableSizes,
+				[name]: value,
+			},
+		}));
+	};
+
 	if (!restaurant) {
 		return (
 			<>
@@ -44,6 +158,20 @@ function UpdateRestaurant(props) {
 			<h2>Update Restaurant</h2>
 			<form>
 				<div className="update-restaurant-restaurant-form">
+					<div className="update-restaurant-photos-preview">
+						{restaurant.photos && restaurant.photos.length > 0 ? (
+							restaurant.photos.map((photoUrl, index) => (
+								<img
+									key={index}
+									src={photoUrl}
+									alt={`Restaurant photo ${index + 1}`}
+									className="update-restaurant-photo-thumbnail"
+								/>
+							))
+						) : (
+							<p>No photos uploaded.</p>
+						)}
+					</div>
 					<label className="update-restaurant-form-group">
 						Name:
 						<input
@@ -144,6 +272,81 @@ function UpdateRestaurant(props) {
 					<label className="update-restaurant-form-section-label">
 						Hours
 					</label>
+					<div className="update-restaurant-form-group-hours">
+						{days.map((day) => (
+							<div key={day} className="update-restaurant-day">
+								<label className="update-restaurant-day-closed">
+									<label className="update-restaurant-day-title">
+										{dayTitles[day]}:
+									</label>
+									<label>
+										Closed:
+										<input
+											type="checkbox"
+											checked={closedDays[day]}
+											onChange={() =>
+												handleCheckboxChange(day)
+											}
+										/>
+									</label>
+								</label>
+								{!closedDays[day] && (
+									<label className="update-restaurant-from-to-hours">
+										{!closedDays[day] && (
+											<label className="update-restaurant-from-to-hours">
+												<label>From:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[0]
+																	.trim()
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"start",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
+
+												<label>To:</label>
+												<TimeSelect
+													value={
+														restaurant.hours[day]
+															? restaurant.hours[
+																	day
+																]
+																	.split(
+																		" - "
+																	)[1]
+																	?.trim() ||
+																""
+															: ""
+													}
+													onChange={(e) =>
+														handleTimeChange(
+															day,
+															"end",
+															e.target.value
+														)
+													}
+													placeholder="00:00"
+												/>
+											</label>
+										)}
+									</label>
+								)}
+							</div>
+						))}
+					</div>
 					<label className="update-restaurant-form-group">
 						Booking Duration:
 						<select
@@ -159,7 +362,28 @@ function UpdateRestaurant(props) {
 							<option value="3 Hours">3 Hours</option>
 						</select>
 					</label>
-					<button className="update-restaurant-save-btn">Save</button>
+					<label className="update-restaurant-form-section-label">
+						Table Sizes
+					</label>
+					<label className="update-restaurant-form-group">
+						Number of Tables:
+						<select
+							name="total-tables"
+							onChange={handleTableChange}
+							className="update-restaurant-form-select-smallest"
+							value={numTables}
+						>
+							<option value="0" disabled selected>
+								0
+							</option>
+							{Array.from({ length: 20 }, (_, i) => (
+								<option key={i + 1} value={i + 1}>
+									{i + 1}
+								</option>
+							))}
+						</select>
+					</label>
+					{renderTableSizes()}
 				</div>
 			</form>
 		</>

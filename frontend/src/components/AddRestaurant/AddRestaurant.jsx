@@ -3,7 +3,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
-import TimeSelect, { timeOptions } from "./TimeSelect";
+import TimeSelect, { timeOptions } from "../TimeSelect";
 
 function AddRestaurant(props) {
 	const { userEmail } = props;
