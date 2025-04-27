@@ -1,13 +1,13 @@
 import Navbar from "../../components/Navbar/Navbar";
 import { useParams } from "react-router-dom";
-import UpdateRestaurant from "../../components/UpdateRestaurant/UpdateRestaurant";
+import RestaurantForm from "../../components/RestaurantForm/RestaurantForm";
 
 function RestaurantManagerUpdateRestaurant() {
 	const { id } = useParams();
 	return (
 		<>
 			<Navbar role="restaurant-manager" />
-			<UpdateRestaurant restaurantId={id} />
+			<RestaurantForm restaurantId={id} userEmail={null} />
 		</>
 	);
 }

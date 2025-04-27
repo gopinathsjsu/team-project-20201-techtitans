@@ -1,20 +1,11 @@
-h2 {
+.update-restaurant-title {
 	margin-top: 100px;
 	text-align: center;
 	width: 100vw;
-}
-
-.update-restaurant-photo-thumbnail {
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
-	border-radius: 8px;
-	margin: 5px;
-}
-.update-restaurant-photos-preview {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
+	color: black;
+	text-indent: -20px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
 .update-restaurant-restaurant-form {
@@ -149,4 +140,36 @@ h2 {
 	background-color: #d9d9d9;
 	width: 150px;
 	margin-bottom: 10px;
+}
+
+.update-restaurant-photo-thumbnail {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+	margin: 5px;
+}
+
+.update-restaurant-photos-preview {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 20px;
+}
+
+.update-photo-with-delete {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 5px;
+}
+
+.update-delete-photo-button {
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+	background-color: #d9d9d9;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
