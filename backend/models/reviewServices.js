@@ -44,3 +44,16 @@ export async function getReviewsByRestaurantId(restaurantId) {
 		return false;
 	}
 }
+
+export async function removeReviews(id) {
+	const conn = getDbConnection();
+	const ReviewModel = conn.model("Review", ReviewSchema);
+	try {
+		const removedReviews = ReviewModel.deleteMany({
+			restaurantId: id,
+		});
+		return removedReviews;
+	} catch (error) {
+		return false;
+	}
+}

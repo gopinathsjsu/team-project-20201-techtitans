@@ -8,6 +8,7 @@ function RestaurantManagerHome(props) {
 		verifiedRestaurantsByEmail,
 		setAlertMessages,
 	} = props;
+
 	const pendingEmailListings = pendingRestaurantsByEmail.map((listing) => (
 		<div className="restaurants-listing" key={listing._id}>
 			<RestaurantListing
@@ -17,6 +18,7 @@ function RestaurantManagerHome(props) {
 			/>
 		</div>
 	));
+
 	const verifiedEmailListings = verifiedRestaurantsByEmail.map((listing) => (
 		<div className="restaurants-listing" key={listing._id}>
 			<RestaurantListing

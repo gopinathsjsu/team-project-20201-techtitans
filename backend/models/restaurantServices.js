@@ -204,3 +204,14 @@ export async function getVerifiedRestaurantsByEmail(email) {
 		return null;
 	}
 }
+
+export async function removeRestaurant(id) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const removedRestaurant = await RestaurantModel.findByIdAndDelete(id);
+		return removedRestaurant;
+	} catch (error) {
+		return false;
+	}
+}

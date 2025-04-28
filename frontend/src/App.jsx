@@ -195,6 +195,9 @@ function App() {
 							pendingRestaurants={pendingRestaurants}
 							setPendingRestaurants={setPendingRestaurants}
 							fetchPendingRestaurants={fetchPendingRestaurants}
+							verifiedRestaurants={verifiedRestaurants}
+							setVerifiedRestaurants={setVerifiedRestaurants}
+							fetchVerifiedRestaurants={fetchVerifiedRestaurants}
 							alertMessages={alertMessages}
 							setAlertMessages={setAlertMessages}
 						/>

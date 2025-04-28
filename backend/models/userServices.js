@@ -46,7 +46,6 @@ export async function addUser(user, hashedPwd) {
 		const newUser = {
 			...user,
 			reservations: [],
-			restaurantListings: [],
 		};
 		const userToAdd = new UserModel(newUser);
 
