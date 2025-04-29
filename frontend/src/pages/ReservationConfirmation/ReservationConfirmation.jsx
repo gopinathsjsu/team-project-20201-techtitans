@@ -1,10 +1,59 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
+import axios from "axios";
 
 const ReservationConfirmation = () => {
 	const location = useLocation();
-	const { restaurantName, date, time, people, table } = location.state || {};
+	const navigate = useNavigate();
+	const { restaurantName, restaurantId, userId, date, time, people, table } = location.state || {};
+	const finalUserId = userId || localStorage.getItem("userId");
+
+	const handleCompleteReservation = async () => {
+		if (!finalUserId) {
+			alert("You must be logged in to make a reservation!");
+			navigate("/login");
+			return;
+		  }		  
+		try {
+			console.log("Submitting reservation...");
+			const reservationData = {
+				userId: finalUserId, 
+				restaurantId,
+				date,
+				time,
+				numberOfPeople: parseInt(people),
+				tableNum: table,
+				timeSlot: time,
+			};
+	
+			console.log(reservationData);
+	
+			const reservationRes = await axios.post(
+				"http://localhost:5000/reservations",
+				reservationData
+			);
+	
+			const tableUpdateRes = await axios.patch(
+				`http://localhost:5000/table/${restaurantId}/${table}`,
+				{
+					timeSlot: time,
+					isTaken: true,
+				}
+			);
+	
+			console.log("Reservation created:", reservationRes.data);
+			console.log("Table updated:", tableUpdateRes.data);
+	
+			alert("Reservation successful!");
+			navigate("/customer-profile");
+	
+		} catch (error) {
+			console.error("Error completing reservation:", error);
+			alert(error.response?.data?.message || "Failed to complete reservation.");
+		}
+	};
+	
 
 	return (
 		<div className="reservation-confirmation-page">
@@ -29,7 +78,10 @@ const ReservationConfirmation = () => {
 						<span>{table}</span>
 					</div>
 				</div>
-				<button className="complete-reservation-button">
+				<button 
+					className="complete-reservation-button"
+					onClick={handleCompleteReservation}
+				>
 					Complete Reservation
 				</button>
 			</div>

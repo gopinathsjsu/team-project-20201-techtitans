@@ -26,14 +26,18 @@ export async function getAvailableTablesbyTime(
 	const conn = getDbConnection();
 	const TableModel = conn.model("Table", TableSchema);
 	try {
+		const peopleNum = parseInt(numPeople, 10);
+
 		const availableTables = TableModel.find({
 			restaurantId: restaurantId,
 			timeSlot: timeSlot,
-			seats: { $gte: numPeople },
+			seats: { $gte: peopleNum },
 			taken: false,
 		}).sort({ tableNum: 1 });
+		
 		return availableTables;
 	} catch (error) {
+		console.error("Error in getAvailableTablesbyTime:", error);
 		return false;
 	}
 }

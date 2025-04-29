@@ -256,25 +256,27 @@ app.post("/table", async (req, res) => {
 	}
 });
 
-app.patch("/table/:tableNum", async (req, res) => {
-	const { tableNum } = req.params;
+app.patch("/table/:restaurantId/:tableNum", async (req, res) => {
+	const { restaurantId, tableNum } = req.params; 
 	const updates = req.body;
+  
 	let result = null;
-	if (updates.isTaken != undefined || updates.isTaken != null) {
-		result = await updateTableStatus(
-			tableNum,
-			updates.timeSlot,
-			updates.restaurantId,
-			updates.isTaken
-		);
+	if (updates.isTaken !== undefined || updates.isTaken !== null) {
+	  result = await updateTableStatus(
+		tableNum, 
+		updates.timeSlot, 
+		restaurantId, 
+		updates.isTaken
+	  );
 	}
-
+  
 	if (result === undefined || result === null) {
-		res.status(404).send("Resource not found.");
+	  res.status(404).send("Resource not found.");
 	} else {
-		res.status(201).send(result);
+	  res.status(201).send(result);
 	}
-});
+  });
+  
 
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 	try {
@@ -292,17 +294,39 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 
 app.post("/reservations", async (req, res) => {
 	try {
-		const reservation = req.body;
-		const result = await addReservation(reservation);
-		if (result) {
-			res.status(201).json(result);
-		} else {
-			res.status(500).end();
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
+	  const reservation = req.body;
+	  const { userId, restaurantId, time, date, numberOfPeople } = reservation;
+  
+	  const availableTables = await getAvailableTablesbyTime(
+		restaurantId,
+		time,
+		numberOfPeople
+	  );
+  
+	  if (!availableTables || availableTables.length === 0) {
+		return res.status(400).send("No available tables at this time.");
+	  }
+  
+	  const selectedTable = availableTables[0]; 
+  
+	  await updateTableStatus(selectedTable.tableNum, time, restaurantId, true);
+  
+	  const finalReservation = {
+		...reservation,
+		table: {
+		  tableNum: selectedTable.tableNum,
+		  timeSlot: time,
+		},
+	  };
+  
+	  const saved = await addReservation(finalReservation);
+  
+	  res.status(201).json(saved);
+	} catch (err) {
+	  console.error("Booking error:", err);
+	  res.status(500).send("Internal Server Error");
 	}
-});
+  });  
 
 app.get("/reservations/user/:userId", async (req, res) => {
 	try {

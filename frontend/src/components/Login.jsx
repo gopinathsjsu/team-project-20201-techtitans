@@ -59,6 +59,9 @@ function Login(props) {
 			makeLoginCall(user).then((result) => {
 				if (result && result.status === 201) {
 					handleLoginIn(result.data);
+
+					localStorage.setItem("userId", result.data.savedUser._id);
+
 					if (result.data.savedUser.status == "Customer") {
 						// eventually navigate with customer id
 						navigate("/customer-profile");

@@ -1,41 +1,41 @@
-import "./RestaurantReservationConfirmation.css";
+import { useLocation } from "react-router-dom";
+import Navbar from "../../components/Navbar/Navbar";
+import "./ReservationConfirmation.css";
 
-function RestaurantReservationConfirmation(props) {
-	const { name, date, time, numPeople, table } = props;
-	const handleFormSubmit = (event) => {
-		event.preventDefault();
-	};
+const ReservationConfirmation = () => {
+	console.log("Loaded ReservationConfirmation");
+	const location = useLocation();
+	const { restaurantName, date, time, people, table } = location.state || {};
 
 	return (
-		<>
-			<h2>{name}</h2>
-			<form
-				className="reservation-confirmation-form"
-				onSubmit={handleFormSubmit}
-			>
-				<div className="reservation-confirmation-control">
-					<label className="reservation-confirmation-info">
-						Date: {date}
-					</label>
-					<label className="reservation-confirmation-info">
-						Time: {time}
-					</label>
-					<label className="reservation-confirmation-info">
-						Number of People: {numPeople}
-					</label>
-					<label className="reservation-confirmation-info">
-						Table Number: {table}
-					</label>
+		<div className="reservation-confirmation-page">
+			<Navbar role="customer" />
+			<div className="confirmation-details">
+				<h2>{restaurantName}</h2>
+				<div className="details">
+					<div className="detail-item">
+						<span>Date</span>
+						<span>{date}</span>
+					</div>
+					<div className="detail-item">
+						<span>Time</span>
+						<span>{time}</span>
+					</div>
+					<div className="detail-item">
+						<span>No of people</span>
+						<span>{people}</span>
+					</div>
+					<div className="detail-item">
+						<span>Table Number</span>
+						<span>{table}</span>
+					</div>
 				</div>
-				<button
-					type="submit"
-					className="reservation-confirmation-complete-btn"
-				>
+				<button className="complete-reservation-button">
 					Complete Reservation
 				</button>
-			</form>
-		</>
+			</div>
+		</div>
 	);
-}
+};
 
-export default RestaurantReservationConfirmation;
+export default ReservationConfirmation;
