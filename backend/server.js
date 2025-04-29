@@ -17,6 +17,7 @@ import {
 	getRestaurantsByEmail,
 	getPendingRestaurantsByEmail,
 	getVerifiedRestaurantsByEmail,
+	updateRestaurantById,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -495,7 +496,7 @@ app.get("/restaurants/pending/owner/:email", async (req, res) => {
 		res.status(201).send(result);
 	} catch (error) {
 		res.status(500).send(
-			"Unable to fetch restaurants belonging to that email."
+			"Unable to fetch restaurants pending approval belonging to that email."
 		);
 	}
 });
@@ -509,7 +510,29 @@ app.get("/restaurants/verified/owner/:email", async (req, res) => {
 		res.status(201).send(result);
 	} catch (error) {
 		res.status(500).send(
-			"Unable to fetch restaurants belonging to that email."
+			"Unable to fetch verified restaurants belonging to that email."
+		);
+	}
+});
+
+app.patch("/restaurants/update/:id", async (req, res) => {
+	try {
+		const restaurantId = req.params.id;
+		const updateData = req.body;
+		const updatedRestaurant = await updateRestaurantById(
+			restaurantId,
+			updateData
+		);
+		if (!updatedRestaurant) {
+			return res
+				.status(404)
+				.send("Restaurant not found or update failed.");
+		}
+		res.status(200).json(updatedRestaurant);
+	} catch (error) {
+		console.error("Error updating restaurant:", error);
+		res.status(500).send(
+			"Internal Server Error while updating restaurant."
 		);
 	}
 });
