@@ -5,7 +5,6 @@ import axios from "axios";
 import "../../pages/Restaurant/Restaurant.css";
 
 function ReservationForm({ restaurant, userId }) {
-	//console.log("Loaded ReservationForm");
 	const navigate = useNavigate();
 
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);

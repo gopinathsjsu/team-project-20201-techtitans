@@ -22,6 +22,7 @@ import {
 	addReservation,
 	getReservationsByUserId,
 	getReservationsByRestaurantId,
+	deleteReservationById,
 } from "./models/reservationServices.js";
 import {
 	addReview,
@@ -277,6 +278,20 @@ app.patch("/table/:restaurantId/:tableNum", async (req, res) => {
 	}
   });
   
+  app.delete("/reservations/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const deleted = await deleteReservationById(id);
+		if (deleted) {
+			res.status(200).send("Reservation deleted and table freed.");
+		} else {
+			res.status(404).send("Reservation not found.");
+		}
+	} catch (error) {
+		res.status(500).send("Deleting reservation failed.");
+	}
+});
+
 
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 	try {
