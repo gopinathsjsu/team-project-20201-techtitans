@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
 	addUser,
+	findUserById,
 	findUserByEmail,
 	findUserByUsername,
 } from "./models/userServices.js";
@@ -258,27 +259,27 @@ app.post("/table", async (req, res) => {
 });
 
 app.patch("/table/:restaurantId/:tableNum", async (req, res) => {
-	const { restaurantId, tableNum } = req.params; 
+	const { restaurantId, tableNum } = req.params;
 	const updates = req.body;
-  
+
 	let result = null;
 	if (updates.isTaken !== undefined || updates.isTaken !== null) {
-	  result = await updateTableStatus(
-		tableNum, 
-		updates.timeSlot, 
-		restaurantId, 
-		updates.isTaken
-	  );
+		result = await updateTableStatus(
+			tableNum,
+			updates.timeSlot,
+			restaurantId,
+			updates.isTaken
+		);
 	}
-  
+
 	if (result === undefined || result === null) {
-	  res.status(404).send("Resource not found.");
+		res.status(404).send("Resource not found.");
 	} else {
-	  res.status(201).send(result);
+		res.status(201).send(result);
 	}
-  });
-  
-  app.delete("/reservations/:id", async (req, res) => {
+});
+
+app.delete("/reservations/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const deleted = await deleteReservationById(id);
@@ -309,39 +310,69 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 
 app.post("/reservations", async (req, res) => {
 	try {
-	  const reservation = req.body;
-	  const { userId, restaurantId, time, date, numberOfPeople } = reservation;
-  
-	  const availableTables = await getAvailableTablesbyTime(
-		restaurantId,
-		time,
-		numberOfPeople
-	  );
-  
-	  if (!availableTables || availableTables.length === 0) {
-		return res.status(400).send("No available tables at this time.");
-	  }
-  
-	  const selectedTable = availableTables[0]; 
-  
-	  await updateTableStatus(selectedTable.tableNum, time, restaurantId, true);
-  
-	  const finalReservation = {
-		...reservation,
-		table: {
-		  tableNum: selectedTable.tableNum,
-		  timeSlot: time,
-		},
-	  };
-  
-	  const saved = await addReservation(finalReservation);
-  
-	  res.status(201).json(saved);
+		const reservation = req.body;
+		const { userId, restaurantId, time, date, numberOfPeople } = reservation;
+
+		const availableTables = await getAvailableTablesbyTime(
+			restaurantId,
+			time,
+			numberOfPeople
+		);
+
+		if (!availableTables || availableTables.length === 0) {
+			return res.status(400).send("No available tables at this time.");
+		}
+
+		const selectedTable = availableTables[0];
+
+		await updateTableStatus(selectedTable.tableNum, time, restaurantId, true);
+
+		const finalReservation = {
+			...reservation,
+			table: {
+				tableNum: selectedTable.tableNum,
+				timeSlot: time,
+			},
+		};
+
+		const saved = await addReservation(finalReservation);
+
+		const restaurant = await getRestaurantById(restaurantId);
+		const restaurantName = restaurant?.name || "our restaurant";
+
+		// send confirmation email
+		if (saved) {
+			const user = await findUserById(req.body.userId);
+		
+			if (user && user.email) {
+				const msg = {
+					to: user.email,
+					from: "BookTable <isla2000@gmail.com>",
+					subject: `${restaurantName}: Reservation Confirmed`,
+					text: `Your reservation at ${restaurantName} been confirmed.`,
+					html: `<strong>Reservation confirmed at ${restaurantName}</strong><br>
+						   Date: ${new Date(date).toLocaleDateString("en-US", { timeZone: "UTC" })}<br>
+						   Time: ${time}<br>
+						   People: ${numberOfPeople}<br>
+						   Table Number: ${selectedTable.tableNum}<br><br>
+						   Thank you for choosing BookTable!`,
+				};
+		
+				try {
+					console.log("Sending confirmation email to:", reservation.email);
+					await sgMail.send(msg);
+					console.log("Confirmation email sent.");
+				} catch (emailError) {
+					console.error("Reservation email error:", emailError.response?.body || emailError);
+				}
+			}
+		}
+		res.status(201).json(saved);
 	} catch (err) {
-	  console.error("Booking error:", err);
-	  res.status(500).send("Internal Server Error");
+		console.error("Booking error:", err);
+		res.status(500).send("Internal Server Error");
 	}
-  });  
+});
 
 app.get("/reservations/user/:userId", async (req, res) => {
 	try {
