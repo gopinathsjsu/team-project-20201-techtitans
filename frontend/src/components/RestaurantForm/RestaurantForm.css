@@ -1,10 +1,14 @@
-h2 {
+.update-restaurant-title {
 	margin-top: 100px;
 	text-align: center;
 	width: 100vw;
+	color: black;
+	text-indent: -20px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
-.add-restaurant-restaurant-form {
+.update-restaurant-restaurant-form {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
@@ -15,7 +19,7 @@ h2 {
 	margin-bottom: 60px;
 }
 
-.add-restaurant-form-group {
+.update-restaurant-form-group {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -24,19 +28,19 @@ h2 {
 	font-weight: bold;
 }
 
-.add-restaurant-form-coordinates {
+.update-restaurant-form-coordinates {
 	display: flex;
 	align-items: center;
 	gap: 14px;
 	justify-content: space-between;
 }
 
-.add-restaurant-form-group input {
+.update-restaurant-form-group input {
 	width: 60%;
 	max-width: 300px;
 }
 
-.add-restaurant-form-group-description {
+.update-restaurant-form-group-description {
 	display: flex;
 	gap: 10px;
 	width: 500px;
@@ -44,37 +48,37 @@ h2 {
 	font-weight: bold;
 }
 
-.add-restaurant-description-text {
+.update-restaurant-description-text {
 	width: 60%;
 	max-width: 300px;
 	height: 100px;
 	resize: none;
 }
 
-.add-restaurant-form-section-label {
+.update-restaurant-form-section-label {
 	display: flex;
 	width: 500px;
 	flex-shrink: 0;
 	font-weight: bold;
 }
 
-.add-restaurant-form-select {
+.update-restaurant-form-select {
 	width: 307px;
 }
 
-.add-restaurant-form-select-smaller {
+.update-restaurant-form-select-smaller {
 	width: 200px;
 }
 
-.add-restaurant-form-select-smallest {
+.update-restaurant-form-select-smallest {
 	width: 100px;
 }
 
-.add-restaurant-form-group-hours {
+.update-restaurant-form-group-hours {
 	margin-bottom: 10px;
 }
 
-.add-restaurant-day {
+.update-restaurant-day {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -82,25 +86,25 @@ h2 {
 	margin-bottom: 10px;
 }
 
-.add-restaurant-day-closed {
+.update-restaurant-day-closed {
 	display: flex;
 	align-items: center;
 	width: 200px;
 	justify-content: space-between;
 }
 
-.add-restaurant-day-title {
+.update-restaurant-day-title {
 	font-weight: bold;
 }
 
-.add-restaurant-from-to-hours {
+.update-restaurant-from-to-hours {
 	display: flex;
 	align-items: center;
 	width: 250px;
 	justify-content: space-between;
 }
 
-.add-restaurant-form-group-booking {
+.update-restaurant-form-group-booking {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -108,11 +112,11 @@ h2 {
 	gap: 4px;
 }
 
-.add-restaurant-booking-times-title {
+.update-restaurant-booking-times-title {
 	font-weight: bold;
 }
 
-.add-restaurant-form-group-table-sizes {
+.update-restaurant-form-group-table-sizes {
 	display: flex;
 	align-items: center;
 	width: 500px;
@@ -120,7 +124,7 @@ h2 {
 	gap: 5px;
 }
 
-.add-restaurant-save-btn {
+.update-restaurant-save-btn {
 	font-size: 1.1rem;
 	font-weight: 600;
 	color: black;
@@ -129,11 +133,43 @@ h2 {
 	width: 150px;
 }
 
-.add-restaurant-insert-pics-btn {
+.update-restaurant-insert-pics-btn {
 	font-weight: 600;
 	color: black;
 	margin-right: 20px;
 	background-color: #d9d9d9;
 	width: 150px;
 	margin-bottom: 10px;
+}
+
+.update-restaurant-photo-thumbnail {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+	margin: 5px;
+}
+
+.update-restaurant-photos-preview {
+	display: flex;
+	flex-wrap: wrap;
+	margin-right: 20px;
+}
+
+.update-photo-with-delete {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 5px;
+}
+
+.update-delete-photo-button {
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+	background-color: #d9d9d9;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
