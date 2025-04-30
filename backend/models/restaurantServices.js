@@ -213,5 +213,23 @@ export async function removeRestaurant(id) {
 		return removedRestaurant;
 	} catch (error) {
 		return false;
+
+export async function updateRestaurantById(id, updatedFields) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			console.error("Invalid restaurant ID");
+			return null;
+		}
+		const updatedRestaurant = await RestaurantModel.findByIdAndUpdate(
+			id,
+			{ $set: updatedFields },
+			{ new: true, runValidators: true }
+		);
+		return updatedRestaurant;
+	} catch (error) {
+		console.error("Error updating restaurant:", error);
+		return null;
 	}
 }

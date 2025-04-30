@@ -18,6 +18,7 @@ import {
 	getPendingRestaurantsByEmail,
 	getVerifiedRestaurantsByEmail,
 	removeRestaurant,
+	updateRestaurantById,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
@@ -326,6 +327,28 @@ app.patch("/restaurants/:name", async (req, res) => {
 		res.status(404).send("Resource not found.");
 	} else {
 		res.status(201).send(result);
+	}
+});
+
+app.patch("/restaurants/update/:id", async (req, res) => {
+	try {
+		const restaurantId = req.params.id;
+		const updateData = req.body;
+		const updatedRestaurant = await updateRestaurantById(
+			restaurantId,
+			updateData
+		);
+		if (!updatedRestaurant) {
+			return res
+				.status(404)
+				.send("Restaurant not found or update failed.");
+		}
+		res.status(200).json(updatedRestaurant);
+	} catch (error) {
+		console.error("Error updating restaurant:", error);
+		res.status(500).send(
+			"Internal Server Error while updating restaurant."
+		);
 	}
 });
 

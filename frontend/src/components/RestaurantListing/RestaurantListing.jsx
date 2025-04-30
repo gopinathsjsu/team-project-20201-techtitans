@@ -4,6 +4,7 @@ import axios from "axios";
 
 function RestaurantListing(props) {
 	const { id, name, interact, setAlertMessages } = props;
+
 	async function makeUpdateCall(name, status) {
 		try {
 			const restaurantStatus = {
@@ -113,7 +114,15 @@ function RestaurantListing(props) {
 			)}
 			{interact == "restaurant-manager-btns" && (
 				<div className="pair-btns">
-					<button className="thumbnail-btn">Update</button>
+					{id ? (
+						<Link
+							to={`/restaurant-manager-update-restaurant/${id}`}
+						>
+							<button className="thumbnail-btn">Update</button>
+						</Link>
+					) : (
+						<button className="thumbnail-btn">Update</button>
+					)}
 					<button className="thumbnail-btn">Bookings</button>
 				</div>
 			)}

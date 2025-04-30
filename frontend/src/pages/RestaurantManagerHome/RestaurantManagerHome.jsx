@@ -15,6 +15,7 @@ function RestaurantManagerHome(props) {
 				name={listing.name}
 				interact={"restaurant-manager-btns"}
 				setAlertMessages={setAlertMessages}
+				id={listing._id}
 			/>
 		</div>
 	));
@@ -25,6 +26,7 @@ function RestaurantManagerHome(props) {
 				name={listing.name}
 				interact={"restaurant-manager-btns"}
 				setAlertMessages={setAlertMessages}
+				id={listing._id}
 			/>
 		</div>
 	));
