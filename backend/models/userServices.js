@@ -64,3 +64,13 @@ export async function addUser(user, hashedPwd) {
 		return false;
 	}
 }
+
+export async function findUserById(id) {
+	const conn = getDbConnection();
+	const userModel = conn.model("User", UserSchema);
+	try {
+		return await userModel.findById(id);
+	} catch (error) {
+		return undefined;
+	}
+}

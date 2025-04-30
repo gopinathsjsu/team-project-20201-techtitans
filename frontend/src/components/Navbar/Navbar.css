@@ -8,6 +8,8 @@
 	top: 0px;
 	padding-left: 30px;
 	background-color: white;
+	max-width: 100vw;
+	left: 0;
 }
 
 .nav-header .nav-logo {

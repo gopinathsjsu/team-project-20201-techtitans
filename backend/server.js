@@ -6,6 +6,7 @@ import {
 	addUser,
 	findUserByEmail,
 	findUserByUsername,
+	findUserById,
 } from "./models/userServices.js";
 import {
 	addRestaurant,
@@ -534,5 +535,18 @@ app.patch("/restaurants/update/:id", async (req, res) => {
 		res.status(500).send(
 			"Internal Server Error while updating restaurant."
 		);
+	}
+});
+
+app.get("/username/:id", async (req, res) => {
+	try {
+		const user = await findUserById(req.params.id);
+		if (user) {
+			res.status(200).json({ username: user.username });
+		} else {
+			res.status(404).send("User not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
 	}
 });

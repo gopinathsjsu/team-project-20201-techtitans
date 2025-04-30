@@ -1,0 +1,23 @@
+.reserve-details-rest-man {
+	width: 200px;
+	padding: 20px;
+	margin: 10px auto;
+	background-color: #d9d9d9;
+	border-radius: 8px;
+	text-align: left;
+}
+
+.reserve-details-rest-man-row {
+	display: flex;
+	margin-bottom: 10px;
+	gap: 5px;
+}
+
+.reserve-details-rest-man-label {
+	color: black;
+}
+
+.reserve-details-rest-man-value {
+	font-weight: bold;
+	color: black;
+}
