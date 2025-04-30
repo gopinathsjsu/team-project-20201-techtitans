@@ -10,22 +10,33 @@ function CustomerProfile() {
 	const [user, setUser] = useState(null);
 	const [reservations, setReservations] = useState([]);
 
-	const handleCancel = async (reservationId, restaurantId, tableNum, timeSlot) => {
+	const handleCancel = async (
+		reservationId,
+		restaurantId,
+		tableNum,
+		timeSlot
+	) => {
 		try {
-			await axios.delete(`http://localhost:5000/reservations/${reservationId}`);
-	
+			await axios.delete(
+				`http://localhost:5000/reservations/${reservationId}`
+			);
+
 			// makes table available
-			await axios.patch(`http://localhost:5000/table/${restaurantId}/${tableNum}`, {
-				timeSlot,
-				isTaken: false,
-			});
-	
-			setReservations(reservations.filter((res) => res._id !== reservationId));
+			await axios.patch(
+				`http://localhost:5000/table/${restaurantId}/${tableNum}`,
+				{
+					timeSlot,
+					isTaken: false,
+				}
+			);
+
+			setReservations(
+				reservations.filter((res) => res._id !== reservationId)
+			);
 		} catch (err) {
 			console.error("Failed Cancelling:", err);
 		}
 	};
-	
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -90,56 +101,40 @@ function CustomerProfile() {
 					<p>No reservations yet.</p>
 				) : (
 					reservations.map((res, i) => (
-						<div key={i}>
+						<div key={i} className="restaurant-card">
 							<RestaurantListing
 								name={res.restaurantName || "Restaurant"}
 							/>
 							<h3>
-								Reservation:{" "}
+								Reservation on{" "}
 								{new Date(res.date).toLocaleDateString(
 									"en-US",
 									{
 										timeZone: "UTC",
 									}
 								)}{" "}
-								at {res.time}, {res.numberOfPeople}{" "}
+								<br />
+								{res.time} <br />
+								{res.numberOfPeople}{" "}
 								{res.numberOfPeople === 1 ? "person" : "people"}
+								, Table Number: {res.table.tableNum}
 							</h3>
-							<button onClick={() => handleCancel(res._id, res.restaurantId, res.tableNum, res.timeSlot)}>
+							<button
+								className="reservation-button"
+								onClick={() =>
+									handleCancel(
+										res._id,
+										res.restaurantId,
+										res.tableNum,
+										res.timeSlot
+									)
+								}
+							>
 								Cancel Reservation
 							</button>
 						</div>
 					))
 				)}
-			</div>
-
-			<h2>Restaurants You've Reviewed</h2>
-			<div className="restaurants-listing">
-				<RestaurantListing
-					name="Mario's Place"
-					interact="customer-btns"
-				/>
-				<RestaurantListing
-					name="Luigi's Macaroni"
-					interact="customer-btns"
-				/>
-				<RestaurantListing
-					name="Laura's Buffet"
-					interact="customer-btns"
-				/>
-				<RestaurantListing
-					name="Little Richard's Almanac Deluxe Edition"
-					interact="customer-btns"
-				/>
-				<RestaurantListing name="In N Out" interact="customer-btns" />
-				<RestaurantListing
-					name="Burger King"
-					interact="customer-btns"
-				/>
-				<RestaurantListing
-					name="Palmer's Joint"
-					interact="customer-btns"
-				/>
 			</div>
 		</>
 	);

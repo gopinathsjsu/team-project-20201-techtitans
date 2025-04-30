@@ -34,7 +34,7 @@ export async function getAvailableTablesbyTime(
 			seats: { $gte: peopleNum },
 			taken: false,
 		}).sort({ tableNum: 1 });
-		
+
 		return availableTables;
 	} catch (error) {
 		console.error("Error in getAvailableTablesbyTime:", error);

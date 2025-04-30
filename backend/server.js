@@ -293,7 +293,6 @@ app.delete("/reservations/:id", async (req, res) => {
 	}
 });
 
-
 app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 	try {
 		const restaurantId = req.params.restaurantId;
@@ -311,7 +310,8 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 app.post("/reservations", async (req, res) => {
 	try {
 		const reservation = req.body;
-		const { userId, restaurantId, time, date, numberOfPeople } = reservation;
+		const { userId, restaurantId, time, date, numberOfPeople } =
+			reservation;
 
 		const availableTables = await getAvailableTablesbyTime(
 			restaurantId,
@@ -325,7 +325,12 @@ app.post("/reservations", async (req, res) => {
 
 		const selectedTable = availableTables[0];
 
-		await updateTableStatus(selectedTable.tableNum, time, restaurantId, true);
+		await updateTableStatus(
+			selectedTable.tableNum,
+			time,
+			restaurantId,
+			true
+		);
 
 		const finalReservation = {
 			...reservation,
@@ -343,7 +348,7 @@ app.post("/reservations", async (req, res) => {
 		// send confirmation email
 		if (saved) {
 			const user = await findUserById(req.body.userId);
-		
+
 			if (user && user.email) {
 				const msg = {
 					to: user.email,
@@ -357,13 +362,14 @@ app.post("/reservations", async (req, res) => {
 						   Table Number: ${selectedTable.tableNum}<br><br>
 						   Thank you for choosing BookTable!`,
 				};
-		
+
 				try {
-					console.log("Sending confirmation email to:", reservation.email);
 					await sgMail.send(msg);
-					console.log("Confirmation email sent.");
 				} catch (emailError) {
-					console.error("Reservation email error:", emailError.response?.body || emailError);
+					console.error(
+						"Reservation email error:",
+						emailError.response?.body || emailError
+					);
 				}
 			}
 		}

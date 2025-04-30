@@ -58,27 +58,18 @@ export async function deleteReservationById(reservationId) {
 	const ReservationModel = conn.model("Reservation", ReservationSchema);
 
 	try {
-		console.log("Looking for reservation with ID:", reservationId);
 		const reservation = await ReservationModel.findById(reservationId);
-		
+
 		if (!reservation) {
 			console.error("Reservation not found.");
 			return null;
 		}
-
-		console.log("Found reservation:", reservation);
 
 		const { table } = reservation;
 		if (!table || !table.tableNum || !table.timeSlot) {
 			console.error("Invalid table data:", table);
 			return false;
 		}
-
-		console.log("Calling updateTableStatus with:", {
-			tableNum: table.tableNum,
-			timeSlot: table.timeSlot,
-			restaurantId: reservation.restaurantId,
-		});
 
 		const tableUpdateResult = await updateTableStatus(
 			table.tableNum,
@@ -87,14 +78,14 @@ export async function deleteReservationById(reservationId) {
 			false // Mark table as available
 		);
 
-		console.log("Table update result:", tableUpdateResult);
-
 		const result = await ReservationModel.findByIdAndDelete(reservationId);
-		console.log("Deleted reservation result:", result);
 
 		return result;
 	} catch (error) {
-		console.error("Error deleting reservation:", error.stack || error.message || error);
+		console.error(
+			"Error deleting reservation:",
+			error.stack || error.message || error
+		);
 		return false;
 	}
 }

@@ -8,22 +8,22 @@ const ReservationConfirmation = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { restaurantName, restaurantId, userId, date, time, people, table } = location.state || {};
+	const { restaurantName, restaurantId, userId, date, time, people, table } =
+		location.state || {};
 	const finalUserId = userId || localStorage.getItem("userId");
 
 	const handleCompleteReservation = async () => {
-		if (isSubmitting) return; 
+		if (isSubmitting) return;
 		setIsSubmitting(true);
 
 		if (!finalUserId) {
 			alert("You must be logged in to make a reservation!");
 			navigate("/login");
 			return;
-		  }		  
+		}
 		try {
-			console.log("Submitting reservation...");
 			const reservationData = {
-				userId: finalUserId, 
+				userId: finalUserId,
 				restaurantId,
 				date,
 				time,
@@ -31,27 +31,24 @@ const ReservationConfirmation = () => {
 				tableNum: table,
 				timeSlot: time,
 			};
-	
-			console.log(reservationData);
-	
+
 			const reservationRes = await axios.post(
 				"http://localhost:5000/reservations",
 				reservationData
 			);
-	
-			console.log("Reservation created:", reservationRes.data);
-	
+
 			alert("Reservation successful!");
 			navigate("/customer-profile");
-	
 		} catch (error) {
 			console.error("Error completing reservation:", error);
-			alert(error.response?.data?.message || "Failed to complete reservation.");
+			alert(
+				error.response?.data?.message ||
+					"Failed to complete reservation."
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
-	
 
 	return (
 		<div className="reservation-confirmation-page">
@@ -76,7 +73,7 @@ const ReservationConfirmation = () => {
 						<span>{table}</span>
 					</div>
 				</div>
-				<button 
+				<button
 					className="complete-reservation-button"
 					onClick={handleCompleteReservation}
 					disabled={isSubmitting}
