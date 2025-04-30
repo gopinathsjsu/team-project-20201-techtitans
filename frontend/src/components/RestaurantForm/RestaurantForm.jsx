@@ -69,7 +69,7 @@ function RestaurantForm(props) {
 			setNumTables(Object.keys(existingTableSizes).length);
 		}
 	}, [restaurantId, restaurant]);
-	
+
 	const [closedDays, setClosedDays] = useState({
 		Sun: false,
 		Mon: false,
@@ -439,9 +439,9 @@ function RestaurantForm(props) {
 	if (restaurantId && !restaurant) {
 		return (
 			<>
-                <div className="update-restaurant-title">
-                    Loading Restaurant Details...
-			    </div>
+				<div className="update-restaurant-title">
+					Loading Restaurant Details...
+				</div>
 			</>
 		);
 	}

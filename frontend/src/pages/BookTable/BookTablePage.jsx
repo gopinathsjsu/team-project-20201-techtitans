@@ -135,9 +135,11 @@ const BookTablePage = () => {
 					// Use today's day for the initial load
 					const currentDay = days[new Date().getDay()];
 					// Get the current time and round it
-					const currentTime = getRoundedTime(new Date().toTimeString().slice(0, 5));
+					const currentTime = getRoundedTime(
+						new Date().toTimeString().slice(0, 5)
+					);
 					const formattedCurrentTime = convertTo12Hour(currentTime);
-					
+
 					// Process all restaurants
 					const restaurantData = response.data.map((restaurant) => {
 						const hours =
@@ -153,8 +155,8 @@ const BookTablePage = () => {
 							costRating: restaurant.costRating,
 							avgRating: restaurant.avgRating || 0,
 							bookingsToday: restaurant.bookingsToday || 0,
-							hours: restaurant.hours, 
-							availableTimes, 
+							hours: restaurant.hours,
+							availableTimes,
 							image: restaurant.image || null,
 							address: restaurant.address || "",
 							location: restaurant.location,
@@ -163,28 +165,38 @@ const BookTablePage = () => {
 					});
 
 					setAllRestaurants(restaurantData);
-					
+
 					// Filter restaurants similar to handleSearch
-					const filteredResults = restaurantData.filter((restaurant) => {
-						// Exclude closed restaurants
-						if (restaurant.availableTimes.includes("Restaurant is Closed"))
-							return false;
-						
-						// Check for table capacity (at least one table for 1 person)
-						if (restaurant.tableSizes) {
-							let capacityMatches = false;
-							for (let [size] of Object.entries(restaurant.tableSizes)) {
-								if (Number(size) >= 1) {
-									capacityMatches = true;
-									break;
+					const filteredResults = restaurantData.filter(
+						(restaurant) => {
+							// Exclude closed restaurants
+							if (
+								restaurant.availableTimes.includes(
+									"Restaurant is Closed"
+								)
+							)
+								return false;
+
+							// Check for table capacity (at least one table for 1 person)
+							if (restaurant.tableSizes) {
+								let capacityMatches = false;
+								for (let [size] of Object.entries(
+									restaurant.tableSizes
+								)) {
+									if (Number(size) >= 1) {
+										capacityMatches = true;
+										break;
+									}
 								}
+								if (!capacityMatches) return false;
 							}
-							if (!capacityMatches) return false;
+
+							// Check if restaurant has available slots
+							return restaurant.availableTimes.includes(
+								formattedCurrentTime
+							);
 						}
-						
-						// Check if restaurant has available slots
-						return restaurant.availableTimes.includes(formattedCurrentTime);
-					});
+					);
 
 					setSearchResults(filteredResults);
 				}
