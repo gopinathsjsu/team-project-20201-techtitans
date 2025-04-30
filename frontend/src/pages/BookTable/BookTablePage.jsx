@@ -152,6 +152,7 @@ const BookTablePage = () => {
 							availableTimes, // initial available times (for today)
 							image: restaurant.image || null,
 							address: restaurant.address || "",
+							location: restaurant.location,
 							tableSizes: restaurant.tableSizes, // include capacity info
 						};
 					});
@@ -420,6 +421,17 @@ const BookTablePage = () => {
 										View Restaurant Details
 									</button>
 								</Link>
+								<button
+									className="view-map-button"
+									onClick={() =>
+										window.open(
+											`https://www.google.com/maps?q=${result.location[1]},${result.location[0]}`,
+											"_blank"
+										)
+									}
+								>
+									View on Map
+								</button>
 							</div>
 						</div>
 					))
