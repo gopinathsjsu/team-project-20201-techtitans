@@ -69,7 +69,7 @@ function RestaurantForm(props) {
 			setNumTables(Object.keys(existingTableSizes).length);
 		}
 	}, [restaurantId, restaurant]);
-
+	
 	const [closedDays, setClosedDays] = useState({
 		Sun: false,
 		Mon: false,
