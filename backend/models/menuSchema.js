@@ -29,7 +29,8 @@ export const MenuSchema = new mongoose.Schema(
 					required: true,
 				},
 				photo: {
-					type: Buffer,
+					type: String,
+					default: "",
 				},
 			},
 		],
