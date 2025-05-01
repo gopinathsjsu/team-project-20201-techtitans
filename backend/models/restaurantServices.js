@@ -213,6 +213,8 @@ export async function removeRestaurant(id) {
 		return removedRestaurant;
 	} catch (error) {
 		return false;
+	}
+}
 
 export async function updateRestaurantById(id, updatedFields) {
 	const conn = getDbConnection();
