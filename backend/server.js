@@ -371,7 +371,7 @@ app.delete("/restaurants/:id", async (req, res) => {
 	}
 });
 
-app.post("/menu", async (req, res) => {
+app.post("/menu", authenticateUser, async (req, res) => {
 	const menu = req.body;
 	const savedMenu = await addMenu(menu);
 	if (savedMenu) {

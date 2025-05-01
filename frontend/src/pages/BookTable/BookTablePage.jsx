@@ -180,8 +180,6 @@ const BookTablePage = () => {
 			// Round the input time and convert it to 12-hour format for comparison
 			const roundedTime = getRoundedTime(searchCriteria.time);
 			const formattedSearchTime = convertTo12Hour(roundedTime);
-			console.log("Rounded Time:", roundedTime);
-			console.log("Formatted Search Time:", formattedSearchTime);
 
 			// Recalculate available times using the selected day, then filter by time slot and capacity.
 			const filteredResults = allRestaurants
