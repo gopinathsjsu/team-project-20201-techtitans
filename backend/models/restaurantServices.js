@@ -205,6 +205,17 @@ export async function getVerifiedRestaurantsByEmail(email) {
 	}
 }
 
+export async function removeRestaurant(id) {
+	const conn = getDbConnection();
+	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
+	try {
+		const removedRestaurant = await RestaurantModel.findByIdAndDelete(id);
+		return removedRestaurant;
+	} catch (error) {
+		return false;
+	}
+}
+
 export async function updateRestaurantById(id, updatedFields) {
 	const conn = getDbConnection();
 	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);

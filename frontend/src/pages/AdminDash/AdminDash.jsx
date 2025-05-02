@@ -9,6 +9,9 @@ function AdminDash(props) {
 		pendingRestaurants,
 		setPendingRestaurants,
 		fetchPendingRestaurants,
+		verifiedRestaurants,
+		setVerifiedRestaurants,
+		fetchVerifiedRestaurants,
 		alertMessages,
 		setAlertMessages,
 	} = props;
@@ -16,8 +19,20 @@ function AdminDash(props) {
 	const pendingListings = pendingRestaurants.map((listing) => (
 		<div className="restaurants-listing" key={listing.name}>
 			<RestaurantListing
+				id={listing._id}
 				name={listing.name}
 				interact={"admin-pending-btns"}
+				setAlertMessages={setAlertMessages}
+			/>
+		</div>
+	));
+
+	const verifiedListings = verifiedRestaurants.map((listing) => (
+		<div className="restaurants-listing" key={listing.name}>
+			<RestaurantListing
+				id={listing._id}
+				name={listing.name}
+				interact={"admin-remove-btn"}
 				setAlertMessages={setAlertMessages}
 			/>
 		</div>
@@ -27,7 +42,10 @@ function AdminDash(props) {
 		fetchPendingRestaurants().then((result) => {
 			setPendingRestaurants(result);
 		});
-	}, [pendingRestaurants]);
+		fetchVerifiedRestaurants().then((result) => {
+			setVerifiedRestaurants(result);
+		});
+	}, [pendingRestaurants, verifiedRestaurants]);
 
 	return (
 		<>
@@ -36,22 +54,9 @@ function AdminDash(props) {
 				<h2>Admin Dashboard</h2>
 			</div>
 			<h2 className="restaurants-listing-title">Pending</h2>
-			<div className="restaurants-listing">{pendingListings}</div>
-			<h2 className="restaurants-listing-title">All Restaurants</h2>
-			<div className="restaurants-listing">
-				<RestaurantListing
-					name="In N Out"
-					interact="admin-remove-btn"
-				/>
-				<RestaurantListing
-					name="Burger King"
-					interact="admin-remove-btn"
-				/>
-				<RestaurantListing
-					name="Palmer's Joint"
-					interact="admin-remove-btn"
-				/>
-			</div>
+			<div className="admin-restaurants-listing">{pendingListings}</div>
+			<h2 className="restaurants-listing-title">Verified Restaurants</h2>
+			<div className="admin-restaurants-listing">{verifiedListings}</div>
 			<AlertMessage
 				alertMessages={alertMessages}
 				setAlertMessages={setAlertMessages}

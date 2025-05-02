@@ -14,6 +14,7 @@ import Register from "./components/Register";
 import CustomerProfile from "./pages/Customer/CustomerProfile";
 import RestaurantManagerHome from "./pages/RestaurantManagerHome/RestaurantManagerHome";
 import RestaurantManagerAddRestaurant from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddRestaurant";
+import RestaurantManagerAddMenu from "./pages/RestaurantManagerAddRestaurant/RestaurantManagerAddMenu";
 import BookTablePage from "./pages/BookTable/BookTablePage";
 import Restaurant from "./pages/Restaurant/Restaurant";
 import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
@@ -197,6 +198,9 @@ function App() {
 							pendingRestaurants={pendingRestaurants}
 							setPendingRestaurants={setPendingRestaurants}
 							fetchPendingRestaurants={fetchPendingRestaurants}
+							verifiedRestaurants={verifiedRestaurants}
+							setVerifiedRestaurants={setVerifiedRestaurants}
+							fetchVerifiedRestaurants={fetchVerifiedRestaurants}
 							alertMessages={alertMessages}
 							setAlertMessages={setAlertMessages}
 						/>
@@ -248,6 +252,20 @@ function App() {
 					path="/restaurant-manager-add-restaurant"
 					element={
 						<RestaurantManagerAddRestaurant userEmail={userEmail} />
+					}
+				/>
+				<Route
+					path="/restaurant-manager-add-menu/:id"
+					element={
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerAddMenu
+								alertMessages={alertMessages}
+								setAlertMessages={setAlertMessages}
+							/>
+						</PrivateRoute>
 					}
 				/>
 				<Route path="/book-table" element={<BookTablePage />} />

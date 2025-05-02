@@ -40,3 +40,16 @@ export async function addMenu(menu) {
 		return false;
 	}
 }
+
+export async function removeMenus(id) {
+	const conn = getDbConnection();
+	const MenuModel = conn.model("Menu", MenuSchema);
+	try {
+		const removedMenus = MenuModel.deleteMany({
+			restaurantId: id,
+		});
+		return removedMenus;
+	} catch (error) {
+		return false;
+	}
+}
