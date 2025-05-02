@@ -8,25 +8,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./Menu.css";
 
 function Menu(props) {
-	const { id } = props;
-	const [menus, setMenus] = useState([]);
-
-	async function fetchMenus() {
-		try {
-			const response = await axios.get(
-				`http://127.0.0.1:5000/menu/${id}`
-			);
-			return response;
-		} catch (error) {
-			return false;
-		}
-	}
-
-	useEffect(() => {
-		fetchMenus().then((result) => {
-			setMenus(result.data);
-		});
-	}, [menus]);
+	const { menus } = props;
 
 	const menuDetails = menus.map((menu) => (
 		<div className="menu">

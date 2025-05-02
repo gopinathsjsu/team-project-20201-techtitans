@@ -32,6 +32,11 @@ export const MenuSchema = new mongoose.Schema(
 					type: String,
 					default: "",
 				},
+				isHighlightDish: {
+					type: Boolean,
+					required: true,
+					default: false,
+				},
 			},
 		],
 	},

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Gallery from "../../components/Gallery/Gallery";
 import Reviews from "../../components/Reviews/Reviews";
 import PopularDishes from "../../components/PopularDishes/PopularDishes";
 import Menu from "../../components/Menu/Menu";
@@ -14,6 +13,24 @@ const Restaurant = () => {
 	const { id } = useParams();
 
 	const [restaurant, setRestaurant] = useState(null);
+	const [menus, setMenus] = useState([]);
+
+	async function fetchMenus() {
+		try {
+			const response = await axios.get(
+				`http://127.0.0.1:5000/menu/${id}`
+			);
+			return response;
+		} catch (error) {
+			return false;
+		}
+	}
+
+	useEffect(() => {
+		fetchMenus().then((result) => {
+			setMenus(result.data);
+		});
+	}, [menus]);
 
 	useEffect(() => {
 		const fetchRestaurant = async () => {
@@ -61,7 +78,6 @@ const Restaurant = () => {
 					<nav className="restaurant-nav">
 						<a href="#overview">Overview</a>
 						<a href="#reviews">Reviews</a>
-						<a href="#gallery">Gallery</a>
 						<a href="#popular-dishes">Popular Dishes</a>
 						<a href="#menu">Menu</a>
 					</nav>
@@ -76,17 +92,14 @@ const Restaurant = () => {
 						<section id="reviews" className="restaurant-section">
 							<Reviews />
 						</section>
-						<section id="gallery" className="restaurant-section">
-							<Gallery />
-						</section>
 						<section
 							id="popular-dishes"
 							className="restaurant-section"
 						>
-							<PopularDishes />
+							<PopularDishes menus={menus} />
 						</section>
 						<section id="menu" className="restaurant-section">
-							<Menu id={id} />
+							<Menu menus={menus} />
 						</section>
 					</div>
 				</div>

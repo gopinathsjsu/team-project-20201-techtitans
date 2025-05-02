@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import "./Menu.css";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 function MenuDish(props) {
 	const { id, dishList, setDishList } = props;
@@ -16,11 +19,19 @@ function MenuDish(props) {
 				...updatedDishes[idx],
 				[event.target.name]: value,
 			};
+
+			if (event.target.name == "isHighlightDish") {
+				if (value === "on") {
+					updatedDishes[idx] = {
+						...updatedDishes[idx],
+						[event.target.name]: true,
+					};
+				}
+			}
 			setDishList(updatedDishes);
 		}
 	}
 
-	// Later: Field for a Highlight Dish
 	const removeDish = () => {
 		let updatedDishes = dishList.filter((dish) => dish.dishId !== id);
 		setDishList(updatedDishes);
@@ -83,6 +94,22 @@ function MenuDish(props) {
 					placeholder="Enter dish cost..."
 					onChange={handleChange}
 				/>
+			</label>
+			<label className="menu-highlight-label" for="isHighlightDish">
+				<input
+					type="checkbox"
+					name="isHighlightDish"
+					onChange={handleChange}
+				/>
+				Would you like to make this a featured dish?
+				<Tooltip
+					title="This will be placed in a highlight gallery as a popular dish
+				on your restaurant's page."
+				>
+					<IconButton>
+						<InfoOutlineIcon style={{ color: "white" }} />
+					</IconButton>
+				</Tooltip>
 			</label>
 			<div>
 				<button className="remove-dish-btn" onClick={removeDish}>

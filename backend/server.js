@@ -7,7 +7,6 @@ import {
 	findUserById,
 	findUserByEmail,
 	findUserByUsername,
-	findUserById,
 } from "./models/userServices.js";
 import {
 	addRestaurant,
@@ -34,7 +33,6 @@ import {
 	getReviewsByRestaurantId,
 	removeReviews,
 } from "./models/reviewServices.js";
-import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 import {
 	addMenu,
 	getMenuByRestaurantId,
@@ -627,34 +625,6 @@ app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
 			res.status(200).json(result);
 		} else {
 			res.status(404).send("Reviews not found");
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.post("/gallery", async (req, res) => {
-	try {
-		const image = req.body;
-		const result = await addImage(image);
-		if (result) {
-			res.status(201).json(result);
-		} else {
-			res.status(500).end();
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
-	try {
-		const restaurantId = req.params.restaurantId;
-		const result = await getImagesByRestaurantId(restaurantId);
-		if (result) {
-			res.status(200).json(result);
-		} else {
-			res.status(404).send("Images not found");
 		}
 	} catch (error) {
 		res.status(500).send("Internal Server Error");
