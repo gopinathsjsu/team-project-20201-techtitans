@@ -43,8 +43,6 @@ import {
 	updateTableStatus,
 	getAvailableTablesbyTime,
 	removeTables,
-	getAllTimeSlotsForRestaurant,
-	updateTableSeatsByLabel,
 	getTablesByRestaurantId,
 } from "./models/tableServices.js";
 
@@ -317,7 +315,7 @@ app.post("/restaurants", async (req, res) => {
 
 			const allTables = await getTablesByRestaurantId(savedRestaurant._id);
 			console.log(
-				`✅ Created ${allTables.length} tables for restaurant ${savedRestaurant._id}:`,
+				`Created ${allTables.length} tables for restaurant ${savedRestaurant._id}:`,
 				allTables
 			);
 
@@ -361,9 +359,7 @@ app.patch("/restaurants/update/:id", async (req, res) => {
 			updateData
 		);
 		if (!updatedRestaurant) {
-			return res
-				.status(404)
-				.send("Restaurant not found or update failed.");
+			return res.status(404).send("Restaurant not found or update failed.");
 		}
 
 		const sizesChanged =
@@ -380,45 +376,20 @@ app.patch("/restaurants/update/:id", async (req, res) => {
 			JSON.stringify(Object.fromEntries(originalRestaurant.hours)) !==
 				JSON.stringify(updateData.hours);
 
-		if (durationChanged || hoursChanged) {
+		if (sizesChanged || durationChanged || hoursChanged) {
 			await removeTables(restaurantId);
 			await generateTablesForRestaurant(updatedRestaurant);
-		} else if (sizesChanged) {
-			const updatedSizes = updateData.tableSizes;
-			const originalSizes = Object.fromEntries(originalRestaurant.tableSizes);
-
-			for (const [tableLabel, newSeats] of Object.entries(updatedSizes)) {
-				const tableNum = tableLabel.split(" ")[1];
-				const originalSeats = originalSizes[tableLabel];
-
-				if (originalSeats === undefined) {
-					const existingSlots = await getAllTimeSlotsForRestaurant(restaurantId);
-					for (const timeSlot of existingSlots) {
-						await addTable({
-							tableNum: tableNum,
-							seats: newSeats,
-							timeSlot: timeSlot,
-							restaurantId: updatedRestaurant._id,
-						});
-					}
-				} else if (originalSeats !== newSeats) {
-					await updateTableSeatsByLabel(restaurantId, tableLabel, newSeats);
-				}
-			}
+			const allTables = await getTablesByRestaurantId(restaurantId);
+			console.log(
+				`Updated tables for restaurant ${restaurantId}: (${allTables.length} total)`,
+				allTables
+			);
 		}
-
-		const allTables = await getTablesByRestaurantId(restaurantId);
-		console.log(
-			`🔄 Updated tables for restaurant ${restaurantId}: (${allTables.length} total)`,
-			allTables
-		);
 
 		res.status(200).json(updatedRestaurant);
 	} catch (error) {
 		console.error("Error updating restaurant:", error);
-		res.status(500).send(
-			"Internal Server Error while updating restaurant."
-		);
+		res.status(500).send("Internal Server Error while updating restaurant.");
 	}
 });
 

@@ -87,37 +87,6 @@ export async function removeTables(id) {
 	}
 }
 
-export async function getAllTimeSlotsForRestaurant(restaurantId) {
-	const conn = getDbConnection();
-	const TableModel = conn.model("Table", TableSchema);
-	try {
-		const tables = await TableModel.find({ restaurantId });
-		const slots = new Set();
-		tables.forEach((t) => slots.add(t.timeSlot));
-		return Array.from(slots);
-	} catch (error) {
-		console.error("Error fetching time slots:", error);
-		return [];
-	}
-}
-
-export async function updateTableSeatsByLabel(restaurantId, tableLabel, newSeats) {
-	const conn = getDbConnection();
-	const TableModel = conn.model("Table", TableSchema);
-
-	try {
-		const tableNum = tableLabel.split(" ")[1];
-		const result = await TableModel.updateMany(
-			{ restaurantId, tableNum },
-			{ $set: { seats: newSeats } }
-		);
-		return result;
-	} catch (error) {
-		console.error("Error updating table seats:", error);
-		return false;
-	}
-}
-
 export async function getTablesByRestaurantId(restaurantId) {
 	const conn = getDbConnection();
 	const TableModel = conn.model("Table", TableSchema);
