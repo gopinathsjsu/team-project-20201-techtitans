@@ -43,7 +43,6 @@ import {
 	updateTableStatus,
 	getAvailableTablesbyTime,
 	removeTables,
-	getTablesByRestaurantId,
 } from "./models/tableServices.js";
 
 import sgMail from "@sendgrid/mail";
@@ -313,12 +312,6 @@ app.post("/restaurants", async (req, res) => {
 		try {
 			await generateTablesForRestaurant(savedRestaurant);
 
-			const allTables = await getTablesByRestaurantId(savedRestaurant._id);
-			console.log(
-				`Created ${allTables.length} tables for restaurant ${savedRestaurant._id}:`,
-				allTables
-			);
-
 			res.status(201).send(savedRestaurant);
 		} catch (err) {
 			console.error("Failed to generate tables:", err);
@@ -359,13 +352,16 @@ app.patch("/restaurants/update/:id", async (req, res) => {
 			updateData
 		);
 		if (!updatedRestaurant) {
-			return res.status(404).send("Restaurant not found or update failed.");
+			return res
+				.status(404)
+				.send("Restaurant not found or update failed.");
 		}
 
 		const sizesChanged =
 			updateData.tableSizes &&
-			JSON.stringify(Object.fromEntries(originalRestaurant.tableSizes)) !==
-				JSON.stringify(updateData.tableSizes);
+			JSON.stringify(
+				Object.fromEntries(originalRestaurant.tableSizes)
+			) !== JSON.stringify(updateData.tableSizes);
 
 		const durationChanged =
 			updateData.bookingDuration &&
@@ -379,20 +375,16 @@ app.patch("/restaurants/update/:id", async (req, res) => {
 		if (sizesChanged || durationChanged || hoursChanged) {
 			await removeTables(restaurantId);
 			await generateTablesForRestaurant(updatedRestaurant);
-			const allTables = await getTablesByRestaurantId(restaurantId);
-			console.log(
-				`Updated tables for restaurant ${restaurantId}: (${allTables.length} total)`,
-				allTables
-			);
 		}
 
 		res.status(200).json(updatedRestaurant);
 	} catch (error) {
 		console.error("Error updating restaurant:", error);
-		res.status(500).send("Internal Server Error while updating restaurant.");
+		res.status(500).send(
+			"Internal Server Error while updating restaurant."
+		);
 	}
 });
-
 
 app.delete("/restaurants/:id", async (req, res) => {
 	const { id } = req.params;
