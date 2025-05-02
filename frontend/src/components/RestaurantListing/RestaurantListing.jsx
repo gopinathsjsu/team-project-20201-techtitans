@@ -123,7 +123,15 @@ function RestaurantListing(props) {
 					) : (
 						<button className="thumbnail-btn">Update</button>
 					)}
-					<button className="thumbnail-btn">Bookings</button>
+					{id ? (
+						<Link
+							to={`/restaurant-manager-restaurant-bookings/${id}`}
+						>
+							<button className="thumbnail-btn">Bookings</button>
+						</Link>
+					) : (
+						<button className="thumbnail-btn">Bookings</button>
+					)}
 				</div>
 			)}
 			{interact == "customer-btns" && (

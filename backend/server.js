@@ -6,6 +6,7 @@ import {
 	addUser,
 	findUserByEmail,
 	findUserByUsername,
+	findUserById,
 } from "./models/userServices.js";
 import {
 	addRestaurant,
@@ -561,5 +562,80 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 	} catch (error) {
 		console.error("Upload error:", error);
 		res.status(500).send("Internal server error during upload.");
+	}
+});
+
+app.get("/restaurants/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getRestaurantsByEmail(restaurantManagerEmail);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/pending/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getPendingRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants pending approval belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/verified/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getVerifiedRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch verified restaurants belonging to that email."
+		);
+	}
+});
+
+app.patch("/restaurants/update/:id", async (req, res) => {
+	try {
+		const restaurantId = req.params.id;
+		const updateData = req.body;
+		const updatedRestaurant = await updateRestaurantById(
+			restaurantId,
+			updateData
+		);
+		if (!updatedRestaurant) {
+			return res
+				.status(404)
+				.send("Restaurant not found or update failed.");
+		}
+		res.status(200).json(updatedRestaurant);
+	} catch (error) {
+		console.error("Error updating restaurant:", error);
+		res.status(500).send(
+			"Internal Server Error while updating restaurant."
+		);
+	}
+});
+
+app.get("/username/:id", async (req, res) => {
+	try {
+		const user = await findUserById(req.params.id);
+		if (user) {
+			res.status(200).json({ username: user.username });
+		} else {
+			res.status(404).send("User not found");
+		}
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
 	}
 });
