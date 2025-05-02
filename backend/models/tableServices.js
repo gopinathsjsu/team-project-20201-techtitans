@@ -86,3 +86,14 @@ export async function removeTables(id) {
 		return false;
 	}
 }
+
+export async function getTablesByRestaurantId(restaurantId) {
+	const conn = getDbConnection();
+	const TableModel = conn.model("Table", TableSchema);
+	try {
+		return await TableModel.find({ restaurantId });
+	} catch (error) {
+		console.error("Error fetching all tables:", error);
+		return [];
+	}
+}

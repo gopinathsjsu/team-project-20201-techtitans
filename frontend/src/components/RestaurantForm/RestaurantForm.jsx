@@ -58,8 +58,10 @@ function RestaurantForm(props) {
 		}
 	}, [restaurantId]);
 
+	const [numTablesInitialized, setNumTablesInitialized] = useState(false);
+
 	useEffect(() => {
-		if (restaurantId && restaurant) {
+		if (restaurantId && restaurant && !numTablesInitialized) {
 			const newClosedDays = {};
 			for (const day of days) {
 				newClosedDays[day] = restaurant.hours?.[day] === "Closed";
@@ -67,6 +69,7 @@ function RestaurantForm(props) {
 			setClosedDays(newClosedDays);
 			const existingTableSizes = restaurant.tableSizes;
 			setNumTables(Object.keys(existingTableSizes).length);
+			setNumTablesInitialized(true);
 		}
 	}, [restaurantId, restaurant]);
 
@@ -129,7 +132,19 @@ function RestaurantForm(props) {
 	const [numTables, setNumTables] = useState(0);
 
 	const handleTableChange = (e) => {
-		setNumTables(parseInt(e.target.value, 10));
+		const newNumTables = parseInt(e.target.value, 10);
+		setNumTables(newNumTables);
+
+		setRestaurant((prev) => {
+			const newTableSizes = { ...prev.tableSizes };
+			Object.keys(newTableSizes)
+				.slice(newNumTables)
+				.forEach((key) => {
+					delete newTableSizes[key];
+				});
+
+			return { ...prev, tableSizes: newTableSizes };
+		});
 	};
 
 	const renderTableSizes = () => {
