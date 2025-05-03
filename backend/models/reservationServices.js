@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { ReservationSchema } from "./reservationSchema.js";
-import { updateTableStatus } from "./tableServices.js";
+import { updateTableStatus } from "./tableServices.js"; 
 
 dotenv.config();
 
@@ -48,6 +48,19 @@ export async function getReservationsByRestaurantId(restaurantId) {
 	try {
 		const reservations = await ReservationModel.find({ restaurantId });
 		return reservations;
+	} catch (error) {
+		return false;
+	}
+}
+
+export async function removeReservations(id) {
+	const conn = getDbConnection();
+	const ReservationModel = conn.model("Reservation", ReservationSchema);
+	try {
+		const removedReservations = await ReservationModel.deleteMany({
+			restaurantId: id,
+		});
+		return removedReservations;
 	} catch (error) {
 		return false;
 	}

@@ -354,7 +354,7 @@ app.post("/reservations", async (req, res) => {
 					to: user.email,
 					from: "BookTable <isla2000@gmail.com>",
 					subject: `${restaurantName}: Reservation Confirmed`,
-					text: `Your reservation at ${restaurantName} been confirmed.`,
+					text: `Your reservation at ${restaurantName} has been confirmed.`,
 					html: `<strong>Reservation confirmed at ${restaurantName}</strong><br>
 						   Date: ${new Date(date).toLocaleDateString("en-US", { timeZone: "UTC" })}<br>
 						   Time: ${time}<br>
