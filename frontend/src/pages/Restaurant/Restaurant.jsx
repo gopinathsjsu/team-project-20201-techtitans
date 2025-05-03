@@ -53,13 +53,7 @@ const Restaurant = () => {
 		<div className="restaurant-page">
 			<Navbar role="customer" />
 			<div className="main-image">
-				<img
-					src={
-						restaurant.imageUrl ||
-						"https://resizer.otstatic.com/v2/photos/wide-huge/3/48791525.jpg"
-					}
-					alt={restaurant.name}
-				/>
+				<img src={restaurant.photos[0]} />
 			</div>
 			<h1 className="restaurant-title">{restaurant.name}</h1>
 			<div className="content-container">

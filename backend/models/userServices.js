@@ -56,7 +56,6 @@ export async function addUser(user, hashedPwd) {
 		const newUser = {
 			...user,
 			reservations: [],
-			restaurantListings: [],
 		};
 		const userToAdd = new UserModel(newUser);
 
@@ -72,5 +71,15 @@ export async function addUser(user, hashedPwd) {
 		return savedUser;
 	} catch (error) {
 		return false;
+	}
+}
+
+export async function findUserById(id) {
+	const conn = getDbConnection();
+	const userModel = conn.model("User", UserSchema);
+	try {
+		return await userModel.findById(id);
+	} catch (error) {
+		return undefined;
 	}
 }

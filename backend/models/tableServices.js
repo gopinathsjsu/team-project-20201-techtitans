@@ -77,3 +77,27 @@ export async function updateTableStatus(
 		return false;
 	}
 }
+
+export async function removeTables(id) {
+	const conn = getDbConnection();
+	const TableModel = conn.model("Table", TableSchema);
+	try {
+		const removedTables = TableModel.deleteMany({
+			restaurantId: id,
+		});
+		return removedTables;
+	} catch (error) {
+		return false;
+	}
+}
+
+export async function getTablesByRestaurantId(restaurantId) {
+	const conn = getDbConnection();
+	const TableModel = conn.model("Table", TableSchema);
+	try {
+		return await TableModel.find({ restaurantId });
+	} catch (error) {
+		console.error("Error fetching all tables:", error);
+		return [];
+	}
+}

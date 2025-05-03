@@ -83,7 +83,10 @@ function ReservationForm({ restaurant, userId }) {
 					convertMinutesTo12Hour(t) +
 					" - " +
 					convertMinutesTo12Hour(t + bookingDuration);
-				slots.push(slot);
+
+				if (t + bookingDuration <= closeMinutes) {
+					slots.push(slot);
+				}
 			}
 			return slots;
 		} catch (error) {

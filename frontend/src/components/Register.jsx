@@ -14,8 +14,8 @@ function Register(props) {
 		password: "",
 		status: "Customer",
 		reservations: [],
-		restaurantListings: [],
 	});
+
 	const textBoxStyle = {
 		marginBottom: "10px",
 		padding: "8px",

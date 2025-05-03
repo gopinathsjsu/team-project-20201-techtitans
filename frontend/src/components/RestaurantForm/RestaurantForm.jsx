@@ -1,12 +1,78 @@
-import "./AddRestaurant.css";
-import { useState, useRef } from "react";
+import "./RestaurantForm.css";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AlertMessage from "../AlertMessage";
-import TimeSelect, { timeOptions } from "./TimeSelect";
+import TimeSelect from "./TimeSelect";
 
-function AddRestaurant(props) {
-	const { userEmail } = props;
+function RestaurantForm(props) {
+	const { userEmail, restaurantId } = props;
+	const [restaurant, setRestaurant] = useState(
+		restaurantId
+			? null
+			: {
+					name: "",
+					cuisineType: "",
+					costRating: "",
+					avgRating: 0,
+					bookingsToday: 0,
+					address: "",
+					contactInfo: "",
+					hours: {
+						Mon: "",
+						Tue: "",
+						Wed: "",
+						Thu: "",
+						Fri: "",
+						Sat: "",
+						Sun: "",
+					},
+					description: "",
+					location: [0, 0],
+					pendingApproval: true,
+					approved: false,
+					email: userEmail || "",
+					tableSizes: {},
+					bookingDuration: "",
+					photos: [],
+				}
+	);
+
+	useEffect(() => {
+		const fetchRestaurant = async () => {
+			try {
+				const response = await axios.get(
+					`http://localhost:5000/restaurants/${restaurantId}`
+				);
+				if (response.data) {
+					setRestaurant(response.data);
+				} else {
+					console.error("No restaurant data received");
+				}
+			} catch (error) {
+				console.error("Could not receive restaurant data");
+			}
+		};
+		if (restaurantId) {
+			fetchRestaurant();
+		}
+	}, [restaurantId]);
+
+	const [numTablesInitialized, setNumTablesInitialized] = useState(false);
+
+	useEffect(() => {
+		if (restaurantId && restaurant && !numTablesInitialized) {
+			const newClosedDays = {};
+			for (const day of days) {
+				newClosedDays[day] = restaurant.hours?.[day] === "Closed";
+			}
+			setClosedDays(newClosedDays);
+			const existingTableSizes = restaurant.tableSizes;
+			setNumTables(Object.keys(existingTableSizes).length);
+			setNumTablesInitialized(true);
+		}
+	}, [restaurantId, restaurant]);
+
 	const [closedDays, setClosedDays] = useState({
 		Sun: false,
 		Mon: false,
@@ -66,7 +132,19 @@ function AddRestaurant(props) {
 	const [numTables, setNumTables] = useState(0);
 
 	const handleTableChange = (e) => {
-		setNumTables(parseInt(e.target.value, 10));
+		const newNumTables = parseInt(e.target.value, 10);
+		setNumTables(newNumTables);
+
+		setRestaurant((prev) => {
+			const newTableSizes = { ...prev.tableSizes };
+			Object.keys(newTableSizes)
+				.slice(newNumTables)
+				.forEach((key) => {
+					delete newTableSizes[key];
+				});
+
+			return { ...prev, tableSizes: newTableSizes };
+		});
 	};
 
 	const renderTableSizes = () => {
@@ -79,13 +157,19 @@ function AddRestaurant(props) {
 		return Array.from({ length: numTables }, (_, i) => (
 			<label
 				key={`table-${i + 1}`}
-				className="add-restaurant-form-group-table-sizes"
+				className="update-restaurant-form-group-table-sizes"
 			>
 				Size for Table {i + 1}:
 				<select
 					name={`Table ${i + 1} Size`}
-					className="add-restaurant-form-select-smallest"
+					className="update-restaurant-form-select-smallest"
 					onChange={handleTableSizeChange}
+					value={
+						restaurant.tableSizes
+							? restaurant.tableSizes?.[`Table ${i + 1} Size`] ||
+								""
+							: ""
+					}
 				>
 					<option value="" disabled selected>
 						0
@@ -114,36 +198,10 @@ function AddRestaurant(props) {
 	});
 	const [error, setError] = useState({});
 	const [isDisable, setDisable] = useState(false);
-	const [restaurant, setRestaurant] = useState({
-		name: "",
-		cuisineType: "",
-		costRating: "",
-		avgRating: 0,
-		bookingsToday: 0,
-		address: "",
-		contactInfo: "",
-		hours: {
-			Mon: "",
-			Tue: "",
-			Wed: "",
-			Thu: "",
-			Fri: "",
-			Sat: "",
-			Sun: "",
-		},
-		description: "",
-		location: [0, 0],
-		pendingApproval: true,
-		approved: false,
-		email: userEmail || "",
-		tableSizes: {},
-		bookingDuration: "",
-		photos: [],
-	});
 
 	const handleLocationChange = (e) => {
 		const { name, value } = e.target;
-		const index = name === "latitude" ? 0 : 1;
+		const index = name === "longitude" ? 0 : 1;
 		const newLocation = [...restaurant.location];
 		newLocation[index] = parseFloat(value);
 		setRestaurant((prev) => ({
@@ -175,6 +233,13 @@ function AddRestaurant(props) {
 		setRestaurant((prev) => ({
 			...prev,
 			photos: [...prev.photos, ...uploadedUrls].slice(0, 5),
+		}));
+	};
+
+	const handleRemovePhoto = (indexToRemove) => {
+		setRestaurant((prev) => ({
+			...prev,
+			photos: prev.photos.filter((_, index) => index !== indexToRemove),
 		}));
 	};
 
@@ -231,20 +296,20 @@ function AddRestaurant(props) {
 		}
 		if (
 			isNaN(restaurant.location[0]) ||
-			restaurant.location[0] < 37.1 ||
-			restaurant.location[0] > 37.5
+			restaurant.location[0] < -122.1 ||
+			restaurant.location[0] > -121.5
 		) {
-			errors.latitude =
-				"Latitude must be between 37.1 and 37.5 (San Jose area).";
+			errors.longitude =
+				"Longitude must be between -122.1 and -121.5 (San Jose area).";
 			bool = false;
 		}
 		if (
 			isNaN(restaurant.location[1]) ||
-			restaurant.location[1] < -122.1 ||
-			restaurant.location[1] > -121.5
+			restaurant.location[1] < 37.1 ||
+			restaurant.location[1] > 37.5
 		) {
-			errors.longitude =
-				"Longitude must be between -122.1 and -121.5 (San Jose area).";
+			errors.latitude =
+				"Latitude must be between 37.1 and 37.5 (San Jose area).";
 			bool = false;
 		}
 		if (restaurant.bookingDuration === "") {
@@ -300,12 +365,24 @@ function AddRestaurant(props) {
 		}
 	}
 
+	async function makeUpdateRestaurantCall(restaurant) {
+		try {
+			const response = await axios.patch(
+				`http://127.0.0.1:5000/restaurants/update/${restaurantId}`,
+				restaurant
+			);
+			return response;
+		} catch (error) {
+			return error;
+		}
+	}
+
 	function addRestaurant() {
 		if (validate()) {
 			setDisable(true);
 			makeRestaurantCall(restaurant).then((result) => {
 				if (result && result.status === 201) {
-					navigate("/restaurant-manager-home");
+					navigate(`/restaurant-manager-add-menu/${result.data._id}`);
 					window.location.reload();
 					setAlertMessages({
 						isOpen: true,
@@ -316,13 +393,14 @@ function AddRestaurant(props) {
 				} else if (result.response.status === 500) {
 					setAlertMessages({
 						isOpen: true,
-						message: "Invalid input. Unable to add restaurant.",
+						message:
+							"An error occurred while adding the restaurant. Please try again.",
 						type: "error",
 					});
 				} else if (result.response.status === 401) {
 					setAlertMessages({
 						isOpen: true,
-						message: "Restaurant already exists.",
+						message: "You are not authorized to add a restaurant.",
 						type: "error",
 					});
 				} else if (result.response.status === 400) {
@@ -336,18 +414,96 @@ function AddRestaurant(props) {
 		}
 	}
 
+	function updateRestaurant() {
+		if (validate()) {
+			setDisable(true);
+			makeUpdateRestaurantCall(restaurant).then((result) => {
+				if (result && result.status === 200) {
+					navigate("/restaurant-manager-home");
+					window.location.reload();
+					setAlertMessages({
+						isOpen: true,
+						message: "Restaurant Successfully Updated",
+						type: "success",
+					});
+				} else if (result.response.status === 500) {
+					setAlertMessages({
+						isOpen: true,
+						message:
+							"An error occurred while updating the restaurant. Please try again.",
+						type: "error",
+					});
+				} else if (result.response.status === 401) {
+					setAlertMessages({
+						isOpen: true,
+						message:
+							"You are not authorized to update this restaurant.",
+						type: "error",
+					});
+				} else if (result.response.status === 400) {
+					setAlertMessages({
+						isOpen: true,
+						message: result.response.data,
+						type: "error",
+					});
+				}
+			});
+		}
+	}
+
+	if (restaurantId && !restaurant) {
+		return (
+			<>
+				<div className="update-restaurant-title">
+					Loading Restaurant Details...
+				</div>
+			</>
+		);
+	}
+
 	return (
 		<>
-			<h2>New Restaurant</h2>
+			<div className="update-restaurant-title">
+				{restaurantId ? "Update Restaurant" : "New Restaurant"}
+			</div>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
 					if (!isDisable) {
-						addRestaurant();
+						if (restaurantId) {
+							updateRestaurant();
+						} else {
+							addRestaurant();
+						}
 					}
 				}}
 			>
-				<div className="add-restaurant-restaurant-form">
+				<div className="update-restaurant-restaurant-form">
+					<div className="update-restaurant-photos-preview">
+						{restaurant.photos && restaurant.photos.length > 0 ? (
+							restaurant.photos.map((photoUrl, index) => (
+								<div
+									key={index}
+									className="update-photo-with-delete"
+								>
+									<img
+										src={photoUrl}
+										alt={`Restaurant photo ${index + 1}`}
+										className="update-restaurant-photo-thumbnail"
+									/>
+									<button
+										type="button"
+										onClick={() => handleRemovePhoto(index)}
+										className="update-delete-photo-button"
+									>
+										❌
+									</button>
+								</div>
+							))
+						) : (
+							<p>No photos uploaded.</p>
+						)}
+					</div>
 					<input
 						type="file"
 						multiple
@@ -356,72 +512,92 @@ function AddRestaurant(props) {
 						style={{ display: "none" }}
 						ref={fileInputRef}
 					/>
-					<button
-						type="button"
-						className="add-restaurant-insert-pics-btn"
-						onClick={() => fileInputRef.current.click()}
-					>
-						Insert Images
-					</button>
 					{restaurant.photos.length > 0 && (
 						<p style={{ color: "green", marginBottom: "10px" }}>
 							{restaurant.photos.length}/5 photo
 							{restaurant.photos.length > 1 ? "s" : ""} added. 👍
 						</p>
 					)}
-					<label className="add-restaurant-form-group">
+					<button
+						type="button"
+						className="update-restaurant-insert-pics-btn"
+						onClick={() => fileInputRef.current.click()}
+					>
+						Insert Images
+					</button>
+					<label className="update-restaurant-form-group">
 						Name:
 						<input
 							type="text"
 							name="name"
-							placeholder="Enter Name..."
+							placeholder={
+								restaurantId ? restaurant.name : "Enter Name..."
+							}
 							onChange={handleChange}
 						/>
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Address:
 						<input
 							type="text"
 							name="address"
-							placeholder="Enter Address..."
+							placeholder={
+								restaurantId
+									? restaurant.address
+									: "Enter Address..."
+							}
 							onChange={handleChange}
 						/>
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Location:
-						<div className="add-restaurant-form-coordinates">
+						<div className="update-restaurant-form-coordinates">
 							<input
 								type="text"
-								name="latitude"
-								placeholder="Enter Latitude..."
+								name="longitude"
+								placeholder={
+									restaurantId
+										? restaurant.location[0]
+										: "Enter Longitude..."
+								}
 								onChange={handleLocationChange}
 							/>
 							<input
 								type="text"
-								name="longitude"
-								placeholder="Enter Longitude..."
+								name="latitude"
+								placeholder={
+									restaurantId
+										? restaurant.location[1]
+										: "Enter Latitude..."
+								}
 								onChange={handleLocationChange}
 							/>
 						</div>
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Phone Number:
 						<input
 							type="text"
 							name="contactInfo"
-							placeholder="Required Format: 123-456-7890"
+							placeholder={
+								restaurantId
+									? restaurant.contactInfo
+									: "Required Format: 123-456-7890"
+							}
 							onChange={handleChange}
 						/>
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Cuisine Type:
 						<select
 							name="cuisineType"
-							className="add-restaurant-form-select"
+							className="update-restaurant-form-select"
 							onChange={handleChange}
 						>
 							<option value="" disabled selected>
-								Choose Cuisine Type...
+								{restaurantId
+									? restaurant.cuisineType
+									: "Choose Cuisine Type..."}
 							</option>
 							<option value="American">American</option>
 							<option value="Chinese">Chinese</option>
@@ -441,39 +617,45 @@ function AddRestaurant(props) {
 							<option value="Other">Other</option>
 						</select>
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Cost Rating:
 						<select
 							name="costRating"
-							className="add-restaurant-form-select-smaller"
+							className="update-restaurant-form-select-smaller"
 							onChange={handleChange}
 						>
 							<option value="" disabled selected>
-								Choose Cost Rating...
+								{restaurantId
+									? restaurant.costRating
+									: "Choose Cost Rating..."}
 							</option>
 							<option value="$">$</option>
 							<option value="$$">$$</option>
 							<option value="$$$">$$$</option>
 						</select>
 					</label>
-					<label className="add-restaurant-form-group-description">
+					<label className="update-restaurant-form-group-description">
 						Description:
 						<textarea
 							type="text"
 							name="description"
-							className="add-restaurant-description-text"
-							placeholder="Enter a description..."
+							className="update-restaurant-description-text"
+							placeholder={
+								restaurantId
+									? restaurant.description
+									: "Enter a description..."
+							}
 							onChange={handleChange}
 						></textarea>
 					</label>
-					<label className="add-restaurant-form-section-label">
+					<label className="update-restaurant-form-section-label">
 						Hours
 					</label>
-					<div className="add-restaurant-form-group-hours">
+					<div className="update-restaurant-form-group-hours">
 						{days.map((day) => (
-							<div key={day} className="add-restaurant-day">
-								<label className="add-restaurant-day-closed">
-									<label className="add-restaurant-day-title">
+							<div key={day} className="update-restaurant-day">
+								<label className="update-restaurant-day-closed">
+									<label className="update-restaurant-day-title">
 										{dayTitles[day]}:
 									</label>
 									<label>
@@ -488,9 +670,9 @@ function AddRestaurant(props) {
 									</label>
 								</label>
 								{!closedDays[day] && (
-									<label className="add-restaurant-from-to-hours">
+									<label className="update-restaurant-from-to-hours">
 										{!closedDays[day] && (
-											<label className="add-restaurant-from-to-hours">
+											<label className="update-restaurant-from-to-hours">
 												<label>From:</label>
 												<TimeSelect
 													value={
@@ -544,30 +726,33 @@ function AddRestaurant(props) {
 							</div>
 						))}
 					</div>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Booking Duration:
 						<select
 							name="bookingDuration"
-							className="add-restaurant-form-select-smaller"
+							className="update-restaurant-form-select-smaller"
 							onChange={handleChange}
 						>
 							<option value="" disabled selected>
-								Choose Booking Duration...
+								{restaurantId
+									? restaurant.bookingDuration
+									: "Choose Booking Duration..."}
 							</option>
 							<option value="1 Hour">1 Hour</option>
 							<option value="2 Hours">2 Hours</option>
 							<option value="3 Hours">3 Hours</option>
 						</select>
 					</label>
-					<label className="add-restaurant-form-section-label">
+					<label className="update-restaurant-form-section-label">
 						Table Sizes
 					</label>
-					<label className="add-restaurant-form-group">
+					<label className="update-restaurant-form-group">
 						Number of Tables:
 						<select
 							name="total-tables"
 							onChange={handleTableChange}
-							className="add-restaurant-form-select-smallest"
+							className="update-restaurant-form-select-smallest"
+							value={numTables ? numTables : ""}
 						>
 							<option value="" disabled selected>
 								0
@@ -592,11 +777,11 @@ function AddRestaurant(props) {
 					{error.address && (
 						<p style={{ color: "red" }}>Error: {error.address}</p>
 					)}
-					{error.latitude && (
-						<p style={{ color: "red" }}>Error: {error.latitude}</p>
-					)}
 					{error.longitude && (
 						<p style={{ color: "red" }}>Error: {error.longitude}</p>
+					)}
+					{error.latitude && (
+						<p style={{ color: "red" }}>Error: {error.latitude}</p>
 					)}
 					{error.contactInfo && (
 						<p style={{ color: "red" }}>
@@ -631,7 +816,9 @@ function AddRestaurant(props) {
 							Error: {error.tableSizes}
 						</p>
 					)}
-					<button className="add-restaurant-save-btn">Save</button>
+					<button className="update-restaurant-save-btn">
+						{restaurantId ? "Update" : "Save"}
+					</button>
 					<AlertMessage
 						alertMessages={alertMessages}
 						setAlertMessages={setAlertMessages}
@@ -642,4 +829,4 @@ function AddRestaurant(props) {
 	);
 }
 
-export default AddRestaurant;
+export default RestaurantForm;

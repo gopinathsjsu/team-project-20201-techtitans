@@ -5,9 +5,13 @@
 	height: 70px;
 	width: 100%;
 	position: fixed;
-	top: 0px;
+	top: 0;
+	right: 0;
+	left: 0;
 	padding-left: 30px;
 	background-color: white;
+	max-width: 100vw;
+	left: 0;
 }
 
 .nav-header .nav-logo {

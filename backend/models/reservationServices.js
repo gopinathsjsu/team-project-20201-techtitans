@@ -102,3 +102,16 @@ export async function deleteReservationById(reservationId) {
 		return false;
 	}
 }
+
+export async function removeReservations(id) {
+	const conn = getDbConnection();
+	const ReservationModel = conn.model("Reservation", ReservationSchema);
+	try {
+		const removedReservations = ReservationModel.deleteMany({
+			restaurantId: id,
+		});
+		return removedReservations;
+	} catch (error) {
+		return false;
+	}
+}
