@@ -1,10 +1,54 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
+import axios from "axios";
+import { useState } from "react";
 
 const ReservationConfirmation = () => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const location = useLocation();
-	const { restaurantName, date, time, people, table } = location.state || {};
+	const navigate = useNavigate();
+	const { restaurantName, restaurantId, userId, date, time, people, table } =
+		location.state || {};
+	const finalUserId = userId || localStorage.getItem("userId");
+
+	const handleCompleteReservation = async () => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+
+		if (!finalUserId) {
+			alert("You must be logged in to make a reservation!");
+			navigate("/login");
+			return;
+		}
+		try {
+			const reservationData = {
+				userId: finalUserId,
+				restaurantId,
+				date,
+				time,
+				numberOfPeople: parseInt(people),
+				tableNum: table,
+				timeSlot: time,
+			};
+
+			const reservationRes = await axios.post(
+				"http://localhost:5000/reservations",
+				reservationData
+			);
+
+			alert("Reservation successful!");
+			navigate("/customer-profile");
+		} catch (error) {
+			console.error("Error completing reservation:", error);
+			alert(
+				error.response?.data?.message ||
+					"Failed to complete reservation."
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<div className="reservation-confirmation-page">
@@ -29,7 +73,11 @@ const ReservationConfirmation = () => {
 						<span>{table}</span>
 					</div>
 				</div>
-				<button className="complete-reservation-button">
+				<button
+					className="complete-reservation-button"
+					onClick={handleCompleteReservation}
+					disabled={isSubmitting}
+				>
 					Complete Reservation
 				</button>
 			</div>
