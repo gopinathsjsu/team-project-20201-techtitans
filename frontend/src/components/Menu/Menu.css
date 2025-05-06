@@ -16,6 +16,14 @@
 	display: flex;
 }
 
+.menu-highlight-label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 10px;
+	font-weight: bold;
+}
+
 .item-text {
 	margin-left: 20px;
 }
@@ -32,10 +40,6 @@
 	margin-left: auto;
 	margin-right: auto;
 	padding-bottom: 10px;
-}
-
-.MuiAccordionDetails-root {
-	color: black;
 }
 
 .add-dish-btn {

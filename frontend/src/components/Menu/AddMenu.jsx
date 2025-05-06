@@ -26,6 +26,7 @@ function AddMenu(props) {
 			description: "",
 			cost: 0,
 			photo: "",
+			isHighlightDish: false,
 		};
 		setDishList([...dishList, dish]);
 	};
@@ -53,6 +54,14 @@ function AddMenu(props) {
 		if (emptyDishes.length > 0) {
 			errors.emptyFields =
 				"Dishes must have a name, description, and cost.";
+			bool = false;
+		}
+
+		const emptyHighlightPhotos = dishList.filter(
+			(dish) => dish.isHighlightDish == true && dish.photo == ""
+		);
+		if (emptyHighlightPhotos.length > 0) {
+			errors.highlight = "A Highlighted Dish must have a photo.";
 			bool = false;
 		}
 		setError(errors);
@@ -132,6 +141,9 @@ function AddMenu(props) {
 			</button>
 			{error.dishes && (
 				<p style={{ color: "red" }}>Error: {error.dishes}</p>
+			)}
+			{error.highlight && (
+				<p style={{ color: "red" }}>Error: {error.highlight}</p>
 			)}
 			<button className="submit-menu-btn" onClick={createMenu}>
 				Create Menu
