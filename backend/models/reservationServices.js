@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { ReservationSchema } from "./reservationSchema.js";
-import { updateTableStatus } from "./tableServices.js"; 
+import { updateTableStatus } from "./tableServices.js";
 
 dotenv.config();
 

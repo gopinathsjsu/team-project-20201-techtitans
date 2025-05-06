@@ -1,7 +1,7 @@
 import "./Navbar.css";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 
 function Navbar(props) {
 	const { role } = props;
@@ -19,7 +19,6 @@ function Navbar(props) {
 			setUsername(storedUsername);
 		}
 	}, []);
-
 
 	return (
 		<header className="nav-header">

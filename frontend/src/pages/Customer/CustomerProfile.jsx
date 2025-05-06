@@ -90,8 +90,12 @@ function CustomerProfile() {
 			<div className="customer-info">
 				<h2>Profile</h2>
 				<div className="customer-photo"></div>
-				<h3><u>Username:</u> {user?.username}</h3>
-				<h3><u>Email:</u> {user?.email}</h3>
+				<h3>
+					<u>Username:</u> {user?.username}
+				</h3>
+				<h3>
+					<u>Email:</u> {user?.email}
+				</h3>
 				<button className="update-password-btn">Update Password</button>
 			</div>
 
