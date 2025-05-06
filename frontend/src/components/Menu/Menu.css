@@ -42,6 +42,17 @@
 	padding-bottom: 10px;
 }
 
+.photo-thumbnail {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 8px;
+	display: block;
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .add-dish-btn {
 	font-size: 1.1rem;
 	font-weight: 600;

@@ -35,8 +35,10 @@ import {
 } from "./models/reviewServices.js";
 import {
 	addMenu,
+	getMenuById,
 	getMenuByRestaurantId,
 	removeMenus,
+	updateMenu,
 } from "./models/menuServices.js";
 import {
 	addTable,
@@ -169,7 +171,6 @@ app.post("/users", async (req, res) => {
 		const hashedPwd = await bcrypt.hash(password, salt);
 		const savedUser = await addUser(user, hashedPwd);
 
-		// generate access token in the future
 		if (savedUser && savedUser != "existing user") {
 			const msg = {
 				to: email,
@@ -415,6 +416,20 @@ app.post("/menu", authenticateUser, async (req, res) => {
 	}
 });
 
+app.get("/menu/get/:id", async (req, res) => {
+	try {
+		const id = req.params.id;
+		const menu = await getMenuById(id);
+
+		if (!menu) {
+			return res.status(404).send("Menu not found");
+		}
+		res.status(200).send(menu);
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
 app.get("/menu/:restaurantId", async (req, res) => {
 	try {
 		const restaurantId = req.params.restaurantId;
@@ -426,6 +441,21 @@ app.get("/menu/:restaurantId", async (req, res) => {
 		}
 	} catch (error) {
 		res.status(500).send("Internal Server Error.");
+	}
+});
+
+app.patch("/menu/update/:id", authenticateUser, async (req, res) => {
+	try {
+		const id = req.params.id;
+		const updateData = req.body;
+		const updatedMenu = await updateMenu(id, updateData);
+
+		if (!updatedMenu) {
+			res.status(404).send("Menu not found or failed to update.");
+		}
+		res.status(201).send(updatedMenu);
+	} catch (error) {
+		res.status(500).send("Internal Server Error while updating menu.");
 	}
 });
 
