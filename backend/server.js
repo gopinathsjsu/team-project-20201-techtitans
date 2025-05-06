@@ -478,12 +478,43 @@ app.delete("/reservations/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const deleted = await deleteReservationById(id);
+
 		if (deleted) {
-			res.status(200).send("Reservation deleted and table freed.");
+			// Send cancellation email
+			const user = await findUserById(deleted.userId);
+			const restaurant = await getRestaurantById(deleted.restaurantId);
+			const restaurantName = restaurant?.name || "our restaurant";
+
+			if (user?.email) {
+				const msg = {
+					to: user.email,
+					from: "BookTable <isla2000@gmail.com>",
+					subject: `${restaurantName}: Reservation Cancelled`,
+					text: `Your reservation at ${restaurantName} has been cancelled.`,
+					html: `<strong>Your reservation at ${restaurantName} has been cancelled.</strong><br>
+						   Date: ${new Date(deleted.date).toLocaleDateString("en-US", { timeZone: "UTC" })}<br>
+						   Time: ${deleted.table?.timeSlot}<br>
+						   People: ${deleted.numberOfPeople}<br>
+						   Table Number: ${deleted.table?.tableNum}<br><br>
+						   Sorry to see you go! We hope to serve you another time.`,
+				};
+
+				try {
+					await sgMail.send(msg);
+				} catch (emailError) {
+					console.error(
+						"Cancellation email error:",
+						emailError.response?.body || emailError
+					);
+				}
+			}
+
+			res.status(200).send("Reservation deleted, table freed, and email sent.");
 		} else {
 			res.status(404).send("Reservation not found.");
 		}
 	} catch (error) {
+		console.error("Error deleting reservation:", error);
 		res.status(500).send("Deleting reservation failed.");
 	}
 });
