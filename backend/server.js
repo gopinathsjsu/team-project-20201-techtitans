@@ -7,7 +7,6 @@ import {
 	findUserById,
 	findUserByEmail,
 	findUserByUsername,
-	findUserById,
 } from "./models/userServices.js";
 import {
 	addRestaurant,

@@ -61,6 +61,7 @@ function Login(props) {
 					handleLoginIn(result.data);
 
 					localStorage.setItem("userId", result.data.savedUser._id);
+					localStorage.setItem("username", result.data.savedUser.username);
 
 					if (result.data.savedUser.status == "Customer") {
 						// eventually navigate with customer id
