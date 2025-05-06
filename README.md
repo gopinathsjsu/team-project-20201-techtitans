@@ -8,11 +8,28 @@ For this project, we chose to do a MERN (MongoDB, Express, React, Node) stack an
 ![uml](https://github.com/user-attachments/assets/5e651b4a-65b8-48b6-96b9-1645e5460982)
 
 # Summary of Areas of Contributions
-- Nivedita:
-  - Test
-- Janice:
-- Joel: 
-- Isla:
+- **Nivedita**
+  - Backend schema/services implementation
+  - Search functionality 
+  - Google Maps API implementation
+  - Cloud deployment 
+- **Janice**
+  - Backend schema/services implementation
+  - Connection to MongoDB
+  - Login/Registration
+  - Approve/deny restaurants as admin
+  - Cookie/token setup
+  - Menu creation
+- **Joel**
+  - Frontend components
+  - Creating/updating restaurants as restaurant mananger
+      - Detailed customization forms 
+  - Uploading/storing images
+- **Isla**
+  - Frontend components
+  - Admin statistics
+  - Dynamic displays on frontend
+  - Booking/cancelling + emailing 
 
 # XP Core Values 
 - **Feedback:** Every week we would hold not only a meeting to assign new tasks, but to reflect on our current work and what we could do to improve. Janice suggested each new implementation would need to be a pull request first, and one other person would have to do a proper code review before merging into main. During code reviews, we were honest with the quality of the code being published, and even with functioning code refactoring was encouraged to make the code readable for everyone else (for instance, the time display was repetitively programmed in the frontend and then turned into a reusable React component). 
