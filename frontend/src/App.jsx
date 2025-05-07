@@ -1,7 +1,14 @@
 import "./App.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import {
+	BrowserRouter,
+	Routes,
+	Route,
+	Navigate,
+	useNavigate,
+	useLocation,
+} from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 import StartLogin from "./pages/StartLogin/StartLogin";
@@ -24,60 +31,93 @@ import RestaurantManagerUpdateMenuSelect from "./pages/RestaurantManagerUpdateRe
 import RestaurantManagerRestaurantBookings from "./pages/RestaurantManagerRestaurantBookings/RestaurantManagerRestaurantBookings";
 
 function PrivateRoute(props) {
-  const [cookies, removeCookie] = useCookies(["auth_token"]);
-  const navigate = useNavigate();
-  const location = useLocation(); // Add this import
-  const { role, userStatus, children } = props;
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  
-  useEffect(() => {
-    // Check if token exists
-    if (!cookies.auth_token) {
-      navigate("/log-in", { state: { from: location.pathname, message: "Please log in to continue" } });
-      return;
-    }
+	const [cookies, removeCookie] = useCookies(["auth_token"]);
+	const navigate = useNavigate();
+	const location = useLocation(); // Add this import
+	const { role, userStatus, children } = props;
+	const [isAuthorized, setIsAuthorized] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
-    // Verify token is valid and not expired
-    try {
-      const decoded = jwtDecode(cookies.auth_token);
-      const currentTime = Date.now() / 1000;
-      
-      if (decoded.exp < currentTime) {
-        removeCookie("auth_token", { path: "/" });
-        navigate("/log-in", { state: { message: "Your session has expired. Please log in again." } });
-        return;
-      }
+	useEffect(() => {
+		// Check if token exists
+		if (!cookies.auth_token) {
+			navigate("/log-in", {
+				state: {
+					from: location.pathname,
+					message: "Please log in to continue",
+				},
+			});
+			return;
+		}
 
-      // Role check
-      if (role !== userStatus) {
-        if (userStatus === "Customer") {
-          navigate("/customer-profile", { state: { message: "You don't have access to that area" } });
-        } else if (userStatus === "RestaurantManager") {
-          navigate("/restaurant-manager-home", { state: { message: "You don't have access to that area" } });
-        } else if (userStatus === "Admin") {
-          navigate("/admin-dash", { state: { message: "You don't have access to that area" } });
-        }
-        return;
-      }
-      
-      // If we get here, user is authorized
-      setIsAuthorized(true);
-      setIsLoading(false);
-    } catch (error) {
-      // Invalid token
-      removeCookie("auth_token", { path: "/" });
-      navigate("/log-in", { state: { message: "Authentication error. Please log in again." } });
-    }
-  }, [cookies.auth_token, role, userStatus, navigate, location.pathname, removeCookie]);
+		// Verify token is valid and not expired
+		try {
+			const decoded = jwtDecode(cookies.auth_token);
+			const currentTime = Date.now() / 1000;
 
-  // Show loading state while checking authorization
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  
-  // Only render children if user is authorized
-  return isAuthorized ? children : null;
+			if (decoded.exp < currentTime) {
+				removeCookie("auth_token", { path: "/" });
+				navigate("/log-in", {
+					state: {
+						message:
+							"Your session has expired. Please log in again.",
+					},
+				});
+				return;
+			}
+
+			// Role check
+			if (role !== userStatus) {
+				if (userStatus === "Customer") {
+					navigate("/customer-profile", {
+						state: {
+							message: "You don't have access to that area",
+						},
+					});
+				} else if (userStatus === "RestaurantManager") {
+					navigate("/restaurant-manager-home", {
+						state: {
+							message: "You don't have access to that area",
+						},
+					});
+				} else if (userStatus === "Admin") {
+					navigate("/admin-dash", {
+						state: {
+							message: "You don't have access to that area",
+						},
+					});
+				}
+				return;
+			}
+
+			// If we get here, user is authorized
+			setIsAuthorized(true);
+			setIsLoading(false);
+		} catch (error) {
+			// Invalid token
+			removeCookie("auth_token", { path: "/" });
+			navigate("/log-in", {
+				state: {
+					message: "Authentication error. Please log in again.",
+				},
+			});
+		}
+	}, [
+		cookies.auth_token,
+		role,
+		userStatus,
+		navigate,
+		location.pathname,
+		removeCookie,
+	]);
+
+	// Show loading state while checking authorization
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
+
+	// Only render children if user is authorized
+	return isAuthorized ? children : null;
 }
 
 function App() {
@@ -91,8 +131,9 @@ function App() {
 		type: "error",
 	});
 	const [userEmail, setUserEmail] = useState("");
-	const [pendingRestaurantsByEmail, setPendingRestaurantsByEmail] =
-		useState([]);
+	const [pendingRestaurantsByEmail, setPendingRestaurantsByEmail] = useState(
+		[]
+	);
 	const [verifiedRestaurantsByEmail, setVerifiedRestaurantsByEmail] =
 		useState([]);
 
@@ -233,27 +274,31 @@ function App() {
 				<Route
 					path="/admin-dash"
 					element={
-							<PrivateRoute role="Admin" userStatus={user.status}>
-								<AdminDash
-									pendingRestaurants={pendingRestaurants}
-									setPendingRestaurants={setPendingRestaurants}
-									fetchPendingRestaurants={fetchPendingRestaurants}
-									verifiedRestaurants={verifiedRestaurants}
-									setVerifiedRestaurants={setVerifiedRestaurants}
-									fetchVerifiedRestaurants={fetchVerifiedRestaurants}
-									alertMessages={alertMessages}
-									setAlertMessages={setAlertMessages}
-								/>
-							</PrivateRoute>
+						<PrivateRoute role="Admin" userStatus={user.status}>
+							<AdminDash
+								pendingRestaurants={pendingRestaurants}
+								setPendingRestaurants={setPendingRestaurants}
+								fetchPendingRestaurants={
+									fetchPendingRestaurants
+								}
+								verifiedRestaurants={verifiedRestaurants}
+								setVerifiedRestaurants={setVerifiedRestaurants}
+								fetchVerifiedRestaurants={
+									fetchVerifiedRestaurants
+								}
+								alertMessages={alertMessages}
+								setAlertMessages={setAlertMessages}
+							/>
+						</PrivateRoute>
 					}
 				/>
-				<Route 
-					path="/admin-analytics" 
+				<Route
+					path="/admin-analytics"
 					element={
 						<PrivateRoute role="Admin" userStatus={user.status}>
 							<AdminAnalytics />
 						</PrivateRoute>
-					} 
+					}
 				/>
 				<Route
 					path="/log-in"
@@ -285,25 +330,33 @@ function App() {
 				<Route
 					path="/restaurant-manager-home"
 					element={
-							<PrivateRoute role="RestaurantManager" userStatus={user.status}>
-								<RestaurantManagerHome
-									pendingRestaurantsByEmail={
-										pendingRestaurantsByEmail
-									}
-									verifiedRestaurantsByEmail={
-										verifiedRestaurantsByEmail
-									}
-									setAlertMessages={setAlertMessages}
-								/>
-							</PrivateRoute>
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerHome
+								pendingRestaurantsByEmail={
+									pendingRestaurantsByEmail
+								}
+								verifiedRestaurantsByEmail={
+									verifiedRestaurantsByEmail
+								}
+								setAlertMessages={setAlertMessages}
+							/>
+						</PrivateRoute>
 					}
 				/>
 				<Route
 					path="/restaurant-manager-add-restaurant"
 					element={
-							<PrivateRoute role="RestaurantManager" userStatus={user.status}>
-								<RestaurantManagerAddRestaurant userEmail={userEmail} />
-							</PrivateRoute>
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerAddRestaurant
+								userEmail={userEmail}
+							/>
+						</PrivateRoute>
 					}
 				/>
 				<Route
@@ -329,9 +382,12 @@ function App() {
 				<Route
 					path="/restaurant-manager-update-restaurant/:id"
 					element={
-							<PrivateRoute role="RestaurantManager" userStatus={user.status}>
-								<RestaurantManagerUpdateRestaurant />
-							</PrivateRoute>
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerUpdateRestaurant />
+						</PrivateRoute>
 					}
 				/>
 				<Route
@@ -362,9 +418,12 @@ function App() {
 				<Route
 					path="/restaurant-manager-restaurant-bookings/:id"
 					element={
-							<PrivateRoute role="RestaurantManager" userStatus={user.status}>
-								<RestaurantManagerRestaurantBookings />
-							</PrivateRoute>
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerRestaurantBookings />
+						</PrivateRoute>
 					}
 				/>
 			</Routes>

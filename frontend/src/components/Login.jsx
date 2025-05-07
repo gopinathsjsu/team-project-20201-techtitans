@@ -60,25 +60,28 @@ function Login(props) {
 				if (result && result.status === 201) {
 					handleLoginIn(result.data);
 					localStorage.setItem("userId", result.data.savedUser._id);
-					
+
 					// Check for pending reservation
-					const pendingReservation = localStorage.getItem("pendingReservation");
+					const pendingReservation =
+						localStorage.getItem("pendingReservation");
 					if (pendingReservation) {
 						const reservation = JSON.parse(pendingReservation);
 						localStorage.removeItem("pendingReservation");
-						navigate("/reservation-confirmation", { 
+						navigate("/reservation-confirmation", {
 							state: {
 								...reservation,
-								userId: result.data.savedUser._id
-							} 
+								userId: result.data.savedUser._id,
+							},
 						});
 						return;
 					}
-					
+
 					// Normal flow
 					if (result.data.savedUser.status == "Customer") {
 						navigate("/customer-profile");
-					} else if (result.data.savedUser.status == "RestaurantManager") {
+					} else if (
+						result.data.savedUser.status == "RestaurantManager"
+					) {
 						navigate("/restaurant-manager-home");
 					} else if (result.data.savedUser.status == "Admin") {
 						navigate("/admin-dash");

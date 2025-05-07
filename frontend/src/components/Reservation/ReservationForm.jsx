@@ -37,27 +37,30 @@ function ReservationForm({ restaurant, userId }) {
 
 	const handleReserveClick = () => {
 		const [cookies] = useCookies(["auth_token"]);
-		
+
 		if (!cookies.auth_token) {
 			// Store reservation details in localStorage to retrieve after login
-			localStorage.setItem("pendingReservation", JSON.stringify({
-				restaurantId: restaurant?._id,
-				restaurantName: restaurant?.name,
-				date,
-				time,
-				people,
-				table
-			}));
-			
-			navigate("/log-in", { 
-				state: { 
+			localStorage.setItem(
+				"pendingReservation",
+				JSON.stringify({
+					restaurantId: restaurant?._id,
+					restaurantName: restaurant?.name,
+					date,
+					time,
+					people,
+					table,
+				})
+			);
+
+			navigate("/log-in", {
+				state: {
 					from: `/restaurant/${restaurant?._id}`,
-					message: "Please log in to complete your reservation" 
-				} 
+					message: "Please log in to complete your reservation",
+				},
 			});
 			return;
 		}
-		
+
 		if (validate()) {
 			navigate("/reservation-confirmation", {
 				state: {
