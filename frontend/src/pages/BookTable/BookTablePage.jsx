@@ -123,25 +123,18 @@ const BookTablePage = () => {
 					"http://127.0.0.1:5000/restaurants"
 				);
 				if (response.data) {
-					const days = [
-						"Sun",
-						"Mon",
-						"Tue",
-						"Wed",
-						"Thu",
-						"Fri",
-						"Sat",
-					];
-					// Use today's day for the initial load
-					const currentDay = days[new Date().getDay()];
-					// Get the current time and round it
-					const currentTime = getRoundedTime(
-						new Date().toTimeString().slice(0, 5)
-					);
-					const formattedCurrentTime = convertTo12Hour(currentTime);
-
-					// Process all restaurants
 					const restaurantData = response.data.map((restaurant) => {
+						const days = [
+							"Sun",
+							"Mon",
+							"Tue",
+							"Wed",
+							"Thu",
+							"Fri",
+							"Sat",
+						];
+						// Use today's day for the initial load
+						const currentDay = days[new Date().getDay()];
 						const hours =
 							restaurant.hours[currentDay] ||
 							Object.values(restaurant.hours)[0] ||
@@ -155,50 +148,15 @@ const BookTablePage = () => {
 							costRating: restaurant.costRating,
 							avgRating: restaurant.avgRating || 0,
 							bookingsToday: restaurant.bookingsToday || 0,
-							hours: restaurant.hours,
-							availableTimes,
+							hours: restaurant.hours, // keep raw hours data for filtering
+							availableTimes, // initial available times (for today)
 							image: restaurant.image || null,
 							address: restaurant.address || "",
-							location: restaurant.location,
-							tableSizes: restaurant.tableSizes,
+							tableSizes: restaurant.tableSizes, // include capacity info
 						};
 					});
-
 					setAllRestaurants(restaurantData);
-
-					// Filter restaurants similar to handleSearch
-					const filteredResults = restaurantData.filter(
-						(restaurant) => {
-							// Exclude closed restaurants
-							if (
-								restaurant.availableTimes.includes(
-									"Restaurant is Closed"
-								)
-							)
-								return false;
-
-							// Check for table capacity (at least one table for 1 person)
-							if (restaurant.tableSizes) {
-								let capacityMatches = false;
-								for (let [size] of Object.entries(
-									restaurant.tableSizes
-								)) {
-									if (Number(size) >= 1) {
-										capacityMatches = true;
-										break;
-									}
-								}
-								if (!capacityMatches) return false;
-							}
-
-							// Check if restaurant has available slots
-							return restaurant.availableTimes.includes(
-								formattedCurrentTime
-							);
-						}
-					);
-
-					setSearchResults(filteredResults);
+					setSearchResults(restaurantData);
 				}
 			} catch (err) {
 				setError("Failed to load restaurants. Please try again.");
@@ -214,67 +172,122 @@ const BookTablePage = () => {
 	// and filters by the rounded time and capacity (number of people).
 	const handleSearch = async () => {
 		try {
+			console.log("===== SEARCH STARTED =====");
+			console.log("Search criteria:", searchCriteria);
 			setLoading(true);
 			const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 			const searchDate = new Date(searchCriteria.date);
 			const dayOfWeek = days[searchDate.getDay()];
+			console.log("Day of week for search:", dayOfWeek);
 
 			// Round the input time and convert it to 12-hour format for comparison
 			const roundedTime = getRoundedTime(searchCriteria.time);
+			console.log("Rounded time (24h):", roundedTime);
 			const formattedSearchTime = convertTo12Hour(roundedTime);
+			console.log("Formatted search time (12h):", formattedSearchTime);
+
+			console.log("Total restaurants before processing:", allRestaurants.length);
+			
+			// Debug restaurant hours
+			allRestaurants.forEach((restaurant, index) => {
+				if (index < 3) { // Only log first 3 to avoid console flood
+					console.log(`Restaurant ${restaurant.name} hours for ${dayOfWeek}:`, 
+						restaurant.hours[dayOfWeek]);
+				}
+			});
 
 			// Recalculate available times using the selected day, then filter by time slot and capacity.
-			const filteredResults = allRestaurants
-				.map((restaurant) => {
-					const hoursForDay = restaurant.hours[dayOfWeek];
-					if (!hoursForDay || hoursForDay === "Closed") {
-						return {
-							...restaurant,
-							availableTimes: ["Restaurant is Closed"],
-						};
-					}
-					const availableTimes = generateTimeSlots(hoursForDay);
-					return { ...restaurant, availableTimes };
-				})
-				.filter((restaurant) => {
-					// Exclude if restaurant is closed on that day.
-					if (
-						restaurant.availableTimes.includes(
-							"Restaurant is Closed"
-						)
-					)
-						return false;
-					// Check capacity: at least one table should have seats >= the requested people.
-					if (restaurant.tableSizes) {
-						let capacityMatches = false;
-						for (let [size] of Object.entries(
-							restaurant.tableSizes
-						)) {
-							if (Number(size) >= searchCriteria.people) {
-								capacityMatches = true;
-								break;
+			const restaurantsWithUpdatedTimes = allRestaurants.map((restaurant) => {
+				const hoursForDay = restaurant.hours[dayOfWeek];
+				if (!hoursForDay || hoursForDay === "Closed") {
+					console.log(`Restaurant ${restaurant.name} is closed on ${dayOfWeek}`);
+					return {
+						...restaurant,
+						availableTimes: ["Restaurant is Closed"],
+					};
+				}
+				const availableTimes = generateTimeSlots(hoursForDay);
+				console.log(`Restaurant ${restaurant.name} available times:`, availableTimes);
+				return { ...restaurant, availableTimes };
+			});
+			
+			console.log("Restaurants after updating times:", restaurantsWithUpdatedTimes.length);
+
+			let filteredResults = restaurantsWithUpdatedTimes.filter((restaurant) => {
+				// Exclude if restaurant is closed on that day.
+				if (restaurant.availableTimes.includes("Restaurant is Closed")) {
+					console.log(`Filtering out ${restaurant.name}: closed on ${dayOfWeek}`);
+					return false;
+				}
+				
+				// Check capacity: at least one table should have seats >= the requested people.
+				if (restaurant.tableSizes) {
+					let capacityMatches = false;
+					console.log(`${restaurant.name} table sizes:`, restaurant.tableSizes);
+					console.log(`People requested: ${searchCriteria.people}`);
+					
+					for (let [size, count] of Object.entries(restaurant.tableSizes)) {
+						console.log(`Checking table size ${size} (count: ${count})`);
+						
+						// Extract the actual number from strings like "Table 1 Size"
+						let actualSize;
+						if (typeof count === 'number') {
+							// If count is already a number, use it
+							actualSize = count;
+						} else if (typeof size === 'string' && size.includes('Size')) {
+							// Try to parse the size from the key
+							const sizeMatch = size.match(/Size:\s*(\d+)/);
+							if (sizeMatch && sizeMatch[1]) {
+								actualSize = Number(sizeMatch[1]);
 							}
 						}
-						if (!capacityMatches) return false;
+						
+						console.log(`Actual size extracted: ${actualSize}`);
+						
+						if (actualSize && actualSize >= searchCriteria.people) {
+							capacityMatches = true;
+							console.log(`${restaurant.name} has tables that can fit ${searchCriteria.people} people`);
+							break;
+						}
 					}
-					if (
-						!restaurant.availableTimes.includes(formattedSearchTime)
-					) {
+					
+					if (!capacityMatches) {
+						console.log(`Filtering out ${restaurant.name}: insufficient table capacity`);
 						return false;
 					}
-					return true;
-				});
-
+				}
+				
+				// Check if requested time is available
+				console.log(`Checking if ${formattedSearchTime} is in available times for ${restaurant.name}:`, 
+					restaurant.availableTimes);
+					
+				if (!restaurant.availableTimes.includes(formattedSearchTime)) {
+					console.log(`Filtering out ${restaurant.name}: time slot ${formattedSearchTime} not available`);
+					return false;
+				}
+				
+				console.log(`${restaurant.name} PASSES all filters`);
+				return true;
+			});
+			
+			console.log("Final filtered restaurants count:", filteredResults.length);
+			if (filteredResults.length === 0) {
+				console.log("WARNING: No restaurants match the criteria");
+			} else {
+				console.log("First matching restaurant:", filteredResults[0].name);
+			}
+			
 			setSearchResults(filteredResults);
 			setError(null);
+			console.log("===== SEARCH COMPLETED =====");
 		} catch (err) {
+			console.error("Search function error:", err);
 			setError("Error searching restaurants: " + err.message);
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	/*
 	const handleTimeSlotClick = (restaurantId, time) => {
 		navigate(`/reservation-confirmation`, {
 			state: {
@@ -285,7 +298,6 @@ const BookTablePage = () => {
 			},
 		});
 	};
-	*/
 
 	const handleLoadMore = () => {
 		setVisibleCount((prev) => prev + visibleCount);
@@ -436,12 +448,18 @@ const BookTablePage = () => {
 
 													return visibleSlots.map(
 														(time, idx) => (
-															<span
+															<button
 																key={idx}
-																className="time-slot-display"
+																onClick={() =>
+																	handleTimeSlotClick(
+																		result.id,
+																		time
+																	)
+																}
+																className="time-slot-button"
 															>
 																{time}
-															</span>
+															</button>
 														)
 													);
 												})()}
@@ -456,17 +474,6 @@ const BookTablePage = () => {
 										View Restaurant Details
 									</button>
 								</Link>
-								<button
-									className="view-map-button"
-									onClick={() =>
-										window.open(
-											`https://www.google.com/maps?q=${result.location[1]},${result.location[0]}`,
-											"_blank"
-										)
-									}
-								>
-									View on Map
-								</button>
 							</div>
 						</div>
 					))
