@@ -10,8 +10,13 @@ function RestaurantListing(props) {
 	useEffect(() => {
 		async function fetchRestaurantPhoto() {
 			try {
-				const response = await axios.get(`http://127.0.0.1:5000/restaurants/${id}`);
-				if (response.status === 200 && response.data.photos.length > 0) {
+				const response = await axios.get(
+					`http://127.0.0.1:5000/restaurants/${id}`
+				);
+				if (
+					response.status === 200 &&
+					response.data.photos.length > 0
+				) {
 					setPhotoUrl(response.data.photos[0]);
 				}
 			} catch (error) {
@@ -95,11 +100,15 @@ function RestaurantListing(props) {
 			{interact == "customer-reservation" && (
 				<div>
 					<Link to={`/restaurant/${id}`}>
-					{photoUrl ? (
-						<img src={photoUrl} alt="Restaurant" className="image" />
-					) : (
-						<div className="image" />
-					)}
+						{photoUrl ? (
+							<img
+								src={photoUrl}
+								alt="Restaurant"
+								className="image"
+							/>
+						) : (
+							<div className="image" />
+						)}
 					</Link>
 					<Link to={`/restaurant/${id}`}>
 						<h3 className="name">{name}</h3>
@@ -109,9 +118,13 @@ function RestaurantListing(props) {
 			{interact == "restaurant-manager-btns" && (
 				<div>
 					{photoUrl ? (
-							<img src={photoUrl} alt="Restaurant" className="image" />
-						) : (
-							<div className="image" />
+						<img
+							src={photoUrl}
+							alt="Restaurant"
+							className="image"
+						/>
+					) : (
+						<div className="image" />
 					)}
 					<h3 className="name">{name}</h3>
 				</div>
@@ -119,9 +132,13 @@ function RestaurantListing(props) {
 			{interact == "admin-remove-btn" && (
 				<div>
 					{photoUrl ? (
-							<img src={photoUrl} alt="Restaurant" className="image" />
-						) : (
-							<div className="image" />
+						<img
+							src={photoUrl}
+							alt="Restaurant"
+							className="image"
+						/>
+					) : (
+						<div className="image" />
 					)}
 					<h3 className="name">{name}</h3>
 				</div>
@@ -129,9 +146,13 @@ function RestaurantListing(props) {
 			{interact == "admin-pending-btns" && (
 				<div>
 					{photoUrl ? (
-							<img src={photoUrl} alt="Restaurant" className="image" />
-						) : (
-							<div className="image" />
+						<img
+							src={photoUrl}
+							alt="Restaurant"
+							className="image"
+						/>
+					) : (
+						<div className="image" />
 					)}
 					<h3 className="name">{name}</h3>
 				</div>
