@@ -15,7 +15,7 @@ function RestaurantManagerRestaurantBookings() {
 	async function fetchRestaurant() {
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/restaurants/${id}`
+				`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/restaurants/${id}`
 			);
 			return response.data;
 		} catch (error) {
@@ -48,7 +48,7 @@ function RestaurantManagerRestaurantBookings() {
 		if (userNames[userId]) return userNames[userId];
 		try {
 			const response = await axios.get(
-				`http://localhost:5000/username/${userId}`
+				`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/username/${userId}`
 			);
 			const name = response.data.username;
 			setUserNames((prev) => ({ ...prev, [userId]: name }));

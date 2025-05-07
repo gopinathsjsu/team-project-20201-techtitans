@@ -18,12 +18,12 @@ function CustomerProfile() {
 	) => {
 		try {
 			await axios.delete(
-				`http://localhost:5000/reservations/${reservationId}`
+				`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/reservations/${reservationId}`
 			);
 
 			// makes table available
 			await axios.patch(
-				`http://localhost:5000/table/${restaurantId}/${tableNum}`,
+				`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/table/${restaurantId}/${tableNum}`,
 				{
 					timeSlot,
 					isTaken: false,
@@ -45,7 +45,7 @@ function CustomerProfile() {
 					headers: { Authorization: `Bearer ${cookies.auth_token}` },
 				};
 				const res = await axios.get(
-					"http://localhost:5000/user",
+					"http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/user",
 					config
 				);
 				setUser(res.data);
@@ -62,12 +62,12 @@ function CustomerProfile() {
 			if (!user?._id) return;
 			try {
 				const res = await axios.get(
-					`http://localhost:5000/reservations/user/${user._id}`
+					`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/reservations/user/${user._id}`
 				);
 				const reservationsWithNames = await Promise.all(
 					res.data.map(async (reservation) => {
 						const restaurantRes = await axios.get(
-							`http://localhost:5000/restaurants/${reservation.restaurantId}`
+							`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/restaurants/${reservation.restaurantId}`
 						);
 						return {
 							...reservation,

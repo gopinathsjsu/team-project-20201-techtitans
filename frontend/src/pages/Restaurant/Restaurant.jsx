@@ -40,7 +40,7 @@ const Restaurant = () => {
 				setRestaurant(null); // reset while loading
 				setLoading(true);
 				const response = await axios.get(
-					`http://localhost:5000/restaurants/${id}`
+					`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/restaurants/${id}`
 				);
 				if (response.data) {
 					setRestaurant(response.data);

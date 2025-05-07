@@ -33,7 +33,7 @@ const ReservationConfirmation = () => {
 			};
 
 			const reservationRes = await axios.post(
-				"http://localhost:5000/reservations",
+				"http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/reservations",
 				reservationData
 			);
 

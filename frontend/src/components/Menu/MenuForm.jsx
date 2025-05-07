@@ -28,7 +28,7 @@ function MenuForm(props) {
 		const fetchMenu = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/menu/get/${id}`
+					`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/menu/get/${id}`
 				);
 				if (response.data) {
 					setMenu(response.data);

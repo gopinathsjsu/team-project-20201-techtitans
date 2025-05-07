@@ -42,7 +42,7 @@ function RestaurantForm(props) {
 		const fetchRestaurant = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/restaurants/${restaurantId}`
+					`http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/restaurants/${restaurantId}`
 				);
 				if (response.data) {
 					setRestaurant(response.data);
@@ -222,7 +222,7 @@ function RestaurantForm(props) {
 
 			try {
 				const res = await axios.post(
-					"http://localhost:5000/upload",
+					"http://http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com/upload",
 					formData
 				);
 				uploadedUrls.push(res.data.fileUrl);
