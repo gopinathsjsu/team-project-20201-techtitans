@@ -19,6 +19,8 @@ import BookTablePage from "./pages/BookTable/BookTablePage";
 import Restaurant from "./pages/Restaurant/Restaurant";
 import ReservationConfirmation from "./pages/ReservationConfirmation/ReservationConfirmation";
 import RestaurantManagerUpdateRestaurant from "./pages/RestaurantManagerUpdateRestaurant/RestaurantManagerUpdateRestaurant";
+import RestaurantManagerUpdateMenu from "./pages/RestaurantManagerUpdateRestaurant/RestaurantManagerUpdateMenu";
+import RestaurantManagerUpdateMenuSelect from "./pages/RestaurantManagerUpdateRestaurant/RestaurantManagerUpdateMenuSelect";
 import RestaurantManagerRestaurantBookings from "./pages/RestaurantManagerRestaurantBookings/RestaurantManagerRestaurantBookings";
 
 function PrivateRoute(props) {
@@ -305,7 +307,7 @@ function App() {
 					}
 				/>
 				<Route
-					path="/restaurant-manager-add-menu/:id"
+					path="/restaurant-manager-add-menu/:restaurantId"
 					element={
 						<PrivateRoute
 							role="RestaurantManager"
@@ -330,6 +332,31 @@ function App() {
 							<PrivateRoute role="RestaurantManager" userStatus={user.status}>
 								<RestaurantManagerUpdateRestaurant />
 							</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/restaurant-manager-update-menu/:restaurantId"
+					element={
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerUpdateMenuSelect />
+						</PrivateRoute>
+					}
+				/>
+				<Route
+					path="/restaurant-manager-update-menu/:restaurantId/:id"
+					element={
+						<PrivateRoute
+							role="RestaurantManager"
+							userStatus={user.status}
+						>
+							<RestaurantManagerUpdateMenu
+								alertMessages={alertMessages}
+								setAlertMessages={setAlertMessages}
+							/>
+						</PrivateRoute>
 					}
 				/>
 				<Route
