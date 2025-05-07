@@ -5,3 +5,11 @@
 	text-align: center;
 	width: 100vw;
 }
+
+.admin-restaurants-listing {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-left: 30px;
+	margin-right: 30px;
+}

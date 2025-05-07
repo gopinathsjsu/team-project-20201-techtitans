@@ -1,0 +1,8 @@
+.rest-man-add-screen {
+	overflow-y: auto;
+	padding-top: 6rem;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	text-align: left;
+}

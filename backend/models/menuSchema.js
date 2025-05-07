@@ -29,7 +29,13 @@ export const MenuSchema = new mongoose.Schema(
 					required: true,
 				},
 				photo: {
-					type: Buffer,
+					type: String,
+					default: "",
+				},
+				isHighlightDish: {
+					type: Boolean,
+					required: true,
+					default: false,
 				},
 			},
 		],

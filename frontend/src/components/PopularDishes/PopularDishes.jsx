@@ -1,27 +1,52 @@
+import { Carousel } from "antd";
+import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
 import "./PopularDishes.css";
 
-const sampleDishes = [
-	{ name: "Dish A", imageUrl: "path/to/dishA.jpg" },
-	{ name: "Dish B", imageUrl: "path/to/dishB.jpg" },
-	{ name: "Dish C", imageUrl: "path/to/dishC.jpg" },
-	{ name: "Dish D", imageUrl: "path/to/dishD.jpg" },
-	{ name: "Dish E", imageUrl: "path/to/dishE.jpg" },
-];
+function PopularDishes(props) {
+	const { menus } = props;
+	const popularDishes = menus
+		.flatMap((menu) => menu.dishes)
+		.filter((dish) => dish.isHighlightDish === true);
 
-const PopularDishes = ({ dishes = sampleDishes }) => {
-	return (
-		<section id="popular-dishes" className="restaurant-section">
-			<h2>Popular Dishes</h2>
-			<div className="popular-dishes">
-				{dishes.map((dish, index) => (
-					<div key={index} className="dish">
-						<img src={dish.imageUrl} alt={dish.name} />
-						<p>{dish.name}</p>
-					</div>
-				))}
-			</div>
-		</section>
+	const popularDishesCarousel = (
+		<Carousel arrows>
+			{popularDishes.map((dish, idx) => (
+				<Card
+					key={idx}
+					sx={{
+						maxHeight: 600,
+						maxWidth: 770,
+						backgroundColor: "transparent",
+						color: "white",
+						border: "2px solid white",
+					}}
+				>
+					<CardContent
+						sx={{
+							backgroundColor: "transparent",
+							textAlign: "center",
+						}}
+					>
+						<Typography variant="h6">{dish.name}</Typography>
+					</CardContent>
+					<hr className="divider" />
+					<CardMedia
+						component="img"
+						height="600"
+						image={dish.photo}
+						alt={dish.name}
+					/>
+				</Card>
+			))}
+		</Carousel>
 	);
-};
+
+	return (
+		<Box sx={{ margin: "0 auto", mt: 4 }}>
+			<h2>Popular Dishes</h2>
+			{popularDishesCarousel}
+		</Box>
+	);
+}
 
 export default PopularDishes;

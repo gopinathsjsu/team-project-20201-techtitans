@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
 	addUser,
+	findUserById,
 	findUserByEmail,
 	findUserByUsername,
 } from "./models/userServices.js";
@@ -17,23 +18,31 @@ import {
 	getRestaurantsByEmail,
 	getPendingRestaurantsByEmail,
 	getVerifiedRestaurantsByEmail,
+	removeRestaurant,
 	updateRestaurantById,
 } from "./models/restaurantServices.js";
 import {
 	addReservation,
 	getReservationsByUserId,
 	getReservationsByRestaurantId,
+	deleteReservationById,
+	removeReservations,
 } from "./models/reservationServices.js";
 import {
 	addReview,
 	getReviewsByRestaurantId,
+	removeReviews,
 } from "./models/reviewServices.js";
-import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
-import { addMenu, getMenuByRestaurantId } from "./models/menuServices.js";
+import {
+	addMenu,
+	getMenuByRestaurantId,
+	removeMenus,
+} from "./models/menuServices.js";
 import {
 	addTable,
 	updateTableStatus,
 	getAvailableTablesbyTime,
+	removeTables,
 } from "./models/tableServices.js";
 
 import sgMail from "@sendgrid/mail";
@@ -73,6 +82,60 @@ function authenticateUser(req, res, next) {
 function generateAccessToken(email) {
 	// change the token duration for your testing
 	return jwt.sign({ email }, process.env.TOKEN_SECRET, { expiresIn: "24h" });
+}
+
+function parseTime(timeStr) {
+	const [time, period] = timeStr.split(" ");
+	let [hours, minutes] = time.split(":").map(Number);
+	if (minutes === undefined) minutes = 0;
+	if (period === "PM" && hours !== 12) hours += 12;
+	if (period === "AM" && hours === 12) hours = 0;
+	return hours * 60 + minutes;
+}
+
+function convertMinutesTo12Hour(totalMinutes) {
+	const hrs24 = Math.floor(totalMinutes / 60);
+	const mins = totalMinutes % 60;
+	const period = hrs24 >= 12 ? "PM" : "AM";
+	const hrs12 = hrs24 % 12 === 0 ? 12 : hrs24 % 12;
+	return `${hrs12}:${mins.toString().padStart(2, "0")} ${period}`;
+}
+
+async function generateTablesForRestaurant(restaurant) {
+	const tables = restaurant.tableSizes;
+	const bookingDuration =
+		parseInt(restaurant.bookingDuration.split(" ")[0], 10) * 60;
+	const hours = Array.from(restaurant.hours);
+	const openHours = hours.filter(([day, time]) => time !== "Closed");
+	const slots = new Set();
+
+	openHours.forEach(([day, time]) => {
+		const [openTime, closeTime] = time.split(" - ");
+		const openMinutes = parseTime(openTime);
+		const closeMinutes = parseTime(closeTime);
+
+		for (let t = openMinutes; t < closeMinutes; t += bookingDuration) {
+			const slot =
+				convertMinutesTo12Hour(t) +
+				" - " +
+				convertMinutesTo12Hour(t + bookingDuration);
+			if (t + bookingDuration <= closeMinutes) {
+				slots.add(slot);
+			}
+		}
+	});
+
+	for (const [tableKey, seats] of tables) {
+		const tableNum = tableKey.split(" ")[1];
+		for (const timeSlot of slots) {
+			await addTable({
+				tableNum,
+				seats,
+				timeSlot,
+				restaurantId: restaurant._id,
+			});
+		}
+	}
 }
 
 app.get("/", (req, res) => {
@@ -184,67 +247,76 @@ app.get("/restaurants/pending", async (req, res) => {
 	}
 });
 
+app.get("/restaurants/:id", async (req, res) => {
+	try {
+		const restaurantId = req.params.id;
+		const restaurant = await getRestaurantById(restaurantId);
+
+		if (!restaurant) {
+			return res.status(404).send("Restaurant not found");
+		}
+
+		const reviews = await getReviewsByRestaurantId(restaurantId);
+		restaurant.reviews = reviews || [];
+		res.status(200).json(restaurant);
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/restaurants/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getRestaurantsByEmail(restaurantManagerEmail);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/pending/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getPendingRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
+app.get("/restaurants/verified/owner/:email", async (req, res) => {
+	try {
+		const restaurantManagerEmail = req.params.email;
+		const result = await getVerifiedRestaurantsByEmail(
+			restaurantManagerEmail
+		);
+		res.status(201).send(result);
+	} catch (error) {
+		res.status(500).send(
+			"Unable to fetch restaurants belonging to that email."
+		);
+	}
+});
+
 app.post("/restaurants", async (req, res) => {
 	const restaurant = req.body;
 	const savedRestaurant = await addRestaurant(restaurant);
 
-	if (savedRestaurant && savedRestaurant != "existing restaurant") {
-		const tables = savedRestaurant.tableSizes;
-		const bookingDuration =
-			parseInt(savedRestaurant.bookingDuration.split(" ")[0], 10) * 60;
-		const hours = Array.from(savedRestaurant.hours);
-		const openHours = hours.filter(([day, time]) => time !== "Closed");
-		const slots = new Set();
+	if (savedRestaurant && savedRestaurant !== "existing restaurant") {
+		try {
+			await generateTablesForRestaurant(savedRestaurant);
 
-		const parseTime = (timeStr) => {
-			const [time, period] = timeStr.split(" ");
-			let [hours, minutes] = time.split(":").map(Number);
-			if (minutes === undefined) minutes = 0;
-			if (period === "PM" && hours !== 12) hours += 12;
-			if (period === "AM" && hours === 12) hours = 0;
-			return hours * 60 + minutes;
-		};
-
-		const convertMinutesTo12Hour = (totalMinutes) => {
-			const hrs24 = Math.floor(totalMinutes / 60);
-			const mins = totalMinutes % 60;
-			const period = hrs24 >= 12 ? "PM" : "AM";
-			const hrs12 = hrs24 % 12 === 0 ? 12 : hrs24 % 12;
-			return `${hrs12}:${mins.toString().padStart(2, "0")} ${period}`;
-		};
-
-		openHours.forEach(([day, time]) => {
-			const [openTime, closeTime] = time.split(" - ");
-			const openMinutes = parseTime(openTime);
-			const closeMinutes = parseTime(closeTime);
-
-			for (let t = openMinutes; t < closeMinutes; t += bookingDuration) {
-				const slot =
-					convertMinutesTo12Hour(t) +
-					" - " +
-					convertMinutesTo12Hour(t + bookingDuration);
-				if (t + bookingDuration <= closeMinutes) {
-					slots.add(slot);
-				}
-			}
-		});
-
-		tables.forEach((seats, tableKey) => {
-			const tableNum = tableKey.split(" ")[1];
-			slots.forEach((timeSlot) => {
-				const tableEntry = {
-					tableNum: tableNum,
-					seats: seats,
-					timeSlot: timeSlot,
-					restaurantId: savedRestaurant._id,
-				};
-				const savedTable = addTable(tableEntry);
-				if (!savedTable) {
-					res.status(500).end("Failed to create restaurant tables.");
-				}
-			});
-		});
-		res.status(201).send(savedRestaurant);
+			res.status(201).send(savedRestaurant);
+		} catch (err) {
+			console.error("Failed to generate tables:", err);
+			res.status(500).end("Failed to create restaurant tables.");
+		}
 	} else {
 		res.status(500).end("existing restaurant");
 	}
@@ -265,7 +337,75 @@ app.patch("/restaurants/:name", async (req, res) => {
 	}
 });
 
-app.post("/menu", async (req, res) => {
+app.patch("/restaurants/update/:id", async (req, res) => {
+	try {
+		const restaurantId = req.params.id;
+		const updateData = req.body;
+
+		const originalRestaurant = await getRestaurantById(restaurantId);
+		if (!originalRestaurant) {
+			return res.status(404).send("Restaurant not found");
+		}
+
+		const updatedRestaurant = await updateRestaurantById(
+			restaurantId,
+			updateData
+		);
+		if (!updatedRestaurant) {
+			return res
+				.status(404)
+				.send("Restaurant not found or update failed.");
+		}
+
+		const sizesChanged =
+			updateData.tableSizes &&
+			JSON.stringify(
+				Object.fromEntries(originalRestaurant.tableSizes)
+			) !== JSON.stringify(updateData.tableSizes);
+
+		const durationChanged =
+			updateData.bookingDuration &&
+			updateData.bookingDuration !== originalRestaurant.bookingDuration;
+
+		const hoursChanged =
+			updateData.hours &&
+			JSON.stringify(Object.fromEntries(originalRestaurant.hours)) !==
+				JSON.stringify(updateData.hours);
+
+		if (sizesChanged || durationChanged || hoursChanged) {
+			await removeTables(restaurantId);
+			await generateTablesForRestaurant(updatedRestaurant);
+		}
+
+		res.status(200).json(updatedRestaurant);
+	} catch (error) {
+		console.error("Error updating restaurant:", error);
+		res.status(500).send(
+			"Internal Server Error while updating restaurant."
+		);
+	}
+});
+
+app.delete("/restaurants/:id", async (req, res) => {
+	const { id } = req.params;
+	const deletedMenus = await removeMenus(id);
+	const deletedTables = await removeTables(id);
+	await removeReviews(id);
+	await removeReservations(id);
+
+	if (!deletedMenus || !deletedTables) {
+		res.send(500).end("Failed to remove Restaurant Details.");
+	} else {
+		const deletedRestaurant = await removeRestaurant(id);
+		if (deletedRestaurant) {
+			res.status(201).send(deletedRestaurant);
+		} else {
+			res.status(500).end("Failed to remove Restaurant.");
+		}
+	}
+});
+
+app.post("/menu", authenticateUser, async (req, res) => {
 	const menu = req.body;
 	const savedMenu = await addMenu(menu);
 	if (savedMenu) {
@@ -313,15 +453,16 @@ app.post("/table", async (req, res) => {
 	}
 });
 
-app.patch("/table/:tableNum", async (req, res) => {
-	const { tableNum } = req.params;
+app.patch("/table/:restaurantId/:tableNum", async (req, res) => {
+	const { restaurantId, tableNum } = req.params;
 	const updates = req.body;
+
 	let result = null;
-	if (updates.isTaken != undefined || updates.isTaken != null) {
+	if (updates.isTaken !== undefined || updates.isTaken !== null) {
 		result = await updateTableStatus(
 			tableNum,
 			updates.timeSlot,
-			updates.restaurantId,
+			restaurantId,
 			updates.isTaken
 		);
 	}
@@ -330,6 +471,20 @@ app.patch("/table/:tableNum", async (req, res) => {
 		res.status(404).send("Resource not found.");
 	} else {
 		res.status(201).send(result);
+	}
+});
+
+app.delete("/reservations/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		const deleted = await deleteReservationById(id);
+		if (deleted) {
+			res.status(200).send("Reservation deleted and table freed.");
+		} else {
+			res.status(404).send("Reservation not found.");
+		}
+	} catch (error) {
+		res.status(500).send("Deleting reservation failed.");
 	}
 });
 
@@ -350,13 +505,72 @@ app.get("/reservations/restaurant/:restaurantId", async (req, res) => {
 app.post("/reservations", async (req, res) => {
 	try {
 		const reservation = req.body;
-		const result = await addReservation(reservation);
-		if (result) {
-			res.status(201).json(result);
-		} else {
-			res.status(500).end();
+		const { userId, restaurantId, time, date, numberOfPeople } =
+			reservation;
+
+		const availableTables = await getAvailableTablesbyTime(
+			restaurantId,
+			time,
+			numberOfPeople
+		);
+
+		if (!availableTables || availableTables.length === 0) {
+			return res.status(400).send("No available tables at this time.");
 		}
-	} catch (error) {
+
+		const selectedTable = availableTables[0];
+
+		await updateTableStatus(
+			selectedTable.tableNum,
+			time,
+			restaurantId,
+			true
+		);
+
+		const finalReservation = {
+			...reservation,
+			table: {
+				tableNum: selectedTable.tableNum,
+				timeSlot: time,
+			},
+		};
+
+		const saved = await addReservation(finalReservation);
+
+		const restaurant = await getRestaurantById(restaurantId);
+		const restaurantName = restaurant?.name || "our restaurant";
+
+		// send confirmation email
+		if (saved) {
+			const user = await findUserById(req.body.userId);
+
+			if (user && user.email) {
+				const msg = {
+					to: user.email,
+					from: "BookTable <isla2000@gmail.com>",
+					subject: `${restaurantName}: Reservation Confirmed`,
+					text: `Your reservation at ${restaurantName} has been confirmed.`,
+					html: `<strong>Reservation confirmed at ${restaurantName}</strong><br>
+						   Date: ${new Date(date).toLocaleDateString("en-US", { timeZone: "UTC" })}<br>
+						   Time: ${time}<br>
+						   People: ${numberOfPeople}<br>
+						   Table Number: ${selectedTable.tableNum}<br><br>
+						   Thank you for choosing BookTable!`,
+				};
+
+				try {
+					await sgMail.send(msg);
+				} catch (emailError) {
+					console.error(
+						"Reservation email error:",
+						emailError.response?.body || emailError
+					);
+				}
+			}
+		}
+		res.status(201).json(saved);
+	} catch (err) {
+		console.error("Booking error:", err);
 		res.status(500).send("Internal Server Error");
 	}
 });
@@ -417,51 +631,6 @@ app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
 	}
 });
 
-app.post("/gallery", async (req, res) => {
-	try {
-		const image = req.body;
-		const result = await addImage(image);
-		if (result) {
-			res.status(201).json(result);
-		} else {
-			res.status(500).end();
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
-	try {
-		const restaurantId = req.params.restaurantId;
-		const result = await getImagesByRestaurantId(restaurantId);
-		if (result) {
-			res.status(200).json(result);
-		} else {
-			res.status(404).send("Images not found");
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.get("/restaurants/:id", async (req, res) => {
-	try {
-		const restaurantId = req.params.id;
-		const restaurant = await getRestaurantById(restaurantId);
-
-		if (!restaurant) {
-			return res.status(404).send("Restaurant not found");
-		}
-
-		const reviews = await getReviewsByRestaurantId(restaurantId);
-		restaurant.reviews = reviews || [];
-		res.status(200).json(restaurant);
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
 app.post("/upload", upload.single("image"), async (req, res) => {
 	try {
 		if (!req.file) {
@@ -472,18 +641,6 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 	} catch (error) {
 		console.error("Upload error:", error);
 		res.status(500).send("Internal server error during upload.");
-	}
-});
-
-app.get("/restaurants/owner/:email", async (req, res) => {
-	try {
-		const restaurantManagerEmail = req.params.email;
-		const result = await getRestaurantsByEmail(restaurantManagerEmail);
-		res.status(201).send(result);
-	} catch (error) {
-		res.status(500).send(
-			"Unable to fetch restaurants belonging to that email."
-		);
 	}
 });
 
@@ -515,24 +672,15 @@ app.get("/restaurants/verified/owner/:email", async (req, res) => {
 	}
 });
 
-app.patch("/restaurants/update/:id", async (req, res) => {
+app.get("/username/:id", async (req, res) => {
 	try {
-		const restaurantId = req.params.id;
-		const updateData = req.body;
-		const updatedRestaurant = await updateRestaurantById(
-			restaurantId,
-			updateData
-		);
-		if (!updatedRestaurant) {
-			return res
-				.status(404)
-				.send("Restaurant not found or update failed.");
+		const user = await findUserById(req.params.id);
+		if (user) {
+			res.status(200).json({ username: user.username });
+		} else {
+			res.status(404).send("User not found");
 		}
-		res.status(200).json(updatedRestaurant);
 	} catch (error) {
-		console.error("Error updating restaurant:", error);
-		res.status(500).send(
-			"Internal Server Error while updating restaurant."
-		);
+		res.status(500).send("Internal Server Error");
 	}
 });

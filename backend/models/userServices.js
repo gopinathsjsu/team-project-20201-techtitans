@@ -38,6 +38,16 @@ export async function findUserByUsername(username) {
 	}
 }
 
+export async function findUserById(id) {
+	const conn = getDbConnection();
+	const userModel = conn.model("User", UserSchema);
+	try {
+		return await userModel.findById(id);
+	} catch (error) {
+		return undefined;
+	}
+}
+
 export async function addUser(user, hashedPwd) {
 	const conn = getDbConnection();
 	const UserModel = conn.model("User", UserSchema);
@@ -46,7 +56,6 @@ export async function addUser(user, hashedPwd) {
 		const newUser = {
 			...user,
 			reservations: [],
-			restaurantListings: [],
 		};
 		const userToAdd = new UserModel(newUser);
 

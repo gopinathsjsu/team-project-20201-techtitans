@@ -27,10 +27,6 @@ export const UserSchema = new mongoose.Schema(
 			type: [mongoose.SchemaTypes.ObjectId],
 			ref: "Reservation",
 		},
-		restaurantListings: {
-			type: [String],
-			ref: "Restaurant",
-		},
 	},
 	{ collection: "Users" }
 );

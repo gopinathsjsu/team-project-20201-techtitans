@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function RestaurantListing(props) {
-	const { name, interact, setAlertMessages, id } = props;
+	const { id, name, interact, setAlertMessages } = props;
+
 	async function makeUpdateCall(name, status) {
 		try {
 			const restaurantStatus = {
@@ -39,6 +40,37 @@ function RestaurantListing(props) {
 		});
 	}
 
+	async function makeRemoveCall(id) {
+		try {
+			const removedRestaurant = await axios.delete(
+				`http://127.0.0.1:5000/restaurants/${id}`
+			);
+			return removedRestaurant;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	function removeRestaurant(id) {
+		makeRemoveCall(id).then((result) => {
+			if (result && result.status === 201) {
+				setAlertMessages({
+					isOpen: true,
+					message: "Restaurant Removed!",
+					type: "success",
+				});
+			} else {
+				if (result.response.data) {
+					setAlertMessages({
+						isOpen: true,
+						message: result.response.data,
+						type: "error",
+					});
+				}
+			}
+		});
+	}
+
 	return (
 		<div className="thumbnail">
 			<Link to="/restaurant-details">
@@ -48,7 +80,15 @@ function RestaurantListing(props) {
 				<h3 className="name">{name}</h3>
 			</Link>
 			{interact == "admin-remove-btn" && (
-				<button className="thumbnail-btn">Remove</button>
+				<button
+					className="thumbnail-btn"
+					onClick={(e) => {
+						e.preventDefault();
+						removeRestaurant(id);
+					}}
+				>
+					Remove
+				</button>
 			)}
 			{interact == "admin-pending-btns" && (
 				<div className="pair-btns">
@@ -83,7 +123,15 @@ function RestaurantListing(props) {
 					) : (
 						<button className="thumbnail-btn">Update</button>
 					)}
-					<button className="thumbnail-btn">Bookings</button>
+					{id ? (
+						<Link
+							to={`/restaurant-manager-restaurant-bookings/${id}`}
+						>
+							<button className="thumbnail-btn">Bookings</button>
+						</Link>
+					) : (
+						<button className="thumbnail-btn">Bookings</button>
+					)}
 				</div>
 			)}
 			{interact == "customer-btns" && (

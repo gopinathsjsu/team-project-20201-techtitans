@@ -4,8 +4,7 @@ import moment from "moment";
 import axios from "axios";
 import "../../pages/Restaurant/Restaurant.css";
 
-function ReservationForm(props) {
-	const { restaurant } = props;
+function ReservationForm({ restaurant, userId }) {
 	const navigate = useNavigate();
 
 	const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -40,6 +39,8 @@ function ReservationForm(props) {
 			navigate("/reservation-confirmation", {
 				state: {
 					restaurantName: restaurant?.name || "Restaurant",
+					restaurantId: restaurant?._id,
+					userId,
 					date,
 					time,
 					people,
