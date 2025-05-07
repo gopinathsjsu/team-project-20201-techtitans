@@ -18,6 +18,17 @@ function getDbConnection() {
 	return dbConnection;
 }
 
+export async function getMenuById(id) {
+	const conn = getDbConnection();
+	const MenuModel = conn.model("Menu", MenuSchema);
+	try {
+		const menu = await MenuModel.findById(id);
+		return menu;
+	} catch (error) {
+		return false;
+	}
+}
+
 export async function getMenuByRestaurantId(restaurantId) {
 	const conn = getDbConnection();
 	const MenuModel = conn.model("Menu", MenuSchema);
@@ -49,6 +60,24 @@ export async function removeMenus(id) {
 			restaurantId: id,
 		});
 		return removedMenus;
+	} catch (error) {
+		return false;
+	}
+}
+
+export async function updateMenu(id, updatedFields) {
+	const conn = getDbConnection();
+	const MenuModel = conn.model("Menu", MenuSchema);
+	try {
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return false;
+		}
+		const updatedMenu = await MenuModel.findByIdAndUpdate(
+			id,
+			{ $set: updatedFields },
+			{ new: true, runValidators: true }
+		);
+		return updatedMenu;
 	} catch (error) {
 		return false;
 	}

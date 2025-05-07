@@ -126,7 +126,7 @@ function ReservationForm({ restaurant, userId }) {
 		} else {
 			setTime("");
 		}
-	}, [availableTimes, time]);
+	}, []);
 
 	useEffect(() => {
 		fetchTablesbyTime(time, people).then((result) => {
@@ -140,7 +140,7 @@ function ReservationForm({ restaurant, userId }) {
 				}
 			}
 		});
-	}, [availableTables]);
+	}, []);
 
 	return (
 		<div className="reservation-form">

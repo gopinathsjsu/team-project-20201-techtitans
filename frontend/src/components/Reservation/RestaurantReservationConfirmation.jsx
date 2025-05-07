@@ -3,7 +3,6 @@ import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
 
 const ReservationConfirmation = () => {
-	console.log("Loaded ReservationConfirmation");
 	const location = useLocation();
 	const { restaurantName, date, time, people, table } = location.state || {};
 
