@@ -13,3 +13,12 @@
 	margin-left: 30px;
 	margin-right: 30px;
 }
+
+h2 {
+	color: grey;
+	margin-left: 50px;
+}
+
+.restaurants-listing-title {
+	color: grey !important;
+}

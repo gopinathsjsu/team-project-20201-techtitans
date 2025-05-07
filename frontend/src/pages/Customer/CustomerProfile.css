@@ -1,8 +1,24 @@
 .customer-info {
-	margin-top: 80px;
+	position: absolute;
+	top: 100px; 
+	left: 30px;
+	padding: 20px;
+	color: white;
 	text-align: left;
-	margin-left: 30px;
 }
+.customer-info h2,
+.customer-info h3,
+.customer-info u {
+	color: white !important;
+	text-align: left !important;
+}
+
+.customer-info h2 {
+	margin: 0;
+	margin-bottom: 10px;
+	text-align: left !important;
+}
+
 
 .customer-photo {
 	padding: 5px 20px;
@@ -53,4 +69,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+}
+
+.upcoming-reservation-title {
+	margin-left: 30px;
+	margin-top: 50px;
+	color: white !important;
 }
