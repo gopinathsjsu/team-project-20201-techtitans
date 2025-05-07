@@ -1,9 +1,28 @@
 import "./RestaurantListing.css";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function RestaurantListing(props) {
 	const { id, name, interact, setAlertMessages } = props;
+	const [photoUrl, setPhotoUrl] = useState(null);
+
+	useEffect(() => {
+		async function fetchRestaurantPhoto() {
+			try {
+				const response = await axios.get(`http://127.0.0.1:5000/restaurants/${id}`);
+				if (response.status === 200 && response.data.photos.length > 0) {
+					setPhotoUrl(response.data.photos[0]);
+				}
+			} catch (error) {
+				console.error("Error fetching restaurant photo:", error);
+			}
+		}
+
+		if (id) {
+			fetchRestaurantPhoto();
+		}
+	}, [id]);
 
 	async function makeUpdateCall(name, status) {
 		try {
@@ -73,12 +92,50 @@ function RestaurantListing(props) {
 
 	return (
 		<div className="thumbnail">
-			<Link to="/restaurant-details">
-				<div className="image"></div>
-			</Link>
-			<Link to="/restaurant-details">
-				<h3 className="name">{name}</h3>
-			</Link>
+			{interact == "customer-reservation" && (
+				<div>
+					<Link to={`/restaurant/${id}`}>
+					{photoUrl ? (
+						<img src={photoUrl} alt="Restaurant" className="image" />
+					) : (
+						<div className="image" />
+					)}
+					</Link>
+					<Link to={`/restaurant/${id}`}>
+						<h3 className="name">{name}</h3>
+					</Link>
+				</div>
+			)}
+			{interact == "restaurant-manager-btns" && (
+				<div>
+					{photoUrl ? (
+							<img src={photoUrl} alt="Restaurant" className="image" />
+						) : (
+							<div className="image" />
+					)}
+					<h3 className="name">{name}</h3>
+				</div>
+			)}
+			{interact == "admin-remove-btn" && (
+				<div>
+					{photoUrl ? (
+							<img src={photoUrl} alt="Restaurant" className="image" />
+						) : (
+							<div className="image" />
+					)}
+					<h3 className="name">{name}</h3>
+				</div>
+			)}
+			{interact == "admin-pending-btns" && (
+				<div>
+					{photoUrl ? (
+							<img src={photoUrl} alt="Restaurant" className="image" />
+						) : (
+							<div className="image" />
+					)}
+					<h3 className="name">{name}</h3>
+				</div>
+			)}
 			{interact == "admin-remove-btn" && (
 				<button
 					className="thumbnail-btn"

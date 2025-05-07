@@ -12,12 +12,12 @@ function Navbar(props) {
 	return (
 		<header className="nav-header">
 			{role == "admin" && (
-				<Link to="/admin-home" className="nav-logo">
+				<Link to="/admin-dash" className="nav-logo">
 					BookTable
 				</Link>
 			)}
 			{role == "adminback" && (
-				<Link to="/admin-home" className="nav-logo">
+				<Link to="/admin-dash" className="nav-logo">
 					BookTable
 				</Link>
 			)}
@@ -27,11 +27,15 @@ function Navbar(props) {
 				</Link>
 			)}
 			{role == "customer" && (
-				<Link to="/customer-home" className="nav-logo">
+				<Link to="/customer-profile" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{role == "signed-out" && <div className="nav-logo">BookTable</div>}
+			{role == "signed-out" && (
+				<Link to="/" className="nav-logo">
+					BookTable
+				</Link>
+			)}
 			<nav className="nav-btns-container">
 				{role == "customer" && (
 					<>
