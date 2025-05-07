@@ -539,7 +539,9 @@ app.delete("/reservations/:id", async (req, res) => {
 				}
 			}
 
-			res.status(200).send("Reservation deleted, table freed, and email sent.");
+			res.status(200).send(
+				"Reservation deleted, table freed, and email sent."
+			);
 		} else {
 			res.status(404).send("Reservation not found.");
 		}
