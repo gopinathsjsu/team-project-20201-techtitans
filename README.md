@@ -2,6 +2,8 @@
 Members: Nivedita Nair, Janice Park, Joel Zapana, Isla Shi
 Meetings: Weekly over Discord 10:30AM
 
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/lJAxgDL-)
+
 # Deployment Diagram and UML Class Diagram
 For this project, we chose to do a MERN (MongoDB, Express, React, Node) stack and Amazon EC2
 ![deployment](https://github.com/user-attachments/assets/76a7bb1e-9c90-49ec-bdd9-4a1215a6c117)
