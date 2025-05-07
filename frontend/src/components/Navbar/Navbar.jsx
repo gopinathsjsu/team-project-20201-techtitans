@@ -47,7 +47,6 @@ function Navbar(props) {
 				{role === "customer" && (
 					<>
 						<Link to="/customer-profile">
-							<div className="user-pic"></div>
 						</Link>
 						<Link to="/customer-profile">
 							<div className="user-name">{username}</div>

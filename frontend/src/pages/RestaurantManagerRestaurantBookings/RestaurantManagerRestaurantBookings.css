@@ -26,6 +26,6 @@
 	margin-right: 30px;
 }
 
-h3 {
-	color: grey;
+h2, h3 {
+	color: white !important;
 }
