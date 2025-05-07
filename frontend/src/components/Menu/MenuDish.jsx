@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import "./Menu.css";
-import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 

@@ -232,6 +232,7 @@ const BookTablePage = () => {
 		}
 	};
 
+	/*
 	const handleTimeSlotClick = (restaurantId, time) => {
 		navigate(`/reservation-confirmation`, {
 			state: {
@@ -242,6 +243,7 @@ const BookTablePage = () => {
 			},
 		});
 	};
+	*/
 
 	const handleLoadMore = () => {
 		setVisibleCount((prev) => prev + visibleCount);
@@ -392,18 +394,12 @@ const BookTablePage = () => {
 
 													return visibleSlots.map(
 														(time, idx) => (
-															<button
+															<span
 																key={idx}
-																onClick={() =>
-																	handleTimeSlotClick(
-																		result.id,
-																		time
-																	)
-																}
-																className="time-slot-button"
+																className="time-slot-display"
 															>
 																{time}
-															</button>
+															</span>
 														)
 													);
 												})()}
