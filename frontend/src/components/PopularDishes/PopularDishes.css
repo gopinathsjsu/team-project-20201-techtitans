@@ -1,16 +1,32 @@
-.popular-dishes {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
+.slick-prev,
+.slick-next {
+	opacity: 1 !important;
+	color: white !important;
+	font-size: 40px !important;
+	transform: scale(1.5) !important;
+	transition: transform 0.3s ease !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
 }
 
-.dish {
-	width: 150px;
-	text-align: center;
+.slick-prev {
+	left: 10px !important;
 }
 
-.dish img {
-	width: 100%;
-	height: auto;
-	border-radius: 8px;
+.slick-next {
+	right: 18px !important;
+}
+
+.slick-dots li button {
+	opacity: 1 !important;
+}
+
+.slick-dots li button:hover {
+	opacity: 1 !important;
+}
+
+.divider {
+	margin-bottom: 0;
+	margin-top: 0;
 }

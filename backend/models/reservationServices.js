@@ -53,19 +53,6 @@ export async function getReservationsByRestaurantId(restaurantId) {
 	}
 }
 
-export async function removeReservations(id) {
-	const conn = getDbConnection();
-	const ReservationModel = conn.model("Reservation", ReservationSchema);
-	try {
-		const removedReservations = await ReservationModel.deleteMany({
-			restaurantId: id,
-		});
-		return removedReservations;
-	} catch (error) {
-		return false;
-	}
-}
-
 export async function deleteReservationById(reservationId) {
 	const conn = getDbConnection();
 	const ReservationModel = conn.model("Reservation", ReservationSchema);

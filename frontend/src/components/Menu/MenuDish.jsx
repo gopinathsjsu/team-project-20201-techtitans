@@ -1,38 +1,57 @@
 import { useRef, useState } from "react";
 import axios from "axios";
 import "./Menu.css";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 function MenuDish(props) {
 	const { id, dishList, setDishList } = props;
+	const dish = dishList.find((d) => d._id == id);
 	const fileInputRef = useRef(null);
+	const [loading, setLoading] = useState(false);
 
 	function handleChange(event) {
 		const { value } = event.target;
 		let updatedDishes = [...dishList];
-		const idx = updatedDishes.findIndex((dish) => dish.dishId === id);
+		const idx = updatedDishes.findIndex((dish) => dish._id === id);
 
 		if (idx !== -1) {
 			updatedDishes[idx] = {
 				...updatedDishes[idx],
 				[event.target.name]: value,
 			};
-			setDishList(updatedDishes);
+
+			if (event.target.name == "isHighlightDish") {
+				if (dish.isHighlightDish && value === "on") {
+					updatedDishes[idx] = {
+						...updatedDishes[idx],
+						[event.target.name]: false,
+					};
+				} else {
+					updatedDishes[idx] = {
+						...updatedDishes[idx],
+						[event.target.name]: true,
+					};
+				}
+			}
 		}
+		setDishList(updatedDishes);
 	}
 
-	// Later: Field for a Highlight Dish
 	const removeDish = () => {
-		let updatedDishes = dishList.filter((dish) => dish.dishId !== id);
+		let updatedDishes = dishList.filter((dish) => dish._id !== id);
 		setDishList(updatedDishes);
 	};
 
 	const handleImageInsert = async (e) => {
+		setLoading(true);
 		const files = e.target.files;
 		if (!files || files.length === 0) return;
 
 		let uploadedUrl = "";
 		let updatedDishes = [...dishList];
-		const idx = updatedDishes.findIndex((dish) => dish.dishId === id);
+		const idx = updatedDishes.findIndex((dish) => dish._id === id);
 
 		const formData = new FormData();
 		formData.append("image", files[0]);
@@ -52,6 +71,7 @@ function MenuDish(props) {
 			photo: uploadedUrl,
 		};
 		setDishList(updatedDishes);
+		setLoading(false);
 	};
 
 	return (
@@ -61,7 +81,7 @@ function MenuDish(props) {
 				<input
 					type="text"
 					name="name"
-					placeholder="Enter dish name..."
+					placeholder={dish.name ? dish.name : "Enter dish name..."}
 					onChange={handleChange}
 				/>
 			</label>
@@ -70,7 +90,11 @@ function MenuDish(props) {
 				<textarea
 					type="text"
 					name="description"
-					placeholder="Enter a description..."
+					placeholder={
+						dish.description
+							? dish.description
+							: "Enter a description..."
+					}
 					className="update-restaurant-description-text"
 					onChange={handleChange}
 				></textarea>
@@ -79,10 +103,28 @@ function MenuDish(props) {
 				Cost:
 				<input
 					type="number"
+					step="any"
 					name="cost"
-					placeholder="Enter dish cost..."
+					placeholder={dish.cost ? dish.cost : "Enter dish cost..."}
 					onChange={handleChange}
 				/>
+			</label>
+			<label className="menu-highlight-label" for="isHighlightDish">
+				<input
+					type="checkbox"
+					name="isHighlightDish"
+					checked={dish.isHighlightDish ? true : false}
+					onChange={handleChange}
+				/>
+				Would you like to make this a featured dish?
+				<Tooltip
+					title="This will be placed in a highlight gallery as a popular dish
+				on your restaurant's page."
+				>
+					<IconButton>
+						<InfoOutlineIcon style={{ color: "white" }} />
+					</IconButton>
+				</Tooltip>
 			</label>
 			<div>
 				<button className="remove-dish-btn" onClick={removeDish}>
@@ -103,12 +145,30 @@ function MenuDish(props) {
 				>
 					Insert Image
 				</button>
-				{dishList.find((dish) => dish.dishId === id)?.photo.length >
-					0 && (
-					<p style={{ color: "green", marginBottom: "10px" }}>
-						Photo added. 👍
-					</p>
-				)}
+
+				<div style={{ display: loading ? "block" : "none" }}>
+					Loading image...
+				</div>
+				<div style={{ display: loading ? "none" : "block" }}>
+					<div className="update-restaurant-photos-preview">
+						{dishList.find((dish) => dish._id === id)?.photo
+							.length > 0 ? (
+							<img
+								src={dish.photo}
+								alt="Menu Item"
+								className="photo-thumbnail"
+							/>
+						) : (
+							<></>
+						)}
+					</div>
+					{dishList.find((dish) => dish._id === id)?.photo.length >
+						0 && (
+						<p style={{ color: "green", marginBottom: "10px" }}>
+							Photo added. 👍
+						</p>
+					)}
+				</div>
 			</div>
 		</div>
 	);

@@ -33,11 +33,12 @@ import {
 	getReviewsByRestaurantId,
 	removeReviews,
 } from "./models/reviewServices.js";
-import { addImage, getImagesByRestaurantId } from "./models/galleryServices.js";
 import {
 	addMenu,
+	getMenuById,
 	getMenuByRestaurantId,
 	removeMenus,
+	updateMenu,
 } from "./models/menuServices.js";
 import {
 	addTable,
@@ -170,7 +171,6 @@ app.post("/users", async (req, res) => {
 		const hashedPwd = await bcrypt.hash(password, salt);
 		const savedUser = await addUser(user, hashedPwd);
 
-		// generate access token in the future
 		if (savedUser && savedUser != "existing user") {
 			const msg = {
 				to: email,
@@ -416,6 +416,20 @@ app.post("/menu", authenticateUser, async (req, res) => {
 	}
 });
 
+app.get("/menu/get/:id", async (req, res) => {
+	try {
+		const id = req.params.id;
+		const menu = await getMenuById(id);
+
+		if (!menu) {
+			return res.status(404).send("Menu not found");
+		}
+		res.status(200).send(menu);
+	} catch (error) {
+		res.status(500).send("Internal Server Error");
+	}
+});
+
 app.get("/menu/:restaurantId", async (req, res) => {
 	try {
 		const restaurantId = req.params.restaurantId;
@@ -427,6 +441,21 @@ app.get("/menu/:restaurantId", async (req, res) => {
 		}
 	} catch (error) {
 		res.status(500).send("Internal Server Error.");
+	}
+});
+
+app.patch("/menu/update/:id", authenticateUser, async (req, res) => {
+	try {
+		const id = req.params.id;
+		const updateData = req.body;
+		const updatedMenu = await updateMenu(id, updateData);
+
+		if (!updatedMenu) {
+			res.status(404).send("Menu not found or failed to update.");
+		}
+		res.status(201).send(updatedMenu);
+	} catch (error) {
+		res.status(500).send("Internal Server Error while updating menu.");
 	}
 });
 
@@ -479,12 +508,43 @@ app.delete("/reservations/:id", async (req, res) => {
 	try {
 		const { id } = req.params;
 		const deleted = await deleteReservationById(id);
+
 		if (deleted) {
-			res.status(200).send("Reservation deleted and table freed.");
+			// Send cancellation email
+			const user = await findUserById(deleted.userId);
+			const restaurant = await getRestaurantById(deleted.restaurantId);
+			const restaurantName = restaurant?.name || "our restaurant";
+
+			if (user?.email) {
+				const msg = {
+					to: user.email,
+					from: "BookTable <isla2000@gmail.com>",
+					subject: `${restaurantName}: Reservation Cancelled`,
+					text: `Your reservation at ${restaurantName} has been cancelled.`,
+					html: `<strong>Your reservation at ${restaurantName} has been cancelled.</strong><br>
+						   Date: ${new Date(deleted.date).toLocaleDateString("en-US", { timeZone: "UTC" })}<br>
+						   Time: ${deleted.table?.timeSlot}<br>
+						   People: ${deleted.numberOfPeople}<br>
+						   Table Number: ${deleted.table?.tableNum}<br><br>
+						   Sorry to see you go! We hope to serve you another time.`,
+				};
+
+				try {
+					await sgMail.send(msg);
+				} catch (emailError) {
+					console.error(
+						"Cancellation email error:",
+						emailError.response?.body || emailError
+					);
+				}
+			}
+
+			res.status(200).send("Reservation deleted, table freed, and email sent.");
 		} else {
 			res.status(404).send("Reservation not found.");
 		}
 	} catch (error) {
+		console.error("Error deleting reservation:", error);
 		res.status(500).send("Deleting reservation failed.");
 	}
 });
@@ -626,34 +686,6 @@ app.get("/reviews/restaurant/:restaurantId", async (req, res) => {
 			res.status(200).json(result);
 		} else {
 			res.status(404).send("Reviews not found");
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.post("/gallery", async (req, res) => {
-	try {
-		const image = req.body;
-		const result = await addImage(image);
-		if (result) {
-			res.status(201).json(result);
-		} else {
-			res.status(500).end();
-		}
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
-});
-
-app.get("/gallery/restaurant/:restaurantId", async (req, res) => {
-	try {
-		const restaurantId = req.params.restaurantId;
-		const result = await getImagesByRestaurantId(restaurantId);
-		if (result) {
-			res.status(200).json(result);
-		} else {
-			res.status(404).send("Images not found");
 		}
 	} catch (error) {
 		res.status(500).send("Internal Server Error");

@@ -1,17 +1,16 @@
 import { useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import MenuForm from "../../components/Menu/MenuForm";
-import "./RestaurantManagerAdd.css";
 
-function RestaurantManagerAddMenu(props) {
+function RestaurantManagerUpdateMenu(props) {
 	const { alertMessages, setAlertMessages } = props;
-	const { restaurantId } = useParams();
+	const { id, restaurantId } = useParams();
 
 	return (
 		<div className="rest-man-add-screen">
 			<Navbar role="restaurant-manager" />
 			<MenuForm
-				id={null}
+				id={id}
 				restaurantId={restaurantId}
 				alertMessages={alertMessages}
 				setAlertMessages={setAlertMessages}
@@ -20,4 +19,4 @@ function RestaurantManagerAddMenu(props) {
 	);
 }
 
-export default RestaurantManagerAddMenu;
+export default RestaurantManagerUpdateMenu;
