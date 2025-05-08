@@ -1,36 +1,20 @@
-import { Bar } from "react-chartjs-2";
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend,
-} from "chart.js";
 import "./Reviews.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend
-);
+import axios from "axios";
 
 const Reviews = () => {
 	const { id } = useParams();
 	const [reviews, setReviews] = useState([]);
+	const [displayCount, setDisplayCount] = useState(3); // Start by showing 3 reviews
 
 	useEffect(() => {
 		const fetchReviews = async () => {
 			try {
-				const res = await fetch(`/restaurants/${id}`);
-				const data = await res.json();
-				setReviews(data.reviews || []);
+				const res = await axios.get(
+					`http://localhost:5000/restaurants/${id}`
+				);
+				setReviews(res.data.reviews || []);
 			} catch (err) {
 				console.error("Failed to fetch reviews", err);
 				setReviews([]);
@@ -40,73 +24,55 @@ const Reviews = () => {
 		if (id) fetchReviews();
 	}, [id]);
 
+	const handleLoadMore = () => {
+		// Increase display count by 3, but don't exceed total reviews length
+		setDisplayCount((prev) => Math.min(prev + 3, reviews.length));
+	};
+
 	const averageRating = reviews.length
 		? (
-				reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length
+				reviews.reduce((acc, r) => acc + Number(r.rating || 0), 0) /
+				reviews.length
 			).toFixed(1)
 		: "No reviews yet";
 
-	const ratingCounts = [0, 0, 0, 0, 0];
-	reviews.forEach((review) => {
-		ratingCounts[review.rating - 1]++;
-	});
-
-	const data = {
-		labels: ["1 Star", "2 Stars", "3 Stars", "4 Stars", "5 Stars"],
-		datasets: [
-			{
-				label: "Number of Reviews",
-				data: ratingCounts,
-				backgroundColor: "rgba(255, 99, 132, 0.6)",
-				borderColor: "rgba(255, 99, 132, 1)",
-				borderWidth: 1,
-			},
-		],
-	};
-
-	const options = {
-		indexAxis: "y", // This makes the chart horizontal
-		responsive: true,
-		plugins: {
-			legend: {
-				display: false,
-			},
-			title: {
-				display: true,
-				text: "Rating Distribution",
-			},
-		},
-		scales: {
-			x: {
-				beginAtZero: true,
-				ticks: {
-					stepSize: 1,
-				},
-			},
-		},
-	};
-
+	// loads first three reviews, click to load more
 	return (
 		<div className="reviews-container">
 			<h2>Reviews</h2>
-			<div className="rating-chart-container">
-				<p className="average-rating">
-					Average Rating: {averageRating} ⭐
-				</p>
-				<div className="chart-container">
-					<Bar data={data} options={options} />
-				</div>
-			</div>
+			<p className="average-rating">Average Rating: {averageRating} ⭐</p>
 			<div className="reviews-list">
-				{reviews.map((review, index) => (
-					<div key={index} className="review-card">
-						<p>
-							<strong>{review.user}</strong>
-						</p>
-						<p>{"⭐".repeat(review.rating)}</p>
-						<p>{review.comment}</p>
-					</div>
-				))}
+				{reviews.length > 0 ? (
+					<>
+						{reviews.slice(0, displayCount).map((review) => (
+							<div key={review._id} className="review-card">
+								<p>
+									<strong>{review.user}</strong>
+								</p>
+								<p>{"⭐".repeat(Number(review.rating) || 0)}</p>
+								<p>{review.comment}</p>
+								<p>
+									<em>
+										{new Date(
+											review.date
+										).toLocaleDateString()}
+									</em>
+								</p>
+							</div>
+						))}
+
+						{displayCount < reviews.length && (
+							<button
+								onClick={handleLoadMore}
+								className="load-more-btn"
+							>
+								Load More
+							</button>
+						)}
+					</>
+				) : (
+					<p>No reviews yet.</p>
+				)}
 			</div>
 		</div>
 	);
