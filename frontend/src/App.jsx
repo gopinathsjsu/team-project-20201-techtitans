@@ -377,7 +377,14 @@ function App() {
 				<Route path="/restaurant/:id" element={<Restaurant />} />
 				<Route
 					path="/reservation-confirmation"
-					element={<ReservationConfirmation />}
+					element={
+						<PrivateRoute role="Customer" userStatus={user.status}>
+							<ReservationConfirmation
+								alertMessages={alertMessages}
+								setAlertMessages={setAlertMessages}
+							/>
+						</PrivateRoute>
+					}
 				/>
 				<Route
 					path="/restaurant-manager-update-restaurant/:id"
