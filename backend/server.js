@@ -264,8 +264,6 @@ app.get("/restaurants/:id", async (req, res) => {
         
         // Add reviews to the response data
         restaurantData.reviews = reviews || [];
-
-        console.log("Sending response:", restaurantData);
         
         res.status(200).json(restaurantData);
     } catch (error) {

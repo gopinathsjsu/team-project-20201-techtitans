@@ -37,15 +37,12 @@ const Restaurant = () => {
 	useEffect(() => {
 		const fetchRestaurant = async () => {
 			try {
-			  setRestaurant(null); // reset while loading
+			  setRestaurant(null); 
 			  setLoading(true);
 			  const response = await axios.get(
 				`http://localhost:5000/restaurants/${id}`
 			  );
 			  if (response.data) {
-				console.log("Full restaurant data:", response.data);  // Log all data
-				console.log("Reviews are:", response.data.reviews || "No reviews");
-		  
 				setRestaurant(response.data);
 			  } else {
 				setError("No restaurant data received");

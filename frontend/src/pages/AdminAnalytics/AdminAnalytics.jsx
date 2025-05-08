@@ -21,9 +21,7 @@ function AdminAnalytics() {
 			<div className="admin-analytics-container">
 				<h2>Admin Analytics</h2>
 				<h3>
-					{/* Uncomment this line for the demo */}
-					{/* Showing stats from: {getDate30DaysAgo()} to {getTodayDate()} */}
-					Showing stats from: 3/1/2025 to 3/30/2025
+					Showing stats from: {getDate30DaysAgo()} to {getTodayDate()} 
 				</h3>
 				<div className="iframe-container">
 					<iframe
