@@ -1,0 +1,13 @@
+.title {
+	text-align: center;
+}
+
+.select-btn {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-top: 20px;
+	align-self: center;
+	color: white;
+	background-color: red;
+	width: 250px;
+}

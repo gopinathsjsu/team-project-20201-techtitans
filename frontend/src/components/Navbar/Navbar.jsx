@@ -1,13 +1,24 @@
 import "./Navbar.css";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function Navbar(props) {
 	const { role } = props;
 	const [, , removeCookie] = useCookies(["auth_token"]);
 	const handleLogOut = () => {
 		removeCookie("auth_token", { path: "/" });
+		localStorage.clear();
 	};
+
+	const [username, setUsername] = useState("");
+
+	useEffect(() => {
+		const storedUsername = localStorage.getItem("username");
+		if (storedUsername) {
+			setUsername(storedUsername);
+		}
+	}, []);
 
 	return (
 		<header className="nav-header">
@@ -37,16 +48,16 @@ function Navbar(props) {
 				</Link>
 			)}
 			<nav className="nav-btns-container">
-				{role == "customer" && (
+				{role === "customer" && (
 					<>
 						<Link to="/customer-profile">
-							<div className="user-pic"></div>
 						</Link>
 						<Link to="/customer-profile">
-							<div className="user-name">User Name</div>
+							<div className="user-name">{username}</div>
 						</Link>
 					</>
 				)}
+
 				{role == "admin" && (
 					<Link to="/admin-analytics">
 						<button className="nav-btns">Analytics</button>
