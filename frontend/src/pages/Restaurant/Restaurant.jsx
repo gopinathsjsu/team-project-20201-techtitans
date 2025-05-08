@@ -37,27 +37,31 @@ const Restaurant = () => {
 	useEffect(() => {
 		const fetchRestaurant = async () => {
 			try {
-				setRestaurant(null); // reset while loading
-				setLoading(true);
-				const response = await axios.get(
-					`http://localhost:5000/restaurants/${id}`
-				);
-				if (response.data) {
-					setRestaurant(response.data);
-				} else {
-					setError("No restaurant data received");
-				}
+			  setRestaurant(null); // reset while loading
+			  setLoading(true);
+			  const response = await axios.get(
+				`http://localhost:5000/restaurants/${id}`
+			  );
+			  if (response.data) {
+				console.log("Full restaurant data:", response.data);  // Log all data
+				console.log("Reviews are:", response.data.reviews || "No reviews");
+		  
+				setRestaurant(response.data);
+			  } else {
+				setError("No restaurant data received");
+			  }
 			} catch (error) {
-				console.error("Error fetching restaurant:", error);
-				if (error.response?.status === 404) {
-					navigate("/book-table");
-				} else {
-					setError("Failed to load restaurant data");
-				}
+			  console.error("Error fetching restaurant:", error);
+			  if (error.response?.status === 404) {
+				navigate("/book-table");
+			  } else {
+				setError("Failed to load restaurant data");
+			  }
 			} finally {
-				setLoading(false);
+			  setLoading(false);
 			}
-		};
+		  };
+		  
 
 		if (id) {
 			fetchRestaurant();

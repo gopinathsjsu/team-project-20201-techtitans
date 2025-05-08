@@ -249,20 +249,29 @@ app.get("/restaurants/pending", async (req, res) => {
 });
 
 app.get("/restaurants/:id", async (req, res) => {
-	try {
-		const restaurantId = req.params.id;
-		const restaurant = await getRestaurantById(restaurantId);
+    try {
+        const restaurantId = req.params.id;
+        const restaurant = await getRestaurantById(restaurantId);
 
-		if (!restaurant) {
-			return res.status(404).send("Restaurant not found");
-		}
+        if (!restaurant) {
+            return res.status(404).send("Restaurant not found");
+        }
 
-		const reviews = await getReviewsByRestaurantId(restaurantId);
-		restaurant.reviews = reviews || [];
-		res.status(200).json(restaurant);
-	} catch (error) {
-		res.status(500).send("Internal Server Error");
-	}
+        const reviews = await getReviewsByRestaurantId(restaurantId);
+        
+        // Convert restaurant to a plain JavaScript object if it's a Mongoose document
+        const restaurantData = restaurant.toObject ? restaurant.toObject() : {...restaurant};
+        
+        // Add reviews to the response data
+        restaurantData.reviews = reviews || [];
+
+        console.log("Sending response:", restaurantData);
+        
+        res.status(200).json(restaurantData);
+    } catch (error) {
+        console.error("Error in /restaurants/:id:", error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 app.get("/restaurants/owner/:email", async (req, res) => {
