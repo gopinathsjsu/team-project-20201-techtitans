@@ -97,7 +97,9 @@ function CustomerProfile() {
 				</h3>
 			</div>
 
-			<h2 className="upcoming-reservation-title">Upcoming Reservations</h2>
+			<h2 className="upcoming-reservation-title">
+				Upcoming Reservations
+			</h2>
 			<div className="restaurants-listing">
 				{reservations.length === 0 ? (
 					<p>No reservations yet.</p>

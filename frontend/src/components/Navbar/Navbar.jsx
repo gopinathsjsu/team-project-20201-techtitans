@@ -45,8 +45,7 @@ function Navbar(props) {
 			<nav className="nav-btns-container">
 				{role === "customer" && (
 					<>
-						<Link to="/customer-profile">
-						</Link>
+						<Link to="/customer-profile"></Link>
 						<Link to="/customer-profile">
 							<div className="user-name">{username}</div>
 						</Link>
