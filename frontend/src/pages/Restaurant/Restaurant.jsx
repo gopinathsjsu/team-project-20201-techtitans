@@ -37,7 +37,7 @@ const Restaurant = () => {
 	useEffect(() => {
 		const fetchRestaurant = async () => {
 			try {
-				setRestaurant(null); // reset while loading
+				setRestaurant(null);
 				setLoading(true);
 				const response = await axios.get(
 					`http://localhost:5000/restaurants/${id}`

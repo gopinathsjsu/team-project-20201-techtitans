@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import "../../pages/Restaurant/Restaurant.css";
 
 function ReservationForm({ restaurant, userId }) {
@@ -140,7 +141,7 @@ function ReservationForm({ restaurant, userId }) {
 				}
 			}
 		});
-	}, []);
+	}, [time, people, table]);
 
 	return (
 		<div className="reservation-form">

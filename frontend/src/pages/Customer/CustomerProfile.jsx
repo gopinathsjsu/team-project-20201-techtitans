@@ -88,14 +88,18 @@ function CustomerProfile() {
 		<>
 			<Navbar role="customer" />
 			<div className="customer-info">
-				<h2>Profile</h2>
-				<div className="customer-photo"></div>
-				<h3>Username: {user?.username}</h3>
-				<h3>Email: {user?.email}</h3>
-				<button className="update-password-btn">Update Password</button>
+				<h2>Customer Profile</h2>
+				<h3>
+					<u>Username:</u> {user?.username}
+				</h3>
+				<h3>
+					<u>Email:</u> {user?.email}
+				</h3>
 			</div>
 
-			<h2>Upcoming Reservations</h2>
+			<h2 className="upcoming-reservation-title">
+				Upcoming Reservations
+			</h2>
 			<div className="restaurants-listing">
 				{reservations.length === 0 ? (
 					<p>No reservations yet.</p>
