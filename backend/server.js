@@ -258,9 +258,18 @@ app.get("/restaurants/:id", async (req, res) => {
 		}
 
 		const reviews = await getReviewsByRestaurantId(restaurantId);
-		restaurant.reviews = reviews || [];
-		res.status(200).json(restaurant);
+
+		// Convert restaurant to a plain JavaScript object if it's a Mongoose document
+		const restaurantData = restaurant.toObject
+			? restaurant.toObject()
+			: { ...restaurant };
+
+		// Add reviews to the response data
+		restaurantData.reviews = reviews || [];
+
+		res.status(200).json(restaurantData);
 	} catch (error) {
+		console.error("Error in /restaurants/:id:", error);
 		res.status(500).send("Internal Server Error");
 	}
 });
