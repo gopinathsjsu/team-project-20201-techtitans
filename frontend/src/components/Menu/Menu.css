@@ -8,8 +8,16 @@
 	margin-bottom: 50px;
 }
 
+.menu-group {
+	align-items: center;
+	justify-content: space-between;
+	font-weight: bold;
+}
+
 .menu-title {
-	text-align: center;
+	align-items: center;
+	margin-left: 20px;
+	width: 300px;
 }
 
 .menu-item {

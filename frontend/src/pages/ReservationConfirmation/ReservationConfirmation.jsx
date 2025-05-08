@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import AlertMessage from "../../components/AlertMessage";
 import Navbar from "../../components/Navbar/Navbar";
 import "./ReservationConfirmation.css";
-import axios from "axios";
-import { useState } from "react";
 
-const ReservationConfirmation = () => {
+function ReservationConfirmation(props) {
+	const { alertMessages, setAlertMessages } = props;
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -17,7 +19,11 @@ const ReservationConfirmation = () => {
 		setIsSubmitting(true);
 
 		if (!finalUserId) {
-			alert("You must be logged in to make a reservation!");
+			setAlertMessages({
+				isOpen: true,
+				message: "You must be logged in to make a reservation!",
+				type: "error",
+			});
 			navigate("/login");
 			return;
 		}
@@ -37,14 +43,19 @@ const ReservationConfirmation = () => {
 				reservationData
 			);
 
-			alert("Reservation successful!");
+			setAlertMessages({
+				isOpen: true,
+				message: "Reservation successfully booked!",
+				type: "success",
+			});
 			navigate("/customer-profile");
 		} catch (error) {
 			console.error("Error completing reservation:", error);
-			alert(
-				error.response?.data?.message ||
-					"Failed to complete reservation."
-			);
+			setAlertMessages({
+				isOpen: true,
+				message: "Failed to complete reservation.",
+				type: "error",
+			});
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -80,9 +91,13 @@ const ReservationConfirmation = () => {
 				>
 					Complete Reservation
 				</button>
+				<AlertMessage
+					alertMessages={alertMessages}
+					setAlertMessages={setAlertMessages}
+				/>
 			</div>
 		</div>
 	);
-};
+}
 
 export default ReservationConfirmation;
