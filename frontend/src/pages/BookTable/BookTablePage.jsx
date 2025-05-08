@@ -384,6 +384,14 @@ const BookTablePage = () => {
 				) : (
 					searchResults.slice(0, visibleCount).map((result) => (
 						<div key={result.id} className="restaurant-result">
+							<img
+								src={
+									result.image ||
+									"/images/default-restaurant.jpg"
+								}
+								alt={result.name}
+								className="restaurant-image"
+							/>
 							<div className="restaurant-content">
 								<h3>{result.name}</h3>
 								<div className="restaurant-info">
