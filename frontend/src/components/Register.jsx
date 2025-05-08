@@ -66,8 +66,6 @@ function Register(props) {
 			setDisable(true);
 			makeUserCall(user).then((result) => {
 				if (result && result.status === 201) {
-					// update user session & token
-					// eventually navigate with customer id
 					if (result.data.status == "Customer") {
 						navigate("/customer-profile");
 					} else if (result.data.status == "RestaurantManager") {

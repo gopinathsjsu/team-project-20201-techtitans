@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import MenuDish from "./MenuDish";
 import AlertMessage from "../AlertMessage";
+import "./Menu.css";
 
 function MenuForm(props) {
 	const { id, restaurantId, alertMessages, setAlertMessages } = props;
@@ -222,11 +223,12 @@ function MenuForm(props) {
 				}}
 			>
 				<div className="update-restaurant-restaurant-form">
-					<h2 className="update-restaurant-form-group">
+					<h2 className="menu-group">
 						Menu Title:
 						<input
 							type="text"
 							name="title"
+							className="menu-title"
 							placeholder={id ? menu.title : "Enter Menu Title"}
 							onChange={handleTitle}
 						/>
