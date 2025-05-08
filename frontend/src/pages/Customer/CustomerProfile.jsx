@@ -97,7 +97,9 @@ function CustomerProfile() {
 				</h3>
 			</div>
 
-			<h2 className="upcoming-reservation-title">Upcoming Reservations</h2>
+			<h2 className="upcoming-reservation-title">
+				Upcoming Reservations
+			</h2>
 			<div className="restaurants-listing">
 				{reservations.length === 0 ? (
 					<p>No reservations yet.</p>
@@ -106,6 +108,8 @@ function CustomerProfile() {
 						<div key={i} className="restaurant-card">
 							<RestaurantListing
 								name={res.restaurantName || "Restaurant"}
+								id={res.restaurantId}
+								interact="customer-reservation"
 							/>
 							<h3>
 								Reservation on{" "}

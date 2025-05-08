@@ -50,7 +50,7 @@ function AdminDash(props) {
 	return (
 		<>
 			<Navbar role="admin" />
-			<div className="customer-info">
+			<div className="admin-title-info">
 				<h2>Admin Dashboard</h2>
 			</div>
 			<h2 className="restaurants-listing-title">Pending</h2>
