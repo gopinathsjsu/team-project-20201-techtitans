@@ -23,12 +23,7 @@ function Navbar(props) {
 	return (
 		<header className="nav-header">
 			{role == "admin" && (
-				<Link to="/admin-home" className="nav-logo">
-					BookTable
-				</Link>
-			)}
-			{role == "adminback" && (
-				<Link to="/admin-home" className="nav-logo">
+				<Link to="/admin-dash" className="nav-logo">
 					BookTable
 				</Link>
 			)}
@@ -38,11 +33,15 @@ function Navbar(props) {
 				</Link>
 			)}
 			{role == "customer" && (
-				<Link to="/customer-home" className="nav-logo">
+				<Link to="/customer-profile" className="nav-logo">
 					BookTable
 				</Link>
 			)}
-			{role == "signed-out" && <div className="nav-logo">BookTable</div>}
+			{role == "signed-out" && (
+				<Link to="/" className="nav-logo">
+					BookTable
+				</Link>
+			)}
 			<nav className="nav-btns-container">
 				{role === "customer" && (
 					<>
@@ -52,15 +51,9 @@ function Navbar(props) {
 						</Link>
 					</>
 				)}
-
 				{role == "admin" && (
 					<Link to="/admin-analytics">
 						<button className="nav-btns">Analytics</button>
-					</Link>
-				)}
-				{role == "adminback" && (
-					<Link to="/admin-dash">
-						<button className="nav-btns">Dashboard</button>
 					</Link>
 				)}
 				{role == "restaurant-manager" && (
@@ -68,7 +61,7 @@ function Navbar(props) {
 						<button className="nav-btns">Add Restaurant</button>
 					</Link>
 				)}
-				{role != "signed-out" && (
+				{role == "customer" && (
 					<Link to="/book-table">
 						<button className="nav-btns">Book Table</button>
 					</Link>

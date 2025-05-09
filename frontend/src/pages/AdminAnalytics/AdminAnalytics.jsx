@@ -17,7 +17,7 @@ function AdminAnalytics() {
 
 	return (
 		<>
-			<Navbar role="adminback" />
+			<Navbar role="admin" />
 			<div className="admin-analytics-container">
 				<h2>Admin Analytics</h2>
 				<h3>

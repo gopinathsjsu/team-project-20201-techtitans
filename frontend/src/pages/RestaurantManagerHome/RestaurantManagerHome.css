@@ -5,13 +5,13 @@
 
 .rest-man-home-restaurants h2 {
 	margin-top: 50px;
-	color: black;
+	color: white;
 	text-align: left;
-	text-indent: 35px;
+	text-indent: -15px;
 }
 
 .rest-man-home-restaurants p {
-	color: black;
+	color: white;
 	text-align: center;
 }
 
@@ -24,5 +24,5 @@
 }
 
 h2 {
-	color: grey !important;
+	color: white !important;
 }
