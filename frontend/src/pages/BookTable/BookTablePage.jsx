@@ -503,18 +503,12 @@ const BookTablePage = () => {
 
 													return visibleSlots.map(
 														(time, idx) => (
-															<button
-																key={idx}
-																onClick={() =>
-																	handleTimeSlotClick(
-																		result.id,
-																		time
-																	)
-																}
+															<span
+																
 																className="time-slot-button"
 															>
 																{time}
-															</button>
+															</span>
 														)
 													);
 												})()}

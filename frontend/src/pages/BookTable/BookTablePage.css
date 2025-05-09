@@ -106,7 +106,7 @@
 }
 
 .restaurant-content h3 {
-	color: black;
+	color: black !important;
 }
 
 .restaurant-info {
