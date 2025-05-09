@@ -7,17 +7,23 @@ const Reviews = () => {
 	const { id } = useParams();
 	const [reviews, setReviews] = useState([]);
 	const [displayCount, setDisplayCount] = useState(3); // Start by showing 3 reviews
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		const fetchReviews = async () => {
+			setIsLoading(true);
+			setError(null);
 			try {
 				const res = await axios.get(
-					`http://localhost:5000/restaurants/${id}`
+					`http://localhost:5000/restaurants/${id}/reviews`
 				);
 				setReviews(res.data.reviews || []);
 			} catch (err) {
-				console.error("Failed to fetch reviews", err);
+				setError("Failed to load reviews. Please try again.");
 				setReviews([]);
+			} finally {
+				setIsLoading(false);
 			}
 		};
 
@@ -25,7 +31,6 @@ const Reviews = () => {
 	}, [id]);
 
 	const handleLoadMore = () => {
-		// Increase display count by 3, but don't exceed total reviews length
 		setDisplayCount((prev) => Math.min(prev + 3, reviews.length));
 	};
 
@@ -36,13 +41,16 @@ const Reviews = () => {
 			).toFixed(1)
 		: "No reviews yet";
 
-	// loads first three reviews, click to load more
 	return (
 		<div className="reviews-container">
 			<h2>Reviews</h2>
 			<p className="average-rating">Average Rating: {averageRating} ⭐</p>
+
+			{isLoading && <p>Loading reviews...</p>}
+			{error && <p className="error-message">{error}</p>}
+
 			<div className="reviews-list">
-				{reviews.length > 0 ? (
+				{!isLoading && reviews.length > 0 ? (
 					<>
 						{reviews.slice(0, displayCount).map((review) => (
 							<div key={review._id} className="review-card">
@@ -65,13 +73,14 @@ const Reviews = () => {
 							<button
 								onClick={handleLoadMore}
 								className="load-more-btn"
+								disabled={isLoading}
 							>
 								Load More
 							</button>
 						)}
 					</>
 				) : (
-					<p>No reviews yet.</p>
+					!isLoading && <p>No reviews yet.</p>
 				)}
 			</div>
 		</div>
