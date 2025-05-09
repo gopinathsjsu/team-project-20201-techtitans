@@ -256,17 +256,6 @@ app.get("/restaurants/:id", async (req, res) => {
 		if (!restaurant) {
 			return res.status(404).send("Restaurant not found");
 		}
-
-		const reviews = await getReviewsByRestaurantId(restaurantId);
-
-		// Convert restaurant to a plain JavaScript object if it's a Mongoose document
-		/*const restaurantData = restaurant.toObject
-			? restaurant.toObject()
-			: { ...restaurant }; */
-
-		// Add reviews to the response data
-		restaurant.reviews = reviews || []; // I don't think we'll need this line
-
 		res.status(200).json(restaurant);
 	} catch (error) {
 		console.error("Error in /restaurants/:id:", error);
