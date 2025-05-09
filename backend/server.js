@@ -260,17 +260,30 @@ app.get("/restaurants/:id", async (req, res) => {
 		const reviews = await getReviewsByRestaurantId(restaurantId);
 
 		// Convert restaurant to a plain JavaScript object if it's a Mongoose document
-		const restaurantData = restaurant.toObject
+		/*const restaurantData = restaurant.toObject
 			? restaurant.toObject()
-			: { ...restaurant };
+			: { ...restaurant }; */
 
 		// Add reviews to the response data
-		restaurantData.reviews = reviews || [];
+		restaurant.reviews = reviews || []; // I don't think we'll need this line
 
-		res.status(200).json(restaurantData);
+		res.status(200).json(restaurant);
 	} catch (error) {
 		console.error("Error in /restaurants/:id:", error);
 		res.status(500).send("Internal Server Error");
+	}
+});
+
+app.get("/restaurants/:id/reviews", async (req, res) => {
+	try {
+		const reviews = await getReviewsByRestaurantId(req.params.id);
+		res.status(200).json({ reviews: reviews || [] });
+	} catch (error) {
+		console.error("Error fetching reviews:", error);
+		res.status(500).json({
+			success: false,
+			message: "Failed to fetch reviews",
+		});
 	}
 });
 
