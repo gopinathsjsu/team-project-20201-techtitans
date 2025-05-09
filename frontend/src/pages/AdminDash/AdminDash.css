@@ -15,16 +15,10 @@
 }
 
 h2 {
-	color: white;
+	color: grey;
 	margin-left: 50px;
 }
 
 .restaurants-listing-title {
-	color: white !important;
-}
-
-.admin-title-info {
-	margin-top: 100px;
-	text-indent: -20px;
 	color: grey !important;
 }

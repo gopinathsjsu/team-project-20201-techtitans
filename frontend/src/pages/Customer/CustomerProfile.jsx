@@ -108,8 +108,6 @@ function CustomerProfile() {
 						<div key={i} className="restaurant-card">
 							<RestaurantListing
 								name={res.restaurantName || "Restaurant"}
-								id={res.restaurantId}
-								interact="customer-reservation"
 							/>
 							<h3>
 								Reservation on{" "}
