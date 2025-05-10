@@ -293,6 +293,9 @@ function RestaurantForm(props) {
 		if (restaurant.description.length === 0) {
 			errors.description = "Please enter a description.";
 			bool = false;
+		} else if (restaurant.description.length > 150) {
+			errors.description = "Description is too long (max 150 characters).";
+			bool = false;
 		}
 		if (
 			isNaN(restaurant.location[0]) ||

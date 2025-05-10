@@ -146,8 +146,7 @@ const BookTablePage = () => {
 							name: restaurant.name,
 							cuisineType: restaurant.cuisineType,
 							costRating: restaurant.costRating,
-							avgRating: restaurant.avgRating || 0,
-							bookingsToday: restaurant.bookingsToday || 0,
+							description: restaurant.description || "",
 							hours: restaurant.hours, // keep raw hours data for filtering
 							availableTimes, // initial available times (for today)
 							image: restaurant.image || null,
@@ -456,8 +455,7 @@ const BookTablePage = () => {
 								<div className="restaurant-info">
 									<p>🍴 {result.cuisineType}</p>
 									<p>💰 {result.costRating}</p>
-									<p>⭐ {result.avgRating.toFixed(1)}</p>
-									<p>📊 {result.bookingsToday} today</p>
+									<div className="restaurant-info-desc-result">{result.description}</div>
 								</div>
 								<div className="available-times">
 									<p>Available times:</p>
