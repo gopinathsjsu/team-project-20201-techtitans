@@ -120,7 +120,7 @@ const BookTablePage = () => {
 			try {
 				setLoading(true);
 				const response = await axios.get(
-					"http://127.0.0.1:5000/restaurants"
+					"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants"
 				);
 				if (response.data) {
 					const restaurantData = response.data.map((restaurant) => {

@@ -156,7 +156,7 @@ function App() {
 				headers: { Authorization: `Bearer ${cookies.auth_token}` },
 			};
 			const response = await axios.get(
-				"http://127.0.0.1:5000/user",
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/user",
 				config
 			);
 			return response;
@@ -168,7 +168,7 @@ function App() {
 	async function fetchPendingRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5000/restaurants/pending"
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/pending"
 			);
 			return response.data;
 		} catch (error) {
@@ -179,7 +179,7 @@ function App() {
 	async function fetchVerifiedRestaurants() {
 		try {
 			const response = await axios.get(
-				"http://127.0.0.1:5000/restaurants/verified"
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/verified"
 			);
 			return response.data;
 		} catch (error) {
@@ -203,7 +203,7 @@ function App() {
 	async function fetchPendingRestaurantsByEmail() {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5000/restaurants/pending/owner/${userEmail}`
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/pending/owner/${userEmail}`
 			);
 			return response.data;
 		} catch (error) {
@@ -218,7 +218,7 @@ function App() {
 	async function fetchVerifiedRestaurantsByEmail() {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5000/restaurants/verified/owner/${userEmail}`
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/verified/owner/${userEmail}`
 			);
 			return response.data;
 		} catch (error) {

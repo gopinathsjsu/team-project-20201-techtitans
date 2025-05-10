@@ -108,7 +108,7 @@ function ReservationForm({ restaurant, userId }) {
 	async function fetchTablesbyTime(time, people) {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5000/table/${restaurant._id}/${time}/${people}`
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/table/${restaurant._id}/${time}/${people}`
 			);
 			return response.data;
 		} catch (error) {

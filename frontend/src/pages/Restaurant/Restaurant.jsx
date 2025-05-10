@@ -20,7 +20,7 @@ const Restaurant = () => {
 	async function fetchMenus() {
 		try {
 			const response = await axios.get(
-				`http://127.0.0.1:5000/menu/${id}`
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/menu/${id}`
 			);
 			return response;
 		} catch (error) {
@@ -40,7 +40,7 @@ const Restaurant = () => {
 				setRestaurant(null);
 				setLoading(true);
 				const response = await axios.get(
-					`http://localhost:5000/restaurants/${id}`
+					`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/${id}`
 				);
 				if (response.data) {
 					setRestaurant(response.data);

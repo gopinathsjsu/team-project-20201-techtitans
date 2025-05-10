@@ -11,7 +11,7 @@ function RestaurantListing(props) {
 		async function fetchRestaurantPhoto() {
 			try {
 				const response = await axios.get(
-					`http://127.0.0.1:5000/restaurants/${id}`
+					`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/${id}`
 				);
 				if (
 					response.status === 200 &&
@@ -35,7 +35,7 @@ function RestaurantListing(props) {
 				updateStatus: status,
 			};
 			const updatedRestaurant = await axios.patch(
-				`http://127.0.0.1:5000/restaurants/${name}`,
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/${name}`,
 				restaurantStatus
 			);
 			return updatedRestaurant;
@@ -67,7 +67,7 @@ function RestaurantListing(props) {
 	async function makeRemoveCall(id) {
 		try {
 			const removedRestaurant = await axios.delete(
-				`http://127.0.0.1:5000/restaurants/${id}`
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/${id}`
 			);
 			return removedRestaurant;
 		} catch (error) {
