@@ -32,7 +32,7 @@ export async function getVerifiedRestaurants() {
 	const conn = getDbConnection();
 	const RestaurantModel = conn.model("Restaurant", RestaurantSchema);
 	try {
-		const verifiedRestaurants = RestaurantModel.find({
+		const verifiedRestaurants = await RestaurantModel.find({
 			pendingApproval: false,
 			approved: true,
 		});

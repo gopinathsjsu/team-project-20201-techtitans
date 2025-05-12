@@ -124,6 +124,13 @@
 	color: black;
 }
 
+.restaurant-info-desc-result {
+	display: flex;
+	color: black;
+	align-items: center;
+	grid-column: span 2;
+}
+
 .available-times {
 	margin-top: 15px;
 	border-top: 1px solid #eee;
