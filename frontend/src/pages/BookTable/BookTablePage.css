@@ -147,6 +147,7 @@
 	border-radius: 20px;
 	cursor: pointer;
 	transition: all 0.3s;
+	display: inline-block;
 }
 
 .time-slot-button:hover {
