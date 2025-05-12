@@ -68,4 +68,7 @@ There are private variables inside a .env file not currently included in this re
 
 
 # Video Demos
-[![Watch the video](![image](https://github.com/user-attachments/assets/49bb9106-2e38-4c13-b249-6532f16a4151))](https://drive.google.com/file/d/1nsXnuaAvL0bWeblpB-LBhOKBsONcfHWH/view?usp=sharing)
+[Admin Demo](https://drive.google.com/file/d/1-uHSAm9h9DL3RJzsDggxR5VIvWBFoFMr/view?usp=sharing)
+[Customer Demo](https://drive.google.com/file/d/1sEKK9VE8lamyCQ3JBtRFBUo_xyofZM1P/view?usp=sharing)
+[Restaurant Manager Demo](https://drive.google.com/file/d/17VEy1cgxqlPNfPdutQOrubdrYuDFXe-g/view?usp=sharing)
+[Google Maps and AWS EC2 Demo](https://drive.google.com/file/d/1nsXnuaAvL0bWeblpB-LBhOKBsONcfHWH/view?usp=sharing)
