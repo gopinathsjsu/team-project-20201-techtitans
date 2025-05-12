@@ -68,4 +68,4 @@ There are private variables inside a .env file not currently included in this re
 
 
 # Video Demos
-[![Watch the video]()](https://drive.google.com/file/d/1nsXnuaAvL0bWeblpB-LBhOKBsONcfHWH/view?usp=sharing)
+[![Watch the video](![image](https://github.com/user-attachments/assets/49bb9106-2e38-4c13-b249-6532f16a4151))](https://drive.google.com/file/d/1nsXnuaAvL0bWeblpB-LBhOKBsONcfHWH/view?usp=sharing)
