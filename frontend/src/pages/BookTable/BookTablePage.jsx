@@ -171,33 +171,18 @@ const BookTablePage = () => {
 	// and filters by the rounded time and capacity (number of people).
 	const handleSearch = async () => {
 		try {
-			console.log("===== SEARCH STARTED =====");
-			console.log("Search criteria:", searchCriteria);
 			setLoading(true);
 			const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 			const searchDate = new Date(searchCriteria.date);
 			const dayOfWeek = days[searchDate.getDay()];
-			console.log("Day of week for search:", dayOfWeek);
 
 			// Round the input time and convert it to 12-hour format for comparison
 			const roundedTime = getRoundedTime(searchCriteria.time);
-			console.log("Rounded time (24h):", roundedTime);
 			const formattedSearchTime = convertTo12Hour(roundedTime);
-			console.log("Formatted search time (12h):", formattedSearchTime);
-
-			console.log(
-				"Total restaurants before processing:",
-				allRestaurants.length
-			);
-
 			// Debug restaurant hours
 			allRestaurants.forEach((restaurant, index) => {
 				if (index < 3) {
-					// Only log first 3 to avoid console flood
-					console.log(
-						`Restaurant ${restaurant.name} hours for ${dayOfWeek}:`,
-						restaurant.hours[dayOfWeek]
-					);
+					// Only log first 3 to avoid console flood //removed console
 				}
 			});
 
@@ -206,26 +191,14 @@ const BookTablePage = () => {
 				(restaurant) => {
 					const hoursForDay = restaurant.hours[dayOfWeek];
 					if (!hoursForDay || hoursForDay === "Closed") {
-						console.log(
-							`Restaurant ${restaurant.name} is closed on ${dayOfWeek}`
-						);
 						return {
 							...restaurant,
 							availableTimes: ["Restaurant is Closed"],
 						};
 					}
 					const availableTimes = generateTimeSlots(hoursForDay);
-					console.log(
-						`Restaurant ${restaurant.name} available times:`,
-						availableTimes
-					);
 					return { ...restaurant, availableTimes };
 				}
-			);
-
-			console.log(
-				"Restaurants after updating times:",
-				restaurantsWithUpdatedTimes.length
 			);
 
 			let filteredResults = restaurantsWithUpdatedTimes.filter(
@@ -236,30 +209,16 @@ const BookTablePage = () => {
 							"Restaurant is Closed"
 						)
 					) {
-						console.log(
-							`Filtering out ${restaurant.name}: closed on ${dayOfWeek}`
-						);
 						return false;
 					}
 
 					// Check capacity: at least one table should have seats >= the requested people.
 					if (restaurant.tableSizes) {
 						let capacityMatches = false;
-						console.log(
-							`${restaurant.name} table sizes:`,
-							restaurant.tableSizes
-						);
-						console.log(
-							`People requested: ${searchCriteria.people}`
-						);
 
 						for (let [size, count] of Object.entries(
 							restaurant.tableSizes
 						)) {
-							console.log(
-								`Checking table size ${size} (count: ${count})`
-							);
-
 							// Extract the actual number from strings like "Table 1 Size"
 							let actualSize;
 							if (typeof count === "number") {
@@ -276,66 +235,32 @@ const BookTablePage = () => {
 								}
 							}
 
-							console.log(`Actual size extracted: ${actualSize}`);
-
 							if (
 								actualSize &&
 								actualSize >= searchCriteria.people
 							) {
 								capacityMatches = true;
-								console.log(
-									`${restaurant.name} has tables that can fit ${searchCriteria.people} people`
-								);
 								break;
 							}
 						}
 
 						if (!capacityMatches) {
-							console.log(
-								`Filtering out ${restaurant.name}: insufficient table capacity`
-							);
 							return false;
 						}
 					}
 
-					// Check if requested time is available
-					console.log(
-						`Checking if ${formattedSearchTime} is in available times for ${restaurant.name}:`,
-						restaurant.availableTimes
-					);
-
 					if (
 						!restaurant.availableTimes.includes(formattedSearchTime)
 					) {
-						console.log(
-							`Filtering out ${restaurant.name}: time slot ${formattedSearchTime} not available`
-						);
 						return false;
 					}
-
-					console.log(`${restaurant.name} PASSES all filters`);
 					return true;
 				}
 			);
 
-			console.log(
-				"Final filtered restaurants count:",
-				filteredResults.length
-			);
-			if (filteredResults.length === 0) {
-				console.log("WARNING: No restaurants match the criteria");
-			} else {
-				console.log(
-					"First matching restaurant:",
-					filteredResults[0].name
-				);
-			}
-
 			setSearchResults(filteredResults);
 			setError(null);
-			console.log("===== SEARCH COMPLETED =====");
 		} catch (err) {
-			console.error("Search function error:", err);
 			setError("Error searching restaurants: " + err.message);
 		} finally {
 			setLoading(false);
@@ -455,7 +380,9 @@ const BookTablePage = () => {
 								<div className="restaurant-info">
 									<p>🍴 {result.cuisineType}</p>
 									<p>💰 {result.costRating}</p>
-									<div className="restaurant-info-desc-result">{result.description}</div>
+									<div className="restaurant-info-desc-result">
+										{result.description}
+									</div>
 								</div>
 								<div className="available-times">
 									<p>Available times:</p>

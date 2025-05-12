@@ -294,7 +294,8 @@ function RestaurantForm(props) {
 			errors.description = "Please enter a description.";
 			bool = false;
 		} else if (restaurant.description.length > 150) {
-			errors.description = "Description is too long (max 150 characters).";
+			errors.description =
+				"Description is too long (max 150 characters).";
 			bool = false;
 		}
 		if (
