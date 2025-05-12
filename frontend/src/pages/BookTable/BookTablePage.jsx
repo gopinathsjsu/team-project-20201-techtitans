@@ -493,10 +493,7 @@ const BookTablePage = () => {
 
 													return visibleSlots.map(
 														(time, idx) => (
-															<span
-																
-																className="time-slot-button"
-															>
+															<span className="time-slot-button">
 																{time}
 															</span>
 														)
