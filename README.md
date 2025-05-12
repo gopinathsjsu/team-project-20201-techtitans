@@ -65,3 +65,7 @@ Install dependencies first.
 `npm run dev`
 
 There are private variables inside a .env file not currently included in this repository that are needed to run. In addition, your device's IP address needs to be added to the MongoDB cluster's network.
+
+
+# Video Demos
+<iframe src="https://drive.google.com/file/d/1nsXnuaAvL0bWeblpB-LBhOKBsONcfHWH/preview" width="640" height="480" allow="autoplay"></iframe>
