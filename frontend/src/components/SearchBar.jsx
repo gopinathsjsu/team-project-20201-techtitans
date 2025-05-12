@@ -13,10 +13,8 @@ const SearchBar = () => {
 	const handlePeopleChange = (e) => setPeople(e.target.value);
 	const handleTextChange = (e) => setText(e.target.value);
 
-	// Handle search button click, just in case?
-	const handleSearch = () => {
-		console.log("Searching for: ", { date, time, people, text });
-	};
+	// Handle search button click
+	const handleSearch = () => {};
 
 	return (
 		<div
