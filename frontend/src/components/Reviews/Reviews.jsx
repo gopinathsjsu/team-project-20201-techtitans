@@ -16,7 +16,7 @@ const Reviews = () => {
 			setError(null);
 			try {
 				const res = await axios.get(
-					`http://localhost:5000/restaurants/${id}/reviews`
+					`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/restaurants/${id}/reviews`
 				);
 				setReviews(res.data.reviews || []);
 			} catch (err) {

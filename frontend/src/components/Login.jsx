@@ -44,7 +44,7 @@ function Login(props) {
 	async function makeLoginCall(user) {
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:5000/log-in",
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/log-in",
 				user
 			);
 			return response;

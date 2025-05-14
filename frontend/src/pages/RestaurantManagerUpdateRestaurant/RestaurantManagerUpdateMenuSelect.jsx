@@ -14,7 +14,7 @@ function RestaurantManagerUpdateMenuSelect() {
 		const fetchMenus = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/menu/${restaurantId}`
+					`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/menu/${restaurantId}`
 				);
 				if (response.data) {
 					setMenus(response.data);

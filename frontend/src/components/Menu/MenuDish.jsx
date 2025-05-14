@@ -58,7 +58,7 @@ function MenuDish(props) {
 
 		try {
 			const res = await axios.post(
-				"http://localhost:5000/upload",
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/upload",
 				formData
 			);
 			uploadedUrl = res.data.fileUrl;

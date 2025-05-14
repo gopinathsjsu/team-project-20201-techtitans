@@ -29,7 +29,7 @@ function MenuForm(props) {
 		const fetchMenu = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:5000/menu/get/${id}`
+					`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/menu/get/${id}`
 				);
 				if (response.data) {
 					setMenu(response.data);
@@ -116,7 +116,7 @@ function MenuForm(props) {
 			setMenu(updatedMenu);
 
 			const response = await axios.post(
-				"http://127.0.0.1:5000/menu",
+				"http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/menu",
 				updatedMenu,
 				config
 			);
@@ -142,7 +142,7 @@ function MenuForm(props) {
 			setMenu(updatedMenu);
 
 			const response = await axios.patch(
-				`http://127.0.0.1:5000/menu/update/${id}`,
+				`http://restaurant-api-alb-405497354.us-east-2.elb.amazonaws.com:5000/menu/update/${id}`,
 				updatedMenu,
 				config
 			);
